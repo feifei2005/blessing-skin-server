@@ -141,7 +141,6 @@ export async function walkFetch(request: Request): Promise<any> {
           isRefreshing = true
           refreshPromise = refreshAccessToken().finally(() => {
             isRefreshing = false
-            refreshPromise = null
           })
         }
         const refreshed = await refreshPromise

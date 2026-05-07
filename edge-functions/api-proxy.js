@@ -7,6 +7,20 @@ export default {
     const url = new URL(request.url)
     const apiBase = env.API_BASE_URL || 'https://your-cvm-server.com'
 
+    // Handle CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': request.headers.get('Origin') || '*',
+          'Access-Control-Allow-Methods':
+            'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Max-Age': '86400',
+        },
+      })
+    }
+
     // Proxy /api/* requests to the PHP backend
     if (url.pathname.startsWith('/api/')) {
       const targetUrl = `${apiBase}${url.pathname}${url.search}`
@@ -72,7 +86,26 @@ export default {
         }
       }
 
-      return response
+      const newHeaders = new Headers(response.headers)
+      newHeaders.set(
+        'Access-Control-Allow-Origin',
+        request.headers.get('Origin') || '*',
+      )
+      newHeaders.set(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      )
+      newHeaders.set(
+        'Access-Control-Allow-Headers',
+        'Content-Type, Authorization',
+      )
+      newHeaders.set('Access-Control-Allow-Credentials', 'true')
+
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: newHeaders,
+      })
     }
 
     // For all other requests, let EdgeOne serve static files

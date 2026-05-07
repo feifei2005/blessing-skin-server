@@ -13,7 +13,7 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'email' => $this->faker->email,
+            'email' => $this->faker->email(),
             'nickname' => $this->faker->name,
             'locale' => null,
             'score' => 1000,

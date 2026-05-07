@@ -29,6 +29,7 @@ export default function (env?: Env): webpack.Configuration {
       ],
     },
     output: {
+      clean: true,
       path: `${__dirname}/public/app`,
       publicPath: '/',
       filename: isDev ? '[name].js' : '[name].[contenthash:7].js',

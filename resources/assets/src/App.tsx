@@ -3,12 +3,15 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { AppConfigProvider } from '@/contexts/AppConfig'
 import { AuthProvider } from '@/auth/AuthContext'
 import { MainLayout } from '@/layouts'
+import { PrivateRoute, AdminRoute } from '@/components/Guards'
 import CallbackPage from '@/views/auth/Callback'
 
 const Dashboard = lazy(() => import('@/views/user/Dashboard'))
 const Closet = lazy(() => import('@/views/user/Closet'))
 const Players = lazy(() => import('@/views/user/Players'))
 const OAuth = lazy(() => import('@/views/user/OAuth'))
+const Profile = lazy(() => import('@/views/user/ProfilePage'))
+const Reports = lazy(() => import('@/views/user/Reports'))
 const Login = lazy(() => import('@/views/auth/Login'))
 const Register = lazy(() => import('@/views/auth/Registration'))
 const Forgot = lazy(() => import('@/views/auth/Forgot'))
@@ -22,6 +25,12 @@ const ReportsMgmt = lazy(() => import('@/views/admin/ReportsManagement'))
 const PluginsMgmt = lazy(() => import('@/views/admin/PluginsManagement'))
 const PluginsMarket = lazy(() => import('@/views/admin/PluginsMarket'))
 const Translations = lazy(() => import('@/views/admin/Translations'))
+const Customization = lazy(() => import('@/views/admin/CustomizationPage'))
+const ScoreOptions = lazy(() => import('@/views/admin/ScoreOptions'))
+const Options = lazy(() => import('@/views/admin/Options'))
+const Resource = lazy(() => import('@/views/admin/Resource'))
+const Status = lazy(() => import('@/views/admin/Status'))
+const UpdatePage = lazy(() => import('@/views/admin/UpdatePage'))
 
 function Loading() {
   return (
@@ -62,62 +71,102 @@ function App() {
                 </MainLayout>
               </Route>
 
-              <Route path="/user/closet">
+              <PrivateRoute path="/user/closet">
                 <MainLayout scope="user" title="My Closet">
                   <Closet />
                 </MainLayout>
-              </Route>
-              <Route path="/user/player">
+              </PrivateRoute>
+              <PrivateRoute path="/user/player">
                 <MainLayout scope="user" title="Player Management">
                   <Players />
                 </MainLayout>
-              </Route>
-              <Route path="/user/oauth/manage">
+              </PrivateRoute>
+              <PrivateRoute path="/user/oauth/manage">
                 <MainLayout scope="user" title="OAuth Management">
                   <OAuth />
                 </MainLayout>
-              </Route>
-              <Route path="/user">
+              </PrivateRoute>
+              <PrivateRoute path="/user/profile">
+                <MainLayout scope="user" title="Profile">
+                  <Profile />
+                </MainLayout>
+              </PrivateRoute>
+              <PrivateRoute path="/user/reports">
+                <MainLayout scope="user" title="My Reports">
+                  <Reports />
+                </MainLayout>
+              </PrivateRoute>
+              <PrivateRoute path="/user">
                 <MainLayout scope="user" title="Dashboard">
                   <Dashboard />
                 </MainLayout>
-              </Route>
+              </PrivateRoute>
 
-              <Route path="/admin/users">
+              <AdminRoute path="/admin/users">
                 <MainLayout scope="admin" title="User Management">
                   <UsersMgmt />
                 </MainLayout>
-              </Route>
-              <Route path="/admin/players">
+              </AdminRoute>
+              <AdminRoute path="/admin/players">
                 <MainLayout scope="admin" title="Player Management">
                   <PlayersMgmt />
                 </MainLayout>
-              </Route>
-              <Route path="/admin/reports">
+              </AdminRoute>
+              <AdminRoute path="/admin/reports">
                 <MainLayout scope="admin" title="Report Management">
                   <ReportsMgmt />
                 </MainLayout>
-              </Route>
-              <Route path="/admin/plugins/manage">
+              </AdminRoute>
+              <AdminRoute path="/admin/plugins/manage">
                 <MainLayout scope="admin" title="Plugin Management">
                   <PluginsMgmt />
                 </MainLayout>
-              </Route>
-              <Route path="/admin/plugins/market">
+              </AdminRoute>
+              <AdminRoute path="/admin/plugins/market">
                 <MainLayout scope="admin" title="Plugin Market">
                   <PluginsMarket />
                 </MainLayout>
-              </Route>
-              <Route path="/admin/i18n">
+              </AdminRoute>
+              <AdminRoute path="/admin/i18n">
                 <MainLayout scope="admin" title="Translations">
                   <Translations />
                 </MainLayout>
-              </Route>
-              <Route path="/admin">
+              </AdminRoute>
+              <AdminRoute path="/admin/customize">
+                <MainLayout scope="admin" title="Customize">
+                  <Customization />
+                </MainLayout>
+              </AdminRoute>
+              <AdminRoute path="/admin/score">
+                <MainLayout scope="admin" title="Score Options">
+                  <ScoreOptions />
+                </MainLayout>
+              </AdminRoute>
+              <AdminRoute path="/admin/options">
+                <MainLayout scope="admin" title="Options">
+                  <Options />
+                </MainLayout>
+              </AdminRoute>
+              <AdminRoute path="/admin/resource">
+                <MainLayout scope="admin" title="Resource Options">
+                  <Resource />
+                </MainLayout>
+              </AdminRoute>
+              <AdminRoute path="/admin/status">
+                <MainLayout scope="admin" title="Status">
+                  <Status />
+                </MainLayout>
+              </AdminRoute>
+              <AdminRoute path="/admin/update">
+                <MainLayout scope="admin" title="Check Update">
+                  <UpdatePage />
+                </MainLayout>
+              </AdminRoute>
+              <AdminRoute path="/admin">
                 <MainLayout scope="admin" title="Admin Dashboard">
                   <Dashboard />
                 </MainLayout>
-              </Route>
+              </AdminRoute>
 
               <Route path="/skinlib/show/:id">
                 <MainLayout scope="user" title="Skin Details">

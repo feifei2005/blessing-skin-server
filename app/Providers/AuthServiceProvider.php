@@ -30,7 +30,7 @@ class AuthServiceProvider extends ServiceProvider
             'Player.Read' => 'auth.oauth.scope.player.read',
             'Player.ReadWrite' => 'auth.oauth.scope.player.readwrite',
             'Closet.Read' => 'auth.oauth.scope.closet.read',
-            'Closet.ReadWrtie' => 'auth.oauth.scope.closet.readwrite',
+            'Closet.ReadWrite' => 'auth.oauth.scope.closet.readwrite',
             'UsersManagement.Read' => 'auth.oauth.scope.users-management.read',
             'UsersManagement.ReadWrite' => 'auth.oauth.scope.users-management.readwrite',
             'PlayersManagement.Read' => 'auth.oauth.scope.players-management.read',

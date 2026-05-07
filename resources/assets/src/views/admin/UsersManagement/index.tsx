@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { hot } from 'react-hot-loader/root'
 import { useImmer } from 'use-immer'
-import useBlessingExtra from '@/scripts/hooks/useBlessingExtra'
+import { useBlessingExtra } from '@/contexts/AppConfig'
 import useIsLargeScreen from '@/scripts/hooks/useIsLargeScreen'
 import { t } from '@/scripts/i18n'
 import * as fetch from '@/scripts/net'

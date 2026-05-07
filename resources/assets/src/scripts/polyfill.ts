@@ -8,8 +8,6 @@
   env: 'production',
   locale: 'en',
   site_name: 'Blessing Skin',
-  version: '',
-  route: window.location.pathname,
   extra: {},
   i18n: {},
   fetch: {

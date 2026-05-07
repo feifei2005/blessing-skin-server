@@ -33,7 +33,7 @@
     "rcrowe/twigbridge": "^0.14",
     "spatie/laravel-translation-loader": "^2.7",
     "symfony/process": "^6.0",
-    "symfony/yaml": "^5.0",
+    "symfony/yaml": "^6.0",
     "twig/twig": "^3.0",
     "vectorface/whip": "^0.4.0"
   },

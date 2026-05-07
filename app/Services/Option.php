@@ -6,6 +6,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Option
 {
@@ -73,6 +74,7 @@ class Option
                     ['option_value' => $value]
                 );
             } catch (QueryException $e) {
+                Log::warning('Failed to save option', ['key' => $key, 'error' => $e->getMessage()]);
             }
         }
     }

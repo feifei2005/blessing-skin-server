@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { hot } from 'react-hot-loader/root'
-import useBlessingExtra from '@/scripts/hooks/useBlessingExtra'
+import { useBlessingExtra } from '@/contexts/AppConfig'
 import useEmitMounted from '@/scripts/hooks/useEmitMounted'
 import useTexture from '@/scripts/hooks/useTexture'
 import { t } from '@/scripts/i18n'
