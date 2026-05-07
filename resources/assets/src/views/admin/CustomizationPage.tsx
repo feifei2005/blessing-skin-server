@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import * as fetch from '@/scripts/net'
 import { toast } from '@/scripts/notify'
+import { t } from '@/scripts/i18n'
 
 interface CustomizeData {
   home_pic_url: string
@@ -54,7 +55,6 @@ const CustomizationPage: React.FC = () => {
       body.navbar = data.extra.navbar
       body.sidebar = data.extra.sidebar
     }
-
     const { code, message } = await fetch.post<fetch.ResponseBody>(
       '/api/admin/options/customize',
       body,
@@ -70,20 +70,18 @@ const CustomizationPage: React.FC = () => {
       </div>
     )
   }
-
-  if (!data)
-    return <div className="alert alert-warning">Failed to load settings.</div>
+  if (!data) return <div className="alert alert-warning">Failed to load.</div>
 
   return (
     <div className="row">
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Homepage</h3>
+            <h3 className="card-title">{t('options.homepage.title')}</h3>
           </div>
           <div className="card-body">
             <div className="form-group">
-              <label>Home Picture URL</label>
+              <label>{t('options.homepage.home_pic_url.title')}</label>
               <input
                 className="form-control"
                 value={data.home_pic_url}
@@ -91,7 +89,7 @@ const CustomizationPage: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Favicon URL</label>
+              <label>{t('options.homepage.favicon_url.title')}</label>
               <input
                 className="form-control"
                 value={data.favicon_url}
@@ -105,7 +103,9 @@ const CustomizationPage: React.FC = () => {
                 checked={data.transparent_navbar}
                 onChange={(e) => update('transparent_navbar', e.target.checked)}
               />
-              <label className="form-check-label">Transparent Navbar</label>
+              <label className="form-check-label">
+                {t('options.homepage.transparent_navbar.label')}
+              </label>
             </div>
             <div className="form-check">
               <input
@@ -114,7 +114,9 @@ const CustomizationPage: React.FC = () => {
                 checked={data.hide_intro}
                 onChange={(e) => update('hide_intro', e.target.checked)}
               />
-              <label className="form-check-label">Hide Intro</label>
+              <label className="form-check-label">
+                {t('options.homepage.hide_intro.label')}
+              </label>
             </div>
             <div className="form-check">
               <input
@@ -123,7 +125,9 @@ const CustomizationPage: React.FC = () => {
                 checked={data.fixed_bg}
                 onChange={(e) => update('fixed_bg', e.target.checked)}
               />
-              <label className="form-check-label">Fixed Background</label>
+              <label className="form-check-label">
+                {t('options.homepage.fixed_bg.label')}
+              </label>
             </div>
           </div>
         </div>
@@ -132,11 +136,13 @@ const CustomizationPage: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Copyright</h3>
+            <h3 className="card-title">
+              {t('admin.customize.change-color.title')}
+            </h3>
           </div>
           <div className="card-body">
             <div className="form-group">
-              <label>Copyright Preference</label>
+              <label>{t('options.homepage.copyright_prefer.title')}</label>
               <select
                 className="form-control"
                 value={data.copyright_prefer}
@@ -154,7 +160,7 @@ const CustomizationPage: React.FC = () => {
               </select>
             </div>
             <div className="form-group">
-              <label>Custom Copyright Text</label>
+              <label>{t('options.homepage.copyright_text.title')}</label>
               <textarea
                 className="form-control"
                 rows={3}
@@ -169,11 +175,11 @@ const CustomizationPage: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Custom CSS/JS</h3>
+            <h3 className="card-title">{t('options.customJsCss.title')}</h3>
           </div>
           <div className="card-body">
             <div className="form-group">
-              <label>Custom CSS</label>
+              <label>{t('options.customJsCss.custom_css')}</label>
               <textarea
                 className="form-control"
                 rows={4}
@@ -182,7 +188,7 @@ const CustomizationPage: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Custom JavaScript</label>
+              <label>{t('options.customJsCss.custom_js')}</label>
               <textarea
                 className="form-control"
                 rows={4}
@@ -197,11 +203,11 @@ const CustomizationPage: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Colors</h3>
+            <h3 className="card-title">{t('admin.customize.colors.navbar')}</h3>
           </div>
           <div className="card-body">
             <div className="form-group">
-              <label>Navbar Color</label>
+              <label>{t('admin.customize.colors.navbar')}</label>
               <select
                 className="form-control"
                 value={data.extra.navbar}
@@ -220,7 +226,7 @@ const CustomizationPage: React.FC = () => {
               </select>
             </div>
             <div className="form-group">
-              <label>Sidebar Color</label>
+              <label>{t('admin.customize.colors.sidebar')}</label>
               <select
                 className="form-control"
                 value={data.extra.sidebar}
@@ -243,7 +249,7 @@ const CustomizationPage: React.FC = () => {
               disabled={saving}
               onClick={() => handleSave('color')}
             >
-              Save Colors
+              {t('general.submit')}
             </button>
           </div>
         </div>
@@ -256,7 +262,7 @@ const CustomizationPage: React.FC = () => {
           onClick={() => handleSave()}
         >
           {saving ? <i className="fas fa-spinner fa-spin mr-1" /> : null}
-          Save All Settings
+          {t('general.submit')}
         </button>
       </div>
     </div>

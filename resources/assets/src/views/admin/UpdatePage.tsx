@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as fetch from '@/scripts/net'
+import { t } from '@/scripts/i18n'
 
 interface UpdateInfo {
   latest: string
@@ -54,16 +55,22 @@ const UpdatePage: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Version</h3>
+            <h3 className="card-title">{t('admin.update.info.title')}</h3>
           </div>
           <div className="card-body">
             {info ? (
               <>
                 <dl className="row">
-                  <dt className="col-sm-4">Current</dt>
+                  <dt className="col-sm-4">
+                    {t('admin.update.info.versions.current')}
+                  </dt>
                   <dd className="col-sm-8">{info.current}</dd>
-                  <dt className="col-sm-4">Latest</dt>
-                  <dd className="col-sm-8">{info.latest || 'Unknown'}</dd>
+                  <dt className="col-sm-4">
+                    {t('admin.update.info.versions.latest')}
+                  </dt>
+                  <dd className="col-sm-8">
+                    {info.latest || t('general.unknown')}
+                  </dd>
                 </dl>
                 {info.error && (
                   <div className="alert alert-warning">{info.error}</div>
@@ -77,12 +84,19 @@ const UpdatePage: React.FC = () => {
                     {downloading ? (
                       <>
                         <i className="fas fa-spinner fa-spin mr-1" />
-                        Downloading...
+                        {t('admin.update.complete')}
                       </>
                     ) : (
-                      'Download Update'
+                      t('admin.update.info.button')
                     )}
                   </button>
+                )}
+                {info.can_update && (
+                  <div className="mt-2">
+                    <small className="text-muted">
+                      {t('admin.update.cautions.title')}
+                    </small>
+                  </div>
                 )}
                 {message && (
                   <div className="alert alert-info mt-2">{message}</div>

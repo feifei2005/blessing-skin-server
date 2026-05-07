@@ -114,11 +114,11 @@ const ProfilePage: React.FC = () => {
   if (!user) return null
 
   const tabs = [
-    { key: 'nickname', label: t('user.profile.nickname') },
-    { key: 'password', label: t('user.profile.password') },
-    { key: 'email', label: t('user.profile.email') },
-    { key: 'avatar', label: t('user.profile.avatar') },
-    { key: 'delete', label: t('user.profile.delete') },
+    { key: 'nickname', label: t('user.profile.nickname.title') },
+    { key: 'password', label: t('user.profile.password.title') },
+    { key: 'email', label: t('user.profile.email.title') },
+    { key: 'avatar', label: t('user.profile.avatar.title') },
+    { key: 'delete', label: t('user.profile.delete.title') },
   ]
 
   return (
@@ -126,7 +126,7 @@ const ProfilePage: React.FC = () => {
       <div className="col-md-3">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Profile</h3>
+            <h3 className="card-title">{t('general.profile')}</h3>
           </div>
           <div className="card-body p-0">
             <div className="list-group list-group-flush">
@@ -152,10 +152,12 @@ const ProfilePage: React.FC = () => {
             {tab === 'nickname' && (
               <form onSubmit={handleNickname}>
                 <div className="form-group">
-                  <label>Current Nickname: {user.nickname}</label>
+                  <label>
+                    {t('user.profile.nickname.title')}: {user.nickname}
+                  </label>
                   <input
                     className="form-control"
-                    placeholder="New nickname"
+                    placeholder={t('user.profile.nickname.title')}
                     value={newNickname}
                     onChange={(e) => setNewNickname(e.target.value)}
                     required
@@ -165,7 +167,123 @@ const ProfilePage: React.FC = () => {
                   {submitting ? (
                     <i className="fas fa-spinner fa-spin mr-1" />
                   ) : null}
-                  Save
+                  {t('user.profile.nickname.success')}
+                </button>
+              </form>
+            )}
+
+            {tab === 'password' && (
+              <form onSubmit={handlePassword}>
+                <div className="form-group">
+                  <label>{t('user.profile.password.old')}</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    maxLength={32}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>{t('user.profile.password.new')}</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    minLength={8}
+                    maxLength={32}
+                  />
+                </div>
+                <button className="btn btn-primary" disabled={submitting}>
+                  {submitting ? (
+                    <i className="fas fa-spinner fa-spin mr-1" />
+                  ) : null}
+                  {t('user.profile.password.button')}
+                </button>
+              </form>
+            )}
+
+            {tab === 'email' && (
+              <form onSubmit={handleEmail}>
+                <div className="form-group">
+                  <label>
+                    {t('user.profile.email.title')}:{' '}
+                    {user.email || t('general.unknown')}
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    placeholder={t('user.profile.email.new')}
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>{t('user.profile.email.password')}</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={emailPassword}
+                    onChange={(e) => setEmailPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <button className="btn btn-primary" disabled={submitting}>
+                  {submitting ? (
+                    <i className="fas fa-spinner fa-spin mr-1" />
+                  ) : null}
+                  {t('user.profile.email.button')}
+                </button>
+              </form>
+            )}
+
+            {tab === 'avatar' && (
+              <form onSubmit={handleAvatar}>
+                <div className="form-group">
+                  <label>{t('user.profile.avatar.notice')}</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder={t('user.profile.avatar.notice')}
+                    value={avatarTid}
+                    onChange={(e) => setAvatarTid(e.target.value)}
+                    required
+                  />
+                </div>
+                <button className="btn btn-primary" disabled={submitting}>
+                  {submitting ? (
+                    <i className="fas fa-spinner fa-spin mr-1" />
+                  ) : null}
+                  {t('user.profile.avatar.title')}
+                </button>
+              </form>
+            )}
+
+            {tab === 'delete' && (
+              <form onSubmit={handleDelete}>
+                <div className="alert alert-danger">
+                  {t('user.profile.delete.notice')}
+                </div>
+                <div className="form-group">
+                  <label>{t('user.profile.delete.password')}</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <button className="btn btn-danger" disabled={submitting}>
+                  {submitting ? (
+                    <i className="fas fa-spinner fa-spin mr-1" />
+                  ) : null}
+                  {t('user.profile.delete.button')}
                 </button>
               </form>
             )}

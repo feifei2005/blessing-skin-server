@@ -1,0 +1,30 @@
+# Dockerfile for SPA frontend build
+# Build the React SPA and output static files for deployment to EdgeOne Pages / CDN.
+#
+# Usage:
+#   docker build -f Dockerfile.spa -t blessing-skin-spa .
+#   docker create --name spa-extract blessing-skin-spa
+#   docker cp spa-extract:/app/public/app ./dist
+#   docker rm spa-extract
+
+FROM node:alpine
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+COPY postcss.config.js tsconfig.build.json tsconfig.json webpack.config.ts ./
+COPY tools/ ./tools/
+COPY resources ./resources
+
+# Set environment variables for SPA build
+ENV REACT_APP_API_BASE=""
+ENV REACT_APP_OAUTH_CLIENT_ID=""
+
+RUN yarn build && \
+    cp resources/assets/src/images/bg.webp public/app/ && \
+    cp resources/assets/src/images/favicon.ico public/app/
+
+# Output: static files in /app/public/app/
+# Deploy this directory to EdgeOne Pages as the site root

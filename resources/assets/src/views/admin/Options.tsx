@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import * as fetch from '@/scripts/net'
 import { toast } from '@/scripts/notify'
+import { t } from '@/scripts/i18n'
 
 interface GeneralData {
   site_name: string
@@ -59,13 +60,12 @@ const Options: React.FC = () => {
     setSaving(false)
   }
 
-  if (loading) {
+  if (loading)
     return (
       <div className="d-flex justify-content-center">
         <div className="spinner-border" />
       </div>
     )
-  }
   if (!data) return <div className="alert alert-warning">Failed to load.</div>
 
   return (
@@ -73,11 +73,13 @@ const Options: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Site Info</h3>
+            <h3 className="card-title">
+              {t('admin.customize.change-color.title')}
+            </h3>
           </div>
           <div className="card-body">
             <div className="form-group">
-              <label>Site Name</label>
+              <label>{t('options.general.site_name')}</label>
               <input
                 className="form-control"
                 value={data.site_name}
@@ -85,7 +87,7 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Description</label>
+              <label>{t('options.general.site_description.title')}</label>
               <input
                 className="form-control"
                 value={data.site_description}
@@ -93,7 +95,7 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Site URL</label>
+              <label>{t('options.general.site_url.title')}</label>
               <input
                 className="form-control"
                 value={data.site_url}
@@ -101,7 +103,7 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Announcement</label>
+              <label>{t('options.announ.announcement.description')}</label>
               <textarea
                 className="form-control"
                 rows={3}
@@ -111,10 +113,9 @@ const Options: React.FC = () => {
             </div>
           </div>
         </div>
-
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Registration</h3>
+            <h3 className="card-title">{t('general.register')}</h3>
           </div>
           <div className="card-body">
             <div className="form-check mb-2">
@@ -127,7 +128,7 @@ const Options: React.FC = () => {
                 }
               />
               <label className="form-check-label">
-                Register with Player Name
+                {t('options.general.register_with_player_name.label')}
               </label>
             </div>
             <div className="form-check mb-2">
@@ -140,11 +141,11 @@ const Options: React.FC = () => {
                 }
               />
               <label className="form-check-label">
-                Require Email Verification
+                {t('options.general.require_verification.label')}
               </label>
             </div>
             <div className="form-group">
-              <label>Registrations per IP</label>
+              <label>{t('options.general.regs_per_ip')}</label>
               <input
                 className="form-control"
                 value={data.regs_per_ip}
@@ -154,15 +155,14 @@ const Options: React.FC = () => {
           </div>
         </div>
       </div>
-
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Upload</h3>
+            <h3 className="card-title">{t('general.skin')}</h3>
           </div>
           <div className="card-body">
             <div className="form-group">
-              <label>Max File Size (KB)</label>
+              <label>{t('options.general.max_upload_file_size.title')}</label>
               <input
                 className="form-control"
                 value={data.max_upload_file_size}
@@ -170,7 +170,7 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Max Texture Width (px)</label>
+              <label>{t('options.general.max_texture_width.title')}</label>
               <input
                 className="form-control"
                 value={data.max_texture_width}
@@ -187,25 +187,35 @@ const Options: React.FC = () => {
                 }
               />
               <label className="form-check-label">
-                Allow Downloading Textures
+                {t('options.general.allow_downloading_texture.label')}
               </label>
             </div>
             <div className="form-group">
-              <label>Player Name Rule</label>
+              <label>{t('options.general.player_name_rule.title')}</label>
               <select
                 className="form-control"
                 value={data.player_name_rule}
                 onChange={(e) => update('player_name_rule', e.target.value)}
               >
-                <option value="official">Official (A-Z, 0-9, _)</option>
-                <option value="cjk">CJK</option>
-                <option value="utf8">UTF-8</option>
-                <option value="custom">Custom Regex</option>
+                <option value="official">
+                  {t('options.general.player_name_rule.official')}
+                </option>
+                <option value="cjk">
+                  {t('options.general.player_name_rule.cjk')}
+                </option>
+                <option value="utf8">
+                  {t('options.general.player_name_rule.utf8')}
+                </option>
+                <option value="custom">
+                  {t('options.general.player_name_rule.custom')}
+                </option>
               </select>
             </div>
             {data.player_name_rule === 'custom' && (
               <div className="form-group">
-                <label>Custom Regex</label>
+                <label>
+                  {t('options.general.custom_player_name_regexp.title')}
+                </label>
                 <input
                   className="form-control"
                   value={data.custom_player_name_regexp}
@@ -218,7 +228,7 @@ const Options: React.FC = () => {
             <div className="form-row">
               <div className="col">
                 <div className="form-group">
-                  <label>Name Length Min</label>
+                  <label>Min</label>
                   <input
                     type="number"
                     className="form-control"
@@ -231,7 +241,7 @@ const Options: React.FC = () => {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label>Name Length Max</label>
+                  <label>Max</label>
                   <input
                     type="number"
                     className="form-control"
@@ -246,15 +256,14 @@ const Options: React.FC = () => {
           </div>
         </div>
       </div>
-
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">SEO &amp; reCAPTCHA</h3>
+            <h3 className="card-title">SEO & reCAPTCHA</h3>
           </div>
           <div className="card-body">
             <div className="form-group">
-              <label>Meta Keywords</label>
+              <label>{t('options.meta.meta_keywords.title')}</label>
               <input
                 className="form-control"
                 value={data.meta_keywords}
@@ -262,7 +271,7 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Meta Description</label>
+              <label>{t('options.meta.meta_description.title')}</label>
               <input
                 className="form-control"
                 value={data.meta_description}
@@ -270,7 +279,7 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Meta Extras</label>
+              <label>{t('options.meta.meta_extras.title')}</label>
               <textarea
                 className="form-control"
                 rows={2}
@@ -279,7 +288,7 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>reCAPTCHA Site Key</label>
+              <label>{t('options.recaptcha.recaptcha_invisible.title')}</label>
               <input
                 className="form-control"
                 value={data.recaptcha_sitekey}
@@ -287,7 +296,7 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>reCAPTCHA Secret Key</label>
+              <label>Secret Key</label>
               <input
                 className="form-control"
                 value={data.recaptcha_secretkey}
@@ -303,20 +312,23 @@ const Options: React.FC = () => {
                   update('recaptcha_invisible', e.target.checked)
                 }
               />
-              <label className="form-check-label">Invisible reCAPTCHA</label>
+              <label className="form-check-label">
+                {t('options.recaptcha.recaptcha_invisible.label')}
+              </label>
             </div>
           </div>
         </div>
       </div>
-
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Content Policy</h3>
+            <h3 className="card-title">
+              {t('options.general.content_policy.title')}
+            </h3>
           </div>
           <div className="card-body">
             <div className="form-group">
-              <label>Content Policy</label>
+              <label>{t('options.general.content_policy.title')}</label>
               <textarea
                 className="form-control"
                 rows={3}
@@ -325,7 +337,7 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Texture Name Regex</label>
+              <label>{t('options.general.texture_name_regexp.title')}</label>
               <input
                 className="form-control"
                 value={data.texture_name_regexp}
@@ -333,7 +345,9 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Private Texture Status Code</label>
+              <label>
+                {t('options.general.status_code_for_private.title')}
+              </label>
               <select
                 className="form-control"
                 value={data.status_code_for_private}
@@ -355,13 +369,12 @@ const Options: React.FC = () => {
                 }
               />
               <label className="form-check-label">
-                Auto Delete Invalid Textures
+                {t('options.general.auto_del_invalid_texture.label')}
               </label>
             </div>
           </div>
         </div>
       </div>
-
       <div className="col-12">
         <button
           className="btn btn-success"
@@ -369,7 +382,7 @@ const Options: React.FC = () => {
           onClick={handleSave}
         >
           {saving ? <i className="fas fa-spinner fa-spin mr-1" /> : null}
-          Save General Settings
+          {t('general.submit')}
         </button>
       </div>
     </div>

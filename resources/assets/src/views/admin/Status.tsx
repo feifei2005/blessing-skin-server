@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as fetch from '@/scripts/net'
+import { t } from '@/scripts/i18n'
 
 interface StatusDetail {
   bs: {
@@ -66,29 +67,29 @@ const Status: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Blessing Skin</h3>
+            <h3 className="card-title">{t('admin.status.bs.name')}</h3>
           </div>
           <div className="card-body p-0">
             <table className="table table-striped">
               <tbody>
                 <tr>
-                  <td>Version</td>
+                  <td>{t('admin.status.bs.version')}</td>
                   <td>{detail.bs.version}</td>
                 </tr>
                 <tr>
-                  <td>Environment</td>
+                  <td>{t('admin.status.bs.env')}</td>
                   <td>{detail.bs.env}</td>
                 </tr>
                 <tr>
-                  <td>Debug</td>
+                  <td>{t('admin.status.bs.debug')}</td>
                   <td>{detail.bs.debug}</td>
                 </tr>
                 <tr>
-                  <td>Commit</td>
+                  <td>{t('admin.status.bs.commit')}</td>
                   <td>{detail.bs.commit}</td>
                 </tr>
                 <tr>
-                  <td>Laravel</td>
+                  <td>{t('admin.status.bs.laravel')}</td>
                   <td>{detail.bs.laravel}</td>
                 </tr>
               </tbody>
@@ -100,21 +101,21 @@ const Status: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Server</h3>
+            <h3 className="card-title">{t('admin.status.server.name')}</h3>
           </div>
           <div className="card-body p-0">
             <table className="table table-striped">
               <tbody>
                 <tr>
-                  <td>PHP</td>
+                  <td>{t('admin.status.server.php')}</td>
                   <td>{detail.server.php}</td>
                 </tr>
                 <tr>
-                  <td>Web Server</td>
+                  <td>{t('admin.status.server.web')}</td>
                   <td>{detail.server.web}</td>
                 </tr>
                 <tr>
-                  <td>OS</td>
+                  <td>{t('admin.status.server.os')}</td>
                   <td>{detail.server.os}</td>
                 </tr>
               </tbody>
@@ -126,33 +127,33 @@ const Status: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Database</h3>
+            <h3 className="card-title">{t('admin.status.db.name')}</h3>
           </div>
           <div className="card-body p-0">
             <table className="table table-striped">
               <tbody>
                 <tr>
-                  <td>Type</td>
+                  <td>{t('admin.status.db.type')}</td>
                   <td>{detail.db.type}</td>
                 </tr>
                 <tr>
-                  <td>Host</td>
+                  <td>{t('admin.status.db.host')}</td>
                   <td>{detail.db.host}</td>
                 </tr>
                 <tr>
-                  <td>Port</td>
+                  <td>{t('admin.status.db.port')}</td>
                   <td>{detail.db.port}</td>
                 </tr>
                 <tr>
-                  <td>Username</td>
+                  <td>{t('admin.status.db.username')}</td>
                   <td>{detail.db.username}</td>
                 </tr>
                 <tr>
-                  <td>Database</td>
+                  <td>{t('admin.status.db.database')}</td>
                   <td>{detail.db.database}</td>
                 </tr>
                 <tr>
-                  <td>Prefix</td>
+                  <td>{t('admin.status.db.prefix')}</td>
                   <td>{detail.db.prefix}</td>
                 </tr>
               </tbody>
@@ -164,7 +165,9 @@ const Status: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Plugins</h3>
+            <h3 className="card-title">
+              {t('admin.status.plugins', { amount: plugins.length })}
+            </h3>
           </div>
           <div className="card-body p-0">
             {plugins.length === 0 ? (

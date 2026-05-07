@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as fetch from '@/scripts/net'
+import { t } from '@/scripts/i18n'
 
 interface Report {
   id: number
@@ -39,7 +40,7 @@ const Reports: React.FC = () => {
   return (
     <div className="card">
       <div className="card-header">
-        <h3 className="card-title">My Reports</h3>
+        <h3 className="card-title">{t('general.my-reports')}</h3>
       </div>
       <div className="card-body p-0">
         {loading ? (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import * as fetch from '@/scripts/net'
 import { toast } from '@/scripts/notify'
+import { t } from '@/scripts/i18n'
 
 interface ScoreData {
   score_per_storage: number
@@ -50,16 +51,15 @@ const ScoreOptions: React.FC = () => {
     setSaving(false)
   }
 
-  if (loading) {
+  if (loading)
     return (
       <div className="d-flex justify-content-center">
         <div className="spinner-border" />
       </div>
     )
-  }
   if (!data) return <div className="alert alert-warning">Failed to load.</div>
 
-  const numberField = (label: string, field: keyof ScoreData) => (
+  const nf = (label: string, field: keyof ScoreData) => (
     <div className="form-group">
       <label>{label}</label>
       <input
@@ -70,8 +70,7 @@ const ScoreOptions: React.FC = () => {
       />
     </div>
   )
-
-  const checkboxField = (label: string, field: keyof ScoreData) => (
+  const cbf = (label: string, field: keyof ScoreData) => (
     <div className="form-check mb-2">
       <input
         type="checkbox"
@@ -88,34 +87,49 @@ const ScoreOptions: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Score Rates</h3>
+            <h3 className="card-title">{t('options.rate.title')}</h3>
           </div>
           <div className="card-body">
-            {numberField('Score per Storage', 'score_per_storage')}
-            {numberField(
-              'Private Score per Storage',
+            {nf(t('options.rate.score_per_storage.title'), 'score_per_storage')}
+            {nf(
+              t('options.rate.private_score_per_storage.title'),
               'private_score_per_storage',
             )}
-            {numberField('Score per Closet Item', 'score_per_closet_item')}
-            {numberField('Score per Player', 'score_per_player')}
-            {numberField('User Initial Score', 'user_initial_score')}
-            {checkboxField('Return Score on Deletion', 'return_score')}
+            {nf(
+              t('options.rate.score_per_closet_item.title'),
+              'score_per_closet_item',
+            )}
+            {nf(t('options.rate.score_per_player.title'), 'score_per_player')}
+            {nf(t('options.rate.user_initial_score'), 'user_initial_score')}
+            {cbf(t('options.rate.return_score.label'), 'return_score')}
           </div>
         </div>
       </div>
-
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Report &amp; Sign</h3>
+            <h3 className="card-title">{t('options.report.title')}</h3>
           </div>
           <div className="card-body">
-            {numberField('Reporter Score Mod.', 'reporter_score_modification')}
-            {numberField('Reporter Reward Score', 'reporter_reward_score')}
+            {nf(
+              t('options.report.reporter_score_modification.title'),
+              'reporter_score_modification',
+            )}
+            {nf(
+              t('options.report.reporter_reward_score.title'),
+              'reporter_reward_score',
+            )}
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">{t('options.sign.title')}</h3>
+          </div>
+          <div className="card-body">
             <div className="form-row">
               <div className="col">
                 <div className="form-group">
-                  <label>Sign Score (From)</label>
+                  <label>{t('options.sign.sign_score.addon1')}</label>
                   <input
                     type="number"
                     className="form-control"
@@ -126,7 +140,7 @@ const ScoreOptions: React.FC = () => {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label>Sign Score (To)</label>
+                  <label>{t('options.sign.sign_score.addon2')}</label>
                   <input
                     type="number"
                     className="form-control"
@@ -136,28 +150,32 @@ const ScoreOptions: React.FC = () => {
                 </div>
               </div>
             </div>
-            {numberField('Sign Gap Time', 'sign_gap_time')}
-            {checkboxField('Sign After Zero', 'sign_after_zero')}
+            {nf(t('options.sign.sign_gap_time.title'), 'sign_gap_time')}
+            {cbf(t('options.sign.sign_after_zero.label'), 'sign_after_zero')}
           </div>
         </div>
       </div>
-
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Sharing</h3>
+            <h3 className="card-title">{t('options.sharing.title')}</h3>
           </div>
           <div className="card-body">
-            {numberField('Score Award per Texture', 'score_award_per_texture')}
-            {checkboxField(
-              'Take Back Scores After Deletion',
+            {nf(
+              t('options.sharing.score_award_per_texture.title'),
+              'score_award_per_texture',
+            )}
+            {cbf(
+              t('options.sharing.take_back_scores_after_deletion.label'),
               'take_back_scores_after_deletion',
             )}
-            {numberField('Score per Like', 'score_award_per_like')}
+            {nf(
+              t('options.sharing.score_award_per_like.title'),
+              'score_award_per_like',
+            )}
           </div>
         </div>
       </div>
-
       <div className="col-12">
         <button
           className="btn btn-success"
@@ -165,7 +183,7 @@ const ScoreOptions: React.FC = () => {
           onClick={handleSave}
         >
           {saving ? <i className="fas fa-spinner fa-spin mr-1" /> : null}
-          Save Score Settings
+          {t('general.submit')}
         </button>
       </div>
     </div>

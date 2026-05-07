@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import * as fetch from '@/scripts/net'
 import { toast } from '@/scripts/notify'
+import { t } from '@/scripts/i18n'
 
 interface ResourceData {
   force_ssl: boolean
@@ -51,13 +52,12 @@ const Resource: React.FC = () => {
     setClearing(false)
   }
 
-  if (loading) {
+  if (loading)
     return (
       <div className="d-flex justify-content-center">
         <div className="spinner-border" />
       </div>
     )
-  }
   if (!data) return <div className="alert alert-warning">Failed to load.</div>
 
   return (
@@ -65,7 +65,7 @@ const Resource: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Resources</h3>
+            <h3 className="card-title">{t('options.resources.title')}</h3>
           </div>
           <div className="card-body">
             <div className="form-check mb-2">
@@ -75,7 +75,9 @@ const Resource: React.FC = () => {
                 checked={data.force_ssl}
                 onChange={(e) => update('force_ssl', e.target.checked)}
               />
-              <label className="form-check-label">Force SSL</label>
+              <label className="form-check-label">
+                {t('options.resources.force_ssl.label')}
+              </label>
             </div>
             <div className="form-check mb-2">
               <input
@@ -86,10 +88,12 @@ const Resource: React.FC = () => {
                   update('auto_detect_asset_url', e.target.checked)
                 }
               />
-              <label className="form-check-label">Auto Detect Asset URL</label>
+              <label className="form-check-label">
+                {t('options.resources.auto_detect_asset_url.label')}
+              </label>
             </div>
             <div className="form-group">
-              <label>Cache Expire Time</label>
+              <label>{t('options.resources.cache_expire_time.title')}</label>
               <input
                 className="form-control"
                 value={data.cache_expire_time}
@@ -97,7 +101,7 @@ const Resource: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>CDN Address</label>
+              <label>{t('options.resources.cdn_address.title')}</label>
               <input
                 className="form-control"
                 value={data.cdn_address}
@@ -107,11 +111,10 @@ const Resource: React.FC = () => {
           </div>
         </div>
       </div>
-
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Cache</h3>
+            <h3 className="card-title">{t('options.cache.title')}</h3>
           </div>
           <div className="card-body">
             <div className="form-check mb-2">
@@ -123,7 +126,9 @@ const Resource: React.FC = () => {
                   update('enable_avatar_cache', e.target.checked)
                 }
               />
-              <label className="form-check-label">Enable Avatar Cache</label>
+              <label className="form-check-label">
+                {t('options.cache.enable_avatar_cache.label')}
+              </label>
             </div>
             <div className="form-check mb-2">
               <input
@@ -134,7 +139,9 @@ const Resource: React.FC = () => {
                   update('enable_preview_cache', e.target.checked)
                 }
               />
-              <label className="form-check-label">Enable Preview Cache</label>
+              <label className="form-check-label">
+                {t('options.cache.enable_preview_cache.label')}
+              </label>
             </div>
             <button
               className="btn btn-warning mt-3"
@@ -142,12 +149,11 @@ const Resource: React.FC = () => {
               onClick={handleClearCache}
             >
               {clearing ? <i className="fas fa-spinner fa-spin mr-1" /> : null}
-              Clear Cache
+              {t('options.cache.clear')}
             </button>
           </div>
         </div>
       </div>
-
       <div className="col-12">
         <button
           className="btn btn-success"
@@ -155,7 +161,7 @@ const Resource: React.FC = () => {
           onClick={handleSave}
         >
           {saving ? <i className="fas fa-spinner fa-spin mr-1" /> : null}
-          Save Resource Settings
+          {t('general.submit')}
         </button>
       </div>
     </div>
