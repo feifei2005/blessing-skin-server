@@ -5,7 +5,7 @@ import { toast } from '@/scripts/notify'
 import { t } from '@/scripts/i18n'
 
 const ProfilePage: React.FC = () => {
-  const { user, refreshUser } = useAuth()
+  const { user, refreshUser, logout } = useAuth()
   const [tab, setTab] = useState('nickname')
   const [submitting, setSubmitting] = useState(false)
 
@@ -46,7 +46,7 @@ const ProfilePage: React.FC = () => {
     if (code === 0) {
       setCurrentPassword('')
       setNewPassword('')
-      refreshUser()
+      logout()
     }
     setSubmitting(false)
   }
@@ -70,7 +70,7 @@ const ProfilePage: React.FC = () => {
     if (code === 0) {
       setNewEmail('')
       setEmailPassword('')
-      refreshUser()
+      logout()
     }
     setSubmitting(false)
   }
@@ -104,7 +104,7 @@ const ProfilePage: React.FC = () => {
       { action: 'delete', password: deletePassword },
     )
     if (code === 0) {
-      window.location.href = '/'
+      logout()
     } else {
       toast.error(message)
     }

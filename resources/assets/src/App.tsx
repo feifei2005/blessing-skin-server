@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { AppConfigProvider } from '@/contexts/AppConfig'
 import { AuthProvider } from '@/auth/AuthContext'
-import { MainLayout } from '@/layouts'
+import { MainLayout, AuthLayout } from '@/layouts'
 import { PrivateRoute, AdminRoute } from '@/components/Guards'
 import CallbackPage from '@/views/auth/Callback'
 
@@ -57,19 +57,19 @@ function App() {
 
               <Route path="/auth/login" exact component={Login} />
               <Route path="/auth/register">
-                <MainLayout scope="user" title="Register">
+                <AuthLayout title="Register">
                   <Register />
-                </MainLayout>
+                </AuthLayout>
               </Route>
               <Route path="/auth/forgot">
-                <MainLayout scope="user" title="Forgot Password">
+                <AuthLayout title="Forgot Password">
                   <Forgot />
-                </MainLayout>
+                </AuthLayout>
               </Route>
               <Route path="/auth/reset/:uid">
-                <MainLayout scope="user" title="Reset Password">
+                <AuthLayout title="Reset Password">
                   <Reset />
-                </MainLayout>
+                </AuthLayout>
               </Route>
 
               <PrivateRoute path="/user/closet">

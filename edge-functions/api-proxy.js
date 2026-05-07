@@ -1,6 +1,23 @@
 // EdgeOne Edge Function: API Proxy
-// This function proxies /api/* and /oauth/* requests to the PHP backend server.
+// Proxies API, OAuth, static resources, and auth routes to the PHP backend.
 // Deploy this as an Edge Function in EdgeOne Pages.
+
+const PROXIED_PATHS = [
+  '/api/',
+  '/oauth/',
+  '/textures/',
+  '/avatar/',
+  '/preview/',
+  '/raw/',
+  '/csl/',
+  '/auth/login',
+  '/auth/register',
+  '/auth/forgot',
+  '/auth/reset',
+  '/auth/captcha',
+  '/auth/verify',
+  '/auth/bind',
+]
 
 export default {
   async fetch(request, env, ctx) {
@@ -21,44 +38,11 @@ export default {
       })
     }
 
-    // Proxy /api/* requests to the PHP backend
-    if (url.pathname.startsWith('/api/')) {
-      const targetUrl = `${apiBase}${url.pathname}${url.search}`
+    const shouldProxy = PROXIED_PATHS.some((prefix) =>
+      url.pathname.startsWith(prefix),
+    )
 
-      const headers = new Headers(request.headers)
-      headers.set('X-Forwarded-Proto', url.protocol.replace(':', ''))
-
-      const response = await fetch(targetUrl, {
-        method: request.method,
-        headers,
-        body:
-          request.method !== 'GET' && request.method !== 'HEAD'
-            ? request.body
-            : undefined,
-      })
-
-      const newHeaders = new Headers(response.headers)
-      newHeaders.set(
-        'Access-Control-Allow-Origin',
-        request.headers.get('Origin') || '*',
-      )
-      newHeaders.set(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-      )
-      newHeaders.set(
-        'Access-Control-Allow-Headers',
-        'Content-Type, Authorization',
-      )
-      return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: newHeaders,
-      })
-    }
-
-    // Proxy /oauth/* requests to the PHP backend
-    if (url.pathname.startsWith('/oauth/')) {
+    if (shouldProxy) {
       const targetUrl = `${apiBase}${url.pathname}${url.search}`
 
       const response = await fetch(targetUrl, {
@@ -97,6 +81,7 @@ export default {
         'Access-Control-Allow-Headers',
         'Content-Type, Authorization',
       )
+
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,

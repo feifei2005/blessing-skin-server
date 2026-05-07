@@ -84,7 +84,7 @@ class OptionsController extends Controller
             }
         }
 
-        return response()->json(['message' => trans('admin.options.changed')]);
+        return json(trans('admin.options.changed'), 0);
     }
 
     public function score()
@@ -148,7 +148,7 @@ class OptionsController extends Controller
             Option::set('sign_score', $signFrom.','.$signTo);
         }
 
-        return response()->json(['message' => trans('admin.options.changed')]);
+        return json(trans('admin.options.changed'), 0);
     }
 
     public function general()
@@ -176,7 +176,6 @@ class OptionsController extends Controller
             'meta_description' => option('meta_description'),
             'meta_extras' => option('meta_extras'),
             'recaptcha_sitekey' => option('recaptcha_sitekey'),
-            'recaptcha_secretkey' => option('recaptcha_secretkey'),
             'recaptcha_invisible' => (bool) option('recaptcha_invisible'),
         ]);
     }
@@ -243,7 +242,7 @@ class OptionsController extends Controller
             Option::set('site_url', $url);
         }
 
-        return response()->json(['message' => trans('admin.options.changed')]);
+        return json(trans('admin.options.changed'), 0);
     }
 
     public function resource()
@@ -289,13 +288,13 @@ class OptionsController extends Controller
             Option::set('cdn_address', $cdnAddress);
         }
 
-        return response()->json(['message' => trans('admin.options.changed')]);
+        return json(trans('admin.options.changed'), 0);
     }
 
     public function clearCache()
     {
         Cache::flush();
 
-        return response()->json(['message' => trans('options.cache.cleared')]);
+        return json(trans('options.cache.cleared'), 0);
     }
 }

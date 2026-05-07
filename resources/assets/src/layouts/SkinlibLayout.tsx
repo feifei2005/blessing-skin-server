@@ -1,5 +1,7 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { useAppConfig } from '@/contexts/AppConfig'
+import { useAuth } from '@/auth/AuthContext'
 
 interface SkinlibLayoutProps {
   children: React.ReactNode
@@ -7,6 +9,7 @@ interface SkinlibLayoutProps {
 
 export function SkinlibLayout({ children }: SkinlibLayoutProps) {
   const { siteName } = useAppConfig()
+  const { isAuth, user } = useAuth()
 
   return (
     <div className="wrapper">
@@ -19,20 +22,26 @@ export function SkinlibLayout({ children }: SkinlibLayoutProps) {
           </div>
           <div className="collapse navbar-collapse">
             <ul className="nav navbar-nav">
-              <li className="nav-item active">
-                <a className="nav-link" href="/skinlib">
+              <li className="nav-item">
+                <Link className="nav-link" to="/skinlib">
                   Skin Library
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
           <div className="navbar-custom-menu">
             <ul className="nav navbar-nav">
               <li className="nav-item">
-                <a className="nav-link" href="/auth/login">
-                  <i className="fas fa-user"></i>
-                  <span className="d-none d-sm-inline">Guest</span>
-                </a>
+                {isAuth && user ? (
+                  <Link className="nav-link" to="/user">
+                    <i className="fas fa-user mr-1"></i>
+                    {user.nickname}
+                  </Link>
+                ) : (
+                  <Link className="nav-link" to="/auth/login">
+                    <i className="fas fa-user mr-1"></i>Guest
+                  </Link>
+                )}
               </li>
             </ul>
           </div>

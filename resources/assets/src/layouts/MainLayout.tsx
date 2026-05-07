@@ -1,6 +1,7 @@
 import React from 'react'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
+import { useAppConfig } from '@/contexts/AppConfig'
 
 interface MainLayoutProps {
   scope: 'user' | 'admin'
@@ -9,6 +10,7 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ scope, title, children }: MainLayoutProps) {
+  const { version, siteName } = useAppConfig()
   return (
     <div className="wrapper">
       <Header />
@@ -32,10 +34,12 @@ export function MainLayout({ scope, title, children }: MainLayoutProps) {
       </div>
       <footer className="main-footer">
         <div className="float-right d-none d-sm-block">
-          <b>Version</b> Blessing Skin
+          <b>Version</b> {version || 'Blessing Skin'}
         </div>
-        <strong>Copyright &copy; Blessing Skin Community.</strong> All rights
-        reserved.
+        <strong>
+          Copyright &copy; {siteName || 'Blessing Skin'} Community.
+        </strong>{' '}
+        All rights reserved.
       </footer>
       <div id="previewer"></div>
     </div>
