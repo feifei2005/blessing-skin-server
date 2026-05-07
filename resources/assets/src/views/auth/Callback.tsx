@@ -23,13 +23,15 @@ const CallbackPage: React.FC = () => {
       return
     }
 
-    handleCallback(code, state).then((success) => {
-      if (success) {
-        history.replace('/user')
-      } else {
-        setError('Failed to exchange authorization code')
-      }
-    })
+    handleCallback(code, state)
+      .then((success) => {
+        if (success) {
+          history.replace('/user')
+        } else {
+          setError('Failed to exchange authorization code')
+        }
+      })
+      .catch((e) => setError(e.message || 'Unexpected error'))
   }, [history])
 
   if (error) {

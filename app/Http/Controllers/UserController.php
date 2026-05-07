@@ -155,8 +155,6 @@ class UserController extends Controller
             return json(trans('user.verification.frequent-mail'), 1);
         }
 
-        $user = Auth::user();
-
         if ($user->verified) {
             return json(trans('user.verification.verified'), 1);
         }

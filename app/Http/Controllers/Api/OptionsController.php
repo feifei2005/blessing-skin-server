@@ -44,6 +44,20 @@ class OptionsController extends Controller
 
     public function saveCustomize(Request $request)
     {
+        $request->validate([
+            'home_pic_url' => 'nullable|url',
+            'favicon_url' => 'nullable|url',
+            'transparent_navbar' => 'nullable|boolean',
+            'hide_intro' => 'nullable|boolean',
+            'fixed_bg' => 'nullable|boolean',
+            'copyright_prefer' => 'nullable|integer|min:0|max:6',
+            'copyright_text' => 'nullable|string',
+            'custom_css' => 'nullable|string',
+            'custom_js' => 'nullable|string',
+            'action' => 'nullable|string|in:color',
+            'navbar' => 'nullable|string',
+            'sidebar' => 'nullable|string',
+        ]);
         $keys = [
             'home_pic_url', 'favicon_url', 'transparent_navbar', 'hide_intro',
             'fixed_bg', 'custom_css', 'custom_js',
@@ -75,7 +89,7 @@ class OptionsController extends Controller
 
     public function score()
     {
-        $signScore = @explode(',', option('sign_score'));
+        $signScore = explode(',', option('sign_score') ?? '');
 
         return response()->json([
             'score_per_storage' => (int) option('score_per_storage'),
@@ -98,6 +112,23 @@ class OptionsController extends Controller
 
     public function saveScore(Request $request)
     {
+        $request->validate([
+            'score_per_storage' => 'nullable|integer|min:0',
+            'private_score_per_storage' => 'nullable|integer|min:0',
+            'score_per_closet_item' => 'nullable|integer|min:0',
+            'return_score' => 'nullable|boolean',
+            'score_per_player' => 'nullable|integer|min:0',
+            'user_initial_score' => 'nullable|integer|min:0',
+            'reporter_score_modification' => 'nullable|integer',
+            'reporter_reward_score' => 'nullable|integer',
+            'sign_score_from' => 'nullable|integer|min:0',
+            'sign_score_to' => 'nullable|integer|min:0',
+            'sign_gap_time' => 'nullable|integer|min:0',
+            'sign_after_zero' => 'nullable|boolean',
+            'score_award_per_texture' => 'nullable|integer|min:0',
+            'take_back_scores_after_deletion' => 'nullable|boolean',
+            'score_award_per_like' => 'nullable|integer|min:0',
+        ]);
         $keys = [
             'score_per_storage', 'private_score_per_storage', 'score_per_closet_item',
             'return_score', 'score_per_player', 'user_initial_score',
@@ -152,6 +183,32 @@ class OptionsController extends Controller
 
     public function saveGeneral(Request $request)
     {
+        $request->validate([
+            'site_name' => 'nullable|string',
+            'site_description' => 'nullable|string',
+            'site_url' => 'nullable|url',
+            'register_with_player_name' => 'nullable|boolean',
+            'require_verification' => 'nullable|boolean',
+            'regs_per_ip' => 'nullable|integer|min:0',
+            'max_upload_file_size' => 'nullable|integer|min:0',
+            'max_texture_width' => 'nullable|integer|min:0',
+            'player_name_rule' => 'nullable|string|in:official,cjk,utf8,custom',
+            'custom_player_name_regexp' => 'nullable|string',
+            'player_name_length_min' => 'nullable|integer|min:1',
+            'player_name_length_max' => 'nullable|integer|min:1',
+            'auto_del_invalid_texture' => 'nullable|boolean',
+            'allow_downloading_texture' => 'nullable|boolean',
+            'status_code_for_private' => 'nullable|string|in:403,404',
+            'texture_name_regexp' => 'nullable|string',
+            'content_policy' => 'nullable|string',
+            'announcement' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'meta_description' => 'nullable|string',
+            'meta_extras' => 'nullable|string',
+            'recaptcha_sitekey' => 'nullable|string',
+            'recaptcha_secretkey' => 'nullable|string',
+            'recaptcha_invisible' => 'nullable|boolean',
+        ]);
         $keys = [
             'register_with_player_name', 'require_verification', 'regs_per_ip',
             'max_upload_file_size', 'max_texture_width', 'player_name_rule',
@@ -203,6 +260,14 @@ class OptionsController extends Controller
 
     public function saveResource(Request $request)
     {
+        $request->validate([
+            'force_ssl' => 'nullable|boolean',
+            'auto_detect_asset_url' => 'nullable|boolean',
+            'cache_expire_time' => 'nullable|integer|min:0',
+            'cdn_address' => 'nullable|string',
+            'enable_avatar_cache' => 'nullable|boolean',
+            'enable_preview_cache' => 'nullable|boolean',
+        ]);
         $keys = [
             'force_ssl', 'auto_detect_asset_url', 'cache_expire_time',
             'enable_avatar_cache', 'enable_preview_cache',

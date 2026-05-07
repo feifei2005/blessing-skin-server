@@ -97,7 +97,21 @@ async function refreshAccessToken(): Promise<boolean> {
   }
 }
 
-export async function walkFetch(request: Request): Promise<any> {
+export async function walkFetch(
+  request: Request,
+  retryCount = 0,
+): Promise<any> {
+  // Proactive token refresh: if access token expired but refresh token exists
+  if (!getAccessToken() && getRefreshToken()) {
+    if (!isRefreshing) {
+      isRefreshing = true
+      refreshPromise = refreshAccessToken().finally(() => {
+        isRefreshing = false
+      })
+    }
+    await refreshPromise
+  }
+
   const token = retrieveToken()
   if (token) {
     if (token.startsWith('Bearer ')) {
@@ -137,7 +151,7 @@ export async function walkFetch(request: Request): Promise<any> {
         text: t('general.csrf'),
       })
     } else if (response.status === 401) {
-      if (getRefreshToken()) {
+      if (getRefreshToken() && retryCount < 1) {
         if (!isRefreshing) {
           isRefreshing = true
           refreshPromise = refreshAccessToken().finally(() => {
@@ -149,7 +163,7 @@ export async function walkFetch(request: Request): Promise<any> {
           const newToken = getAccessToken()
           if (newToken && retryClone) {
             retryClone.headers.set('Authorization', `Bearer ${newToken}`)
-            return walkFetch(retryClone)
+            return walkFetch(retryClone, retryCount + 1)
           }
         }
       }

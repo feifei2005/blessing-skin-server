@@ -8,10 +8,16 @@ interface MenuItem {
   link?: string
   icon: string
   children?: MenuItem[]
+  exact?: boolean
 }
 
 const userMenu: MenuItem[] = [
-  { title: 'general.dashboard', link: '/user', icon: 'fa-tachometer-alt' },
+  {
+    title: 'general.dashboard',
+    link: '/user',
+    icon: 'fa-tachometer-alt',
+    exact: true,
+  },
   { title: 'general.my-closet', link: '/user/closet', icon: 'fa-star' },
   { title: 'general.player-manage', link: '/user/player', icon: 'fa-users' },
   { title: 'general.my-reports', link: '/user/reports', icon: 'fa-flag' },
@@ -30,7 +36,12 @@ const userMenu: MenuItem[] = [
 ]
 
 const adminMenu: MenuItem[] = [
-  { title: 'general.dashboard', link: '/admin', icon: 'fa-tachometer-alt' },
+  {
+    title: 'general.dashboard',
+    link: '/admin',
+    icon: 'fa-tachometer-alt',
+    exact: true,
+  },
   { title: 'general.user-manage', link: '/admin/users', icon: 'fa-users' },
   {
     title: 'general.player-manage',
@@ -70,15 +81,25 @@ const adminMenu: MenuItem[] = [
 ]
 
 const exploreMenu: MenuItem[] = [
-  { title: 'general.skinlib', link: '/skinlib', icon: 'fa-archive' },
+  {
+    title: 'general.skinlib',
+    link: '/skinlib',
+    icon: 'fa-archive',
+    exact: true,
+  },
 ]
 
 function SideMenuLink({ item }: { item: MenuItem }) {
-  const link = item.link || '#'
+  const link = item.link!
   const title = t(item.title)
 
   return (
-    <NavLink to={link} className="nav-link" activeClassName="active">
+    <NavLink
+      to={link}
+      className="nav-link"
+      activeClassName="active"
+      exact={item.exact}
+    >
       <i className={`nav-icon fas ${item.icon}`}></i>
       <p className="ml-1">{title}</p>
     </NavLink>
@@ -151,6 +172,7 @@ export function Sidebar({ scope }: SidebarProps) {
                     className="nav-link"
                     to="/admin"
                     activeClassName="active"
+                    exact
                   >
                     <i className="nav-icon fas fa-cog"></i>
                     <p>{t('general.admin-panel')}</p>
@@ -171,6 +193,7 @@ export function Sidebar({ scope }: SidebarProps) {
                     className="nav-link"
                     to="/user"
                     activeClassName="active"
+                    exact
                   >
                     <i className="nav-icon fas fa-user"></i>&nbsp;
                     <p>{t('general.user-center')}</p>
@@ -181,6 +204,7 @@ export function Sidebar({ scope }: SidebarProps) {
                     className="nav-link"
                     to="/skinlib"
                     activeClassName="active"
+                    exact
                   >
                     <i className="nav-icon fas fa-archive"></i>&nbsp;
                     <p>{t('general.skinlib')}</p>

@@ -50,8 +50,6 @@ export default {
         'Access-Control-Allow-Headers',
         'Content-Type, Authorization',
       )
-      newHeaders.set('Access-Control-Allow-Credentials', 'true')
-
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,
@@ -99,8 +97,6 @@ export default {
         'Access-Control-Allow-Headers',
         'Content-Type, Authorization',
       )
-      newHeaders.set('Access-Control-Allow-Credentials', 'true')
-
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,

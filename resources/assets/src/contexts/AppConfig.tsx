@@ -76,6 +76,9 @@ export function AppConfigProvider({
             }
             ;(window as any).blessing.base_url =
               next.baseUrl || process.env.REACT_APP_API_BASE || ''
+            if (next.siteName) {
+              document.title = next.siteName
+            }
             return next
           })
         }
