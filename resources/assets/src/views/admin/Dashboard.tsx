@@ -14,7 +14,9 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     fetch
       .get<ChartData>('/api/admin/chart')
-      .then(setChart)
+      .then((d) => {
+        if (d && d.labels) setChart(d)
+      })
       .finally(() => setLoading(false))
   }, [])
 

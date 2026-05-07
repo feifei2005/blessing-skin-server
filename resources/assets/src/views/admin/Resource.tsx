@@ -20,7 +20,9 @@ const Resource: React.FC = () => {
   useEffect(() => {
     fetch
       .get<ResourceData>('/api/admin/options/resource')
-      .then(setData)
+      .then((d) => {
+        if (d && d.force_ssl !== undefined) setData(d)
+      })
       .finally(() => setLoading(false))
   }, [])
 

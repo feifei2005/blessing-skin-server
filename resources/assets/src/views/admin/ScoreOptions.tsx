@@ -28,7 +28,9 @@ const ScoreOptions: React.FC = () => {
   useEffect(() => {
     fetch
       .get<ScoreData>('/api/admin/options/score')
-      .then(setData)
+      .then((d) => {
+        if (d && d.score_per_storage !== undefined) setData(d)
+      })
       .finally(() => setLoading(false))
   }, [])
 

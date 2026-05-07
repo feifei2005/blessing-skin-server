@@ -37,7 +37,9 @@ const Options: React.FC = () => {
   useEffect(() => {
     fetch
       .get<GeneralData>('/api/admin/options/general')
-      .then(setData)
+      .then((d) => {
+        if (d && d.site_name !== undefined) setData(d)
+      })
       .finally(() => setLoading(false))
   }, [])
 

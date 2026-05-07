@@ -28,8 +28,10 @@ const Reports: React.FC = () => {
     fetch
       .get<PaginatedData>('/api/user/reports', { page })
       .then((result) => {
-        setReports(result.data || [])
-        setLastPage(result.last_page || 1)
+        if (result && result.data) {
+          setReports(result.data)
+          setLastPage(result.last_page || 1)
+        }
       })
       .finally(() => setLoading(false))
   }, [page])

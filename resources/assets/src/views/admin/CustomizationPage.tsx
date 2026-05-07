@@ -24,7 +24,9 @@ const CustomizationPage: React.FC = () => {
   useEffect(() => {
     fetch
       .get<CustomizeData>('/api/admin/options/customize')
-      .then(setData)
+      .then((d) => {
+        if (d && d.colors) setData(d)
+      })
       .finally(() => setLoading(false))
   }, [])
 

@@ -43,6 +43,7 @@ export interface UserInfo {
   nickname: string
   admin: boolean
   avatar: string
+  permission: number
 }
 
 export async function fetchUser(): Promise<UserInfo | null> {

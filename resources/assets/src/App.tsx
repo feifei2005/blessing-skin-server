@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { AppConfigProvider } from '@/contexts/AppConfig'
 import { AuthProvider } from '@/auth/AuthContext'
-import { MainLayout, AuthLayout } from '@/layouts'
+import { MainLayout, AuthLayout, SkinlibLayout } from '@/layouts'
 import { PrivateRoute, AdminRoute } from '@/components/Guards'
 import CallbackPage from '@/views/auth/Callback'
 
@@ -158,7 +158,7 @@ function App() {
                   <Status />
                 </MainLayout>
               </AdminRoute>
-              <AdminRoute path="/admin/update">
+              <AdminRoute path="/admin/update" requiredPermission={2}>
                 <MainLayout scope="admin" title="Check Update">
                   <UpdatePage />
                 </MainLayout>
@@ -170,19 +170,19 @@ function App() {
               </AdminRoute>
 
               <Route path="/skinlib/show/:id">
-                <MainLayout scope="user" title="Skin Details">
+                <SkinlibLayout>
                   <Show />
-                </MainLayout>
+                </SkinlibLayout>
               </Route>
               <Route path="/skinlib/upload">
-                <MainLayout scope="user" title="Upload Skin">
+                <SkinlibLayout>
                   <Upload />
-                </MainLayout>
+                </SkinlibLayout>
               </Route>
               <Route path="/skinlib">
-                <MainLayout scope="user" title="Skin Library">
+                <SkinlibLayout>
                   <SkinLibrary />
-                </MainLayout>
+                </SkinlibLayout>
               </Route>
 
               <Route path="/" exact>

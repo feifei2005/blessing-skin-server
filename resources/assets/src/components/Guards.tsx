@@ -30,7 +30,15 @@ export function PrivateRoute({ children, ...rest }: RouteProps) {
   )
 }
 
-export function AdminRoute({ children, ...rest }: RouteProps) {
+interface AdminRouteProps extends RouteProps {
+  requiredPermission?: number
+}
+
+export function AdminRoute({
+  children,
+  requiredPermission = 1,
+  ...rest
+}: AdminRouteProps) {
   const { isAuth, user, loading } = useAuth()
 
   return (
@@ -43,6 +51,12 @@ export function AdminRoute({ children, ...rest }: RouteProps) {
           return (
             <div className="alert alert-danger m-3">
               Access denied. Admin privileges required.
+            </div>
+          )
+        if ((user?.permission ?? 0) < requiredPermission)
+          return (
+            <div className="alert alert-danger m-3">
+              Access denied. Super Admin privileges required.
             </div>
           )
         return children

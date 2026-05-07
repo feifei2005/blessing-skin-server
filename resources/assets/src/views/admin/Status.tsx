@@ -41,7 +41,9 @@ const Status: React.FC = () => {
   useEffect(() => {
     fetch
       .get<StatusData>('/api/admin/status')
-      .then((d) => setData(d))
+      .then((d) => {
+        if (d && d.detail) setData(d)
+      })
       .finally(() => setLoading(false))
   }, [])
 

@@ -18,7 +18,9 @@ const UpdatePage: React.FC = () => {
     setLoading(true)
     fetch
       .get<UpdateInfo>('/api/admin/update')
-      .then(setInfo)
+      .then((d) => {
+        if (d && d.latest !== undefined) setInfo(d)
+      })
       .finally(() => setLoading(false))
   }
 
