@@ -31,6 +31,11 @@ class TranslationsController extends Controller
         if ($data['group'] === 'front-end') {
             $js->resetTime($app->getLocale());
         }
+
+        if ($request->expectsJson()) {
+            return json(trans('admin.i18n.added'), 0, ['id' => $line->id]);
+        }
+
         $request->session()->put('success', true);
 
         return redirect('/admin/i18n');

@@ -69,7 +69,15 @@ export function AppConfigProvider({
     ])
       .then(([data]) => {
         if (data && typeof data === 'object') {
-          setAppConfig((prev) => ({ ...prev, ...data }))
+          setAppConfig((prev) => {
+            const next = { ...prev, ...data }
+            if (next.extra) {
+              ;(window as any).blessing.extra = next.extra
+            }
+            ;(window as any).blessing.base_url =
+              next.baseUrl || process.env.REACT_APP_API_BASE || ''
+            return next
+          })
         }
       })
       .catch((e) => {

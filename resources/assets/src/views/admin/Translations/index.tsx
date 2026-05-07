@@ -19,7 +19,7 @@ const Translations: React.FC = () => {
   useEffect(() => {
     const getLines = async () => {
       setIsLoading(true)
-      const result = await fetch.get<Paginator<Line>>('/admin/i18n/list', {
+      const result = await fetch.get<Paginator<Line>>('/api/admin/i18n/list', {
         page,
       })
       setLines(() => result.data)
@@ -43,7 +43,7 @@ const Translations: React.FC = () => {
     }
 
     const { code, message } = await fetch.put<fetch.ResponseBody>(
-      `/admin/i18n/${line.id}`,
+      `/api/admin/i18n/${line.id}`,
       { text },
     )
     if (code === 0) {

@@ -32,7 +32,9 @@ const PluginsMarket: React.FC = () => {
   useEffect(() => {
     const getPlugins = async () => {
       setIsLoading(true)
-      const plugins = await fetch.get<Plugin[]>('/admin/plugins/market/list')
+      const plugins = await fetch.get<Plugin[]>(
+        '/api/admin/plugins/market/list',
+      )
       setPlugins(() => plugins)
       setTotalPages(Math.ceil(plugins.length / 10))
       setIsLoading(false)
@@ -61,7 +63,7 @@ const PluginsMarket: React.FC = () => {
       message,
       data = { reason: [] },
     } = await fetch.post<fetch.ResponseBody<{ reason: string[] }>>(
-      '/admin/plugins/market/download',
+      '/api/admin/plugins/market/download',
       {
         name: plugin.name,
       },

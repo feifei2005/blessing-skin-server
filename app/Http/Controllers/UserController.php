@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
@@ -138,14 +139,17 @@ class UserController extends Controller
         }
     }
 
-    public function sendVerificationEmail()
+    public function sendVerificationEmail(Request $request)
     {
         if (!option('require_verification')) {
             return json(trans('user.verification.disabled'), 1);
         }
 
+        $user = Auth::user();
+        $cacheKey = 'last_mail_time:'.$user->uid;
+
         // Rate limit of 60s
-        $remain = 60 + session('last_mail_time', 0) - time();
+        $remain = 60 + (int) Cache::get($cacheKey, 0) - time();
 
         if ($remain > 0) {
             return json(trans('user.verification.frequent-mail'), 1);
@@ -167,7 +171,7 @@ class UserController extends Controller
             return json(trans('user.verification.failed', ['msg' => $e->getMessage()]), 2);
         }
 
-        Session::put('last_mail_time', time());
+        Cache::put($cacheKey, time(), 120);
 
         return json(trans('user.verification.success'), 0);
     }
@@ -243,7 +247,9 @@ class UserController extends Controller
                 $dispatcher->dispatch('user.profile.updated', [$user, $action, $addition]);
                 event(new UserProfileUpdated($action, $user));
 
-                Auth::logout();
+                if (!$request->bearerToken()) {
+                    Auth::logout();
+                }
 
                 return json(trans('user.profile.password.success'), 0);
 
@@ -268,7 +274,9 @@ class UserController extends Controller
                 $dispatcher->dispatch('user.profile.updated', [$user, $action, $addition]);
                 event(new UserProfileUpdated($action, $user));
 
-                Auth::logout();
+                if (!$request->bearerToken()) {
+                    Auth::logout();
+                }
 
                 return json(trans('user.profile.email.success'), 0);
 
@@ -285,13 +293,18 @@ class UserController extends Controller
                     return json(trans('user.profile.delete.wrong-password'), 1);
                 }
 
-                Auth::logout();
+                if (!$request->bearerToken()) {
+                    Auth::logout();
+                }
 
                 $dispatcher->dispatch('user.deleting', [$user]);
 
                 $user->delete();
                 $dispatcher->dispatch('user.deleted', [$user]);
-                session()->flush();
+
+                if (!$request->bearerToken()) {
+                    session()->flush();
+                }
 
                 return json(trans('user.profile.delete.success'), 0);
 

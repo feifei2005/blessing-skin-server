@@ -43,10 +43,26 @@ class HomeController extends Controller
 
     public function siteConfig()
     {
+        $user = auth()->user();
+
         return response()->json([
             'siteName' => option_localized('site_name'),
             'locale' => config('app.locale'),
             'version' => config('app.version'),
+            'extra' => [
+                'recaptcha' => option('recaptcha_sitekey'),
+                'invisible' => (bool) option('recaptcha_invisible'),
+                'nickname' => $user?->nickname,
+                'uploaderExists' => $user !== null,
+                'currentUid' => $user?->uid,
+                'admin' => $user?->isAdmin() ?? false,
+                'unverified' => $user !== null && !$user->verified,
+                'badges' => [],
+                'download' => (bool) option('allow_downloading_texture'),
+                'report' => (int) option('reporter_reward_score'),
+                'regs_per_ip' => option('regs_per_ip'),
+                'register_with_player_name' => (bool) option('register_with_player_name'),
+            ],
         ]);
     }
 

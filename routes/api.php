@@ -7,16 +7,54 @@ Route::any('', 'HomeController@apiRoot');
 Route::get('site-config', 'HomeController@siteConfig')->name('api.site-config');
 Route::get('i18n/{locale}', 'HomeController@i18n')->name('api.i18n');
 
-Route::prefix('user')->middleware('auth:oauth')->group(function () {
+// Skinlib public routes
+Route::prefix('skinlib')->group(function () {
+    Route::get('list', 'SkinlibController@library');
+    Route::get('info/{texture}', 'SkinlibController@info');
+});
+
+// Texture upload and management
+Route::prefix('texture')->group(function () {
+    Route::get('{texture}', 'SkinlibController@info');
+
+    Route::middleware(['auth:web,oauth', 'verified'])->group(function () {
+        Route::post('', 'SkinlibController@handleUpload');
+        Route::put('{texture}/name', 'SkinlibController@rename');
+        Route::put('{texture}/type', 'SkinlibController@type');
+        Route::put('{texture}/privacy', 'SkinlibController@privacy');
+        Route::delete('{texture}', 'SkinlibController@delete');
+    });
+});
+
+// Reports
+Route::middleware(['auth:web,oauth', 'verified'])->group(function () {
+    Route::post('reports', 'ReportController@submit');
+});
+
+Route::prefix('user')->middleware('auth:web,oauth')->group(function () {
     Route::get('', 'UserController@user')->middleware(['scope:User.Read']);
 
     Route::middleware(['scope:Notification.Read'])->group(function () {
         Route::get('notifications', 'NotificationsController@all');
         Route::post('notifications/{id}', 'NotificationsController@read');
     });
+
+    // User profile and account
+    Route::get('score-info', 'UserController@scoreInfo');
+    Route::post('sign', 'UserController@sign');
+    Route::post('profile', 'UserController@handleProfile');
+    Route::post('profile/avatar', 'UserController@setAvatar');
+    Route::post('email-verification', 'UserController@sendVerificationEmail');
+    Route::put('dark-mode', 'UserController@toggleDarkMode');
+
+    // User reports
+    Route::get('reports', 'ReportController@trackData');
+
+    // Closet IDs
+    Route::get('closet/ids', 'ClosetController@allIds');
 });
 
-Route::prefix('players')->middleware('auth:oauth')->group(function () {
+Route::prefix('players')->middleware('auth:web,oauth')->group(function () {
     Route::get('', 'PlayerController@list')->middleware(['scope:Player.Read,Player.ReadWrite']);
 
     Route::middleware(['scope:Player.ReadWrite'])->group(function () {
@@ -28,7 +66,7 @@ Route::prefix('players')->middleware('auth:oauth')->group(function () {
     });
 });
 
-Route::prefix('closet')->middleware('auth:oauth')->group(function () {
+Route::prefix('closet')->middleware('auth:web,oauth')->group(function () {
     Route::get('', 'ClosetController@getClosetData')->middleware(['scope:Closet.Read,Closet.ReadWrite']);
 
     Route::middleware(['scope:Closet.ReadWrite'])->group(function () {
@@ -39,8 +77,11 @@ Route::prefix('closet')->middleware('auth:oauth')->group(function () {
 });
 
 Route::prefix('admin')
-    ->middleware(['auth:oauth', 'role:admin'])
+    ->middleware(['auth:web,oauth', 'role:admin'])
     ->group(function () {
+        Route::get('chart', 'AdminController@chartData');
+        Route::get('status', 'AdminController@statusData');
+
         Route::prefix('users')->group(function () {
             Route::get('', 'UsersManagementController@list')->name('list')->middleware(['scope:UsersManagement.Read,UsersManagement.ReadWrite']);
             Route::prefix('{user}')->middleware(['scope:UsersManagement.ReadWrite'])->group(function () {
@@ -79,4 +120,47 @@ Route::prefix('admin')
         });
 
         Route::post('notifications', 'NotificationsController@send')->middleware(['scope:Notification.ReadWrite']);
+
+        // Translations
+        Route::prefix('i18n')->group(function () {
+            Route::get('list', 'TranslationsController@list');
+            Route::post('', 'TranslationsController@create');
+            Route::put('{line}', 'TranslationsController@update');
+            Route::delete('{line}', 'TranslationsController@delete');
+        });
+
+        // Plugins
+        Route::prefix('plugins')->group(function () {
+            Route::get('data', 'PluginController@getPluginData');
+            Route::post('manage', 'PluginController@manage');
+
+            Route::middleware('role:super-admin')->group(function () {
+                Route::post('upload', 'PluginController@upload');
+                Route::post('wget', 'PluginController@wget');
+            });
+
+            Route::prefix('market')->group(function () {
+                Route::get('list', 'MarketController@marketData');
+                Route::post('download', 'MarketController@download');
+            });
+        });
+
+        // Update
+        Route::prefix('update')->middleware('role:super-admin')->group(function () {
+            Route::get('', 'UpdateController@checkUpdate');
+            Route::post('download', 'UpdateController@download');
+        });
+
+        // Options
+        Route::prefix('options')->group(function () {
+            Route::get('customize', 'Api\OptionsController@customize');
+            Route::post('customize', 'Api\OptionsController@saveCustomize');
+            Route::get('score', 'Api\OptionsController@score');
+            Route::post('score', 'Api\OptionsController@saveScore');
+            Route::get('general', 'Api\OptionsController@general');
+            Route::post('general', 'Api\OptionsController@saveGeneral');
+            Route::get('resource', 'Api\OptionsController@resource');
+            Route::post('resource', 'Api\OptionsController@saveResource');
+            Route::post('resource/clear-cache', 'Api\OptionsController@clearCache');
+        });
     });

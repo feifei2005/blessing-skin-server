@@ -108,6 +108,7 @@ export async function walkFetch(request: Request): Promise<any> {
   }
 
   try {
+    const retryClone = getRefreshToken() ? request.clone() : null
     const response = await fetch(request)
     const cloned = response.clone()
     const contentType = response.headers.get('Content-Type') || ''
@@ -146,10 +147,9 @@ export async function walkFetch(request: Request): Promise<any> {
         const refreshed = await refreshPromise
         if (refreshed) {
           const newToken = getAccessToken()
-          if (newToken) {
-            const retryRequest = request.clone()
-            retryRequest.headers.set('Authorization', `Bearer ${newToken}`)
-            return walkFetch(retryRequest)
+          if (newToken && retryClone) {
+            retryClone.headers.set('Authorization', `Bearer ${newToken}`)
+            return walkFetch(retryClone)
           }
         }
       }

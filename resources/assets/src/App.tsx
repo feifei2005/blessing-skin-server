@@ -7,6 +7,7 @@ import { PrivateRoute, AdminRoute } from '@/components/Guards'
 import CallbackPage from '@/views/auth/Callback'
 
 const Dashboard = lazy(() => import('@/views/user/Dashboard'))
+const AdminDashboard = lazy(() => import('@/views/admin/Dashboard'))
 const Closet = lazy(() => import('@/views/user/Closet'))
 const Players = lazy(() => import('@/views/user/Players'))
 const OAuth = lazy(() => import('@/views/user/OAuth'))
@@ -164,7 +165,7 @@ function App() {
               </AdminRoute>
               <AdminRoute path="/admin">
                 <MainLayout scope="admin" title="Admin Dashboard">
-                  <Dashboard />
+                  <AdminDashboard />
                 </MainLayout>
               </AdminRoute>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useParams } from 'react-router-dom'
 import { hot } from 'react-hot-loader/root'
 import Skeleton from 'react-loading-skeleton'
 import { useBlessingExtra } from '@/contexts/AppConfig'
@@ -25,6 +26,7 @@ export type Badge = {
 const Previewer = React.lazy(() => import('@/components/Viewer'))
 
 const Show: React.FC = () => {
+  const { id } = useParams<{ id: string }>()
   const [texture, setTexture] = useState<Texture>({} as Texture)
   const [isLoading, setIsLoading] = useState(true)
   const [showModalApply, setShowModalApply] = useState(false)
@@ -42,11 +44,7 @@ const Show: React.FC = () => {
 
   useEffect(() => {
     const fetchInfo = async () => {
-      const url = location.href
-        .replace(blessing.base_url, '')
-        .replace('skinlib/show', 'texture')
-
-      const texture = await fetch.get<Texture>(url)
+      const texture = await fetch.get<Texture>(urls.texture.info(Number(id)))
       setTexture(texture)
       setIsLoading(false)
     }
@@ -167,7 +165,7 @@ const Show: React.FC = () => {
     }
 
     const { code, message } = await fetch.post<fetch.ResponseBody>(
-      '/skinlib/report',
+      '/api/reports',
       {
         tid: texture.tid,
         reason,

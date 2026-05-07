@@ -20,7 +20,7 @@ const PluginsManagement: React.FC = () => {
   useEffect(() => {
     const getPlugins = async () => {
       setIsLoading(true)
-      const plugins = await fetch.get<Plugin[]>('/admin/plugins/data')
+      const plugins = await fetch.get<Plugin[]>('/api/admin/plugins/data')
       setPlugins(() => plugins)
       setIsLoading(false)
     }
@@ -64,7 +64,7 @@ const PluginsManagement: React.FC = () => {
 
   const handleDisable = async (plugin: Plugin, i: number) => {
     const { code, message } = await fetch.post<fetch.ResponseBody>(
-      '/admin/plugins/manage',
+      '/api/admin/plugins/manage',
       {
         action: 'disable',
         name: plugin.name,
@@ -92,7 +92,7 @@ const PluginsManagement: React.FC = () => {
     }
 
     const { code, message } = await fetch.post<fetch.ResponseBody>(
-      '/admin/plugins/manage',
+      '/api/admin/plugins/manage',
       {
         action: 'delete',
         name: plugin.name,
@@ -124,7 +124,7 @@ const PluginsManagement: React.FC = () => {
     const formData = new FormData()
     formData.append('file', file, file.name)
     const { code, message } = await fetch.post<fetch.ResponseBody>(
-      '/admin/plugins/upload',
+      '/api/admin/plugins/upload',
       formData,
     )
 
@@ -133,7 +133,7 @@ const PluginsManagement: React.FC = () => {
       toast.success(message)
       setFile(null)
 
-      const plugins = await fetch.get<Plugin[]>('/admin/plugins/data')
+      const plugins = await fetch.get<Plugin[]>('/api/admin/plugins/data')
       setPlugins(() => plugins)
     } else {
       toast.error(message)
@@ -143,7 +143,7 @@ const PluginsManagement: React.FC = () => {
   const handleSubmitUrl = async () => {
     setIsDownloading(true)
     const { code, message } = await fetch.post<fetch.ResponseBody>(
-      '/admin/plugins/wget',
+      '/api/admin/plugins/wget',
       { url },
     )
 
@@ -152,7 +152,7 @@ const PluginsManagement: React.FC = () => {
       toast.success(message)
       setUrl('')
 
-      const plugins = await fetch.get<Plugin[]>('/admin/plugins/data')
+      const plugins = await fetch.get<Plugin[]>('/api/admin/plugins/data')
       setPlugins(() => plugins)
     } else {
       toast.error(message)

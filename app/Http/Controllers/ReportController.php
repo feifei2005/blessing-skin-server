@@ -65,6 +65,15 @@ class ReportController extends Controller
         return view('user.report', ['reports' => $reports]);
     }
 
+    public function trackData()
+    {
+        $reports = Report::where('reporter', auth()->id())
+            ->orderBy('report_at', 'desc')
+            ->paginate(10);
+
+        return response()->json($reports);
+    }
+
     public function manage(Request $request)
     {
         $q = $request->input('q');

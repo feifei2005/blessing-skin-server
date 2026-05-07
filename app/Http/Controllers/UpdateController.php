@@ -29,6 +29,19 @@ class UpdateController extends Controller
         ]);
     }
 
+    public function checkUpdate()
+    {
+        $info = $this->getUpdateInfo();
+        $canUpdate = $this->canUpdate(Arr::get($info, 'info'));
+
+        return response()->json([
+            'latest' => Arr::get($info, 'info.latest'),
+            'current' => config('app.version'),
+            'error' => Arr::get($info, 'error', $canUpdate['reason']),
+            'can_update' => $canUpdate['can'],
+        ]);
+    }
+
     public function download(Unzip $unzip, Filesystem $filesystem)
     {
         $info = $this->getUpdateInfo();

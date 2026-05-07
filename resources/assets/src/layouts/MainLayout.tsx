@@ -37,6 +37,7 @@ export function MainLayout({ scope, title, children }: MainLayoutProps) {
         <strong>Copyright &copy; Blessing Skin Community.</strong> All rights
         reserved.
       </footer>
+      <div id="previewer"></div>
     </div>
   )
 }

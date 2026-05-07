@@ -88,6 +88,29 @@ class AdminController extends Controller
         Filesystem $filesystem,
         Filter $filter,
     ) {
+        $data = $this->buildStatusData($request, $plugins, $filesystem, $filter);
+
+        return view('admin.status')
+            ->with('grid', $data['grid'])
+            ->with('detail', $data['detail'])
+            ->with('plugins', $data['plugins']);
+    }
+
+    public function statusData(
+        Request $request,
+        PluginManager $plugins,
+        Filesystem $filesystem,
+        Filter $filter,
+    ) {
+        return response()->json($this->buildStatusData($request, $plugins, $filesystem, $filter));
+    }
+
+    protected function buildStatusData(
+        Request $request,
+        PluginManager $plugins,
+        Filesystem $filesystem,
+        Filter $filter,
+    ) {
         $db = config('database.connections.'.config('database.default'));
         $dbType = Arr::get([
             'mysql' => 'MySQL/MariaDB',
@@ -120,9 +143,9 @@ class AdminController extends Controller
         ];
         $grid = $filter->apply('grid:admin.status', $grid);
 
-        return view('admin.status')
-            ->with('grid', $grid)
-            ->with('detail', [
+        return [
+            'grid' => $grid,
+            'detail' => [
                 'bs' => [
                     'version' => config('app.version'),
                     'env' => config('app.env'),
@@ -143,7 +166,8 @@ class AdminController extends Controller
                     'database' => Arr::get($db, 'database'),
                     'prefix' => Arr::get($db, 'prefix'),
                 ],
-            ])
-            ->with('plugins', $enabledPlugins);
+            ],
+            'plugins' => $enabledPlugins,
+        ];
     }
 }

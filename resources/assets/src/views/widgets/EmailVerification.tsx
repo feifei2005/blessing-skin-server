@@ -9,7 +9,7 @@ const EmailVerification: React.FC = () => {
   const send = async () => {
     setIsSending(true)
     const { code, message } = await fetch.post<fetch.ResponseBody>(
-      '/user/email-verification',
+      '/api/user/email-verification',
     )
     if (code === 0) {
       toast.success(message)

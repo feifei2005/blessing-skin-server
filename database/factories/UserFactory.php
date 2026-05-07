@@ -14,7 +14,7 @@ class UserFactory extends Factory
     {
         return [
             'email' => $this->faker->email(),
-            'nickname' => $this->faker->name,
+            'nickname' => $this->faker->name(),
             'locale' => null,
             'score' => 1000,
             'avatar' => 0,
