@@ -4,7 +4,6 @@ import { execSync } from 'child_process'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import HtmlWebpackEnhancementPlugin from './tools/HtmlWebpackEnhancementPlugin'
 
 interface Env {
   production?: boolean
@@ -13,36 +12,25 @@ interface Env {
 export default function (env?: Env): webpack.Configuration {
   const isDev = !env?.production
   const isGitpod = 'GITPOD_REPO_ROOT' in process.env
-  const htmlPublicPath = isDev
-    ? isGitpod
-      ? `${execSync('gp url 8080')}/app/`
-      : '//localhost:8080/app/'
-    : '{{ cdn_base }}/app/'
 
   return {
     name: 'app',
     mode: isDev ? 'development' : 'production',
     entry: {
-      app: ['react-hot-loader/patch', '@/index.tsx'],
-      style: [
+      app: [
+        'react-hot-loader/patch',
         '@/styles/common.css',
         'admin-lte/dist/css/alt/adminlte.components.min.css',
         'admin-lte/dist/css/alt/adminlte.core.min.css',
         'admin-lte/dist/css/alt/adminlte.pages.min.css',
         'admin-lte/dist/css/alt/adminlte.light.min.css',
         '@fortawesome/fontawesome-free/css/all.min.css',
-      ],
-      home: '@/scripts/homePage.ts',
-      'home-css': '@/styles/home.css',
-      spectre: [
-        'spectre.css/dist/spectre.min.css',
-        '@/fonts/minecraft.css',
-        '@/styles/spectre.css',
+        '@/index.tsx',
       ],
     },
     output: {
       path: `${__dirname}/public/app`,
-      publicPath: '/app/',
+      publicPath: '/',
       filename: isDev ? '[name].js' : '[name].[contenthash:7].js',
       chunkFilename: isDev ? '[id].js' : '[id].[contenthash:7].js',
       crossOriginLoading: 'anonymous',
@@ -82,38 +70,11 @@ export default function (env?: Env): webpack.Configuration {
         chunkFilename: isDev ? '[id].css' : '[id].[contenthash:7].css',
       }),
       new HtmlWebpackPlugin({
-        templateContent: '',
+        template: `${__dirname}/resources/assets/template.html`,
         chunks: ['app'],
         scriptLoading: 'blocking',
-        filename: 'app.twig',
-        publicPath: htmlPublicPath,
+        filename: 'index.html',
       }),
-      new HtmlWebpackPlugin({
-        templateContent: '',
-        chunks: ['style'],
-        filename: 'style.twig',
-        publicPath: htmlPublicPath,
-      }),
-      new HtmlWebpackPlugin({
-        templateContent: '',
-        chunks: ['home'],
-        scriptLoading: 'blocking',
-        filename: 'home.twig',
-        publicPath: htmlPublicPath,
-      }),
-      new HtmlWebpackPlugin({
-        templateContent: '',
-        chunks: ['home-css'],
-        filename: 'home-css.twig',
-        publicPath: htmlPublicPath,
-      }),
-      new HtmlWebpackPlugin({
-        templateContent: '',
-        chunks: ['spectre'],
-        filename: 'spectre.twig',
-        publicPath: htmlPublicPath,
-      }),
-      new HtmlWebpackEnhancementPlugin(),
       new webpack.DefinePlugin({
         'window.Deno': 'true',
         Deno: {
@@ -122,7 +83,12 @@ export default function (env?: Env): webpack.Configuration {
           version: {},
         },
         'process.platform': '"browser"',
-        __blessing_public_path__: JSON.stringify(htmlPublicPath),
+        'process.env.REACT_APP_API_BASE': JSON.stringify(
+          process.env.REACT_APP_API_BASE || '',
+        ),
+        'process.env.REACT_APP_OAUTH_CLIENT_ID': JSON.stringify(
+          process.env.REACT_APP_OAUTH_CLIENT_ID || '',
+        ),
       }),
     ].concat(isDev ? [new webpack.HotModuleReplacementPlugin()] : []),
     resolve: {
@@ -147,6 +113,7 @@ export default function (env?: Env): webpack.Configuration {
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
+      historyApiFallback: true,
       host: '0.0.0.0',
       hot: true,
       hotOnly: true,

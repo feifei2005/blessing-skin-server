@@ -13,23 +13,27 @@ declare global {
     version: string
     route: string
     extra: any
-    i18n: object
+    i18n: Record<string, any>
 
     fetch: {
-      get(url: string, params?: object): Promise<object>
-      post(url: string, data?: object): Promise<object>
-      put(url: string, data?: object): Promise<object>
-      del(url: string, data?: object): Promise<object>
+      get(url: string, params?: Record<string, unknown>): Promise<any>
+      post(url: string, data?: Record<string, unknown>): Promise<any>
+      put(url: string, data?: Record<string, unknown>): Promise<any>
+      del(url: string, data?: Record<string, unknown>): Promise<any>
     }
 
     event: {
-      on(eventName: string, listener: Function): void
-      emit(eventName: string, payload: object): void
+      on(eventName: string, listener: CallableFunction): void
+      emit(eventName: string, payload?: unknown): void
     }
 
     notify: {
       showModal(options?: ModalOptions): Promise<ModalResult>
       toast: Toast
     }
+
+    t: (key: string, params?: Record<string, unknown>) => string
   }
+
+  function trans(key: string): string
 }

@@ -39,11 +39,12 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
+            Middleware\HandleCors::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
         'authorize' => [
-            'auth:web',
+            'auth:web,oauth',
             Middleware\RejectBannedUser::class,
             Middleware\EnsureEmailFilled::class,
             Middleware\FireUserAuthenticated::class,

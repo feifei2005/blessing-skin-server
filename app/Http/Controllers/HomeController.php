@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PluginManager;
 use Illuminate\Support\Arr;
 
 class HomeController extends Controller
@@ -38,5 +39,34 @@ class HomeController extends Controller
             'copyright' => $copyright,
             'site_name' => option('site_name'),
         ]);
+    }
+
+    public function siteConfig()
+    {
+        return response()->json([
+            'siteName' => option_localized('site_name'),
+            'locale' => config('app.locale'),
+            'version' => config('app.version'),
+        ]);
+    }
+
+    public function i18n($locale)
+    {
+        $previousLocale = app()->getLocale();
+
+        try {
+            app()->setLocale($locale);
+
+            $translations = trans('front-end');
+
+            $plugins = app(PluginManager::class)->getEnabledPlugins();
+            foreach ($plugins as $plugin) {
+                $translations[$plugin->name] = trans($plugin->namespace.'::front-end');
+            }
+
+            return response()->json($translations);
+        } finally {
+            app()->setLocale($previousLocale);
+        }
     }
 }

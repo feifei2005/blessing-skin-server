@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::any('', 'HomeController@apiRoot');
 
+Route::get('site-config', 'HomeController@siteConfig')->name('api.site-config');
+Route::get('i18n/{locale}', 'HomeController@i18n')->name('api.i18n');
+
 Route::prefix('user')->middleware('auth:oauth')->group(function () {
     Route::get('', 'UserController@user')->middleware(['scope:User.Read']);
 

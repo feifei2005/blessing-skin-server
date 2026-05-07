@@ -2,9 +2,32 @@ interface I18nTable {
   [key: string]: string | I18nTable | undefined
 }
 
-export function t(key: string, parameters = Object.create(null)): string {
+let i18nTable: I18nTable = (blessing.i18n as I18nTable) || {}
+
+export function setI18n(table: I18nTable) {
+  i18nTable = table
+  blessing.i18n = table
+}
+
+export async function loadI18n(locale: string): Promise<void> {
+  const baseUrl = process.env.REACT_APP_API_BASE || blessing.base_url || ''
+  try {
+    const resp = await fetch(`${baseUrl}/api/i18n/${locale}`)
+    if (resp.ok) {
+      const data = await resp.json()
+      setI18n(data)
+    }
+  } catch {
+    // fallback: use empty table, keys will show as-is
+  }
+}
+
+export function t(
+  key: string,
+  parameters = Object.create(null) as Record<string, string>,
+): string {
   const segments = key.split('.')
-  let temp = blessing.i18n as I18nTable | undefined
+  let temp = i18nTable
   let result = ''
 
   for (const segment of segments) {
@@ -21,7 +44,7 @@ export function t(key: string, parameters = Object.create(null)): string {
   }
 
   Object.keys(parameters).forEach(
-    (slot) => (result = result.replace(`:${slot}`, parameters[slot])),
+    (slot) => (result = result.replace(`:${slot}`, parameters[slot]!)),
   )
 
   return result
