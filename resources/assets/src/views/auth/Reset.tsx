@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { hot } from 'react-hot-loader/root'
+import { useHistory } from 'react-router-dom'
 import useEmitMounted from '@/scripts/hooks/useEmitMounted'
 import { t } from '@/scripts/i18n'
 import * as fetch from '@/scripts/net'
@@ -12,6 +13,7 @@ const Reset: React.FC = () => {
   const [confirmation, setConfirmation] = useState('')
   const [warningMessage, setWarningMessage] = useState('')
   const [isPending, setIsPending] = useState(false)
+  const history = useHistory()
 
   useEmitMounted()
 
@@ -34,14 +36,15 @@ const Reset: React.FC = () => {
     }
 
     setIsPending(true)
+    const uid = location.pathname.split('/').pop()
     const { code, message } = await fetch.post<fetch.ResponseBody>(
-      location.href.replace(blessing.base_url, ''),
+      urls.auth.reset(Number(uid)),
       { password },
     )
     if (code === 0) {
       toast.success(message)
       setTimeout(() => {
-        window.location.href = blessing.base_url + urls.auth.login()
+        history.push('/auth/login')
       }, 2000)
     } else {
       setWarningMessage(message)

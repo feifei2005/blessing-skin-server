@@ -1,11 +1,22 @@
 <?php
 
+use App\Http\Middleware\RejectBannedUser;
 use Illuminate\Support\Facades\Route;
 
 Route::any('', 'HomeController@apiRoot');
 
 Route::get('site-config', 'HomeController@siteConfig')->name('api.site-config');
 Route::get('i18n/{locale}', 'HomeController@i18n')->name('api.i18n');
+
+Route::get('health', fn () => response()->json(['status' => 'ok', 'timestamp' => now()]));
+
+Route::prefix('auth')->group(function () {
+    Route::post('login', 'AuthController@handleLogin');
+    Route::post('register', 'AuthController@handleRegister');
+    Route::post('forgot', 'AuthController@handleForgot');
+    Route::post('reset/{uid}', 'AuthController@handleReset');
+    Route::post('logout', 'AuthController@logout')->middleware('auth:web,oauth');
+});
 
 // Skinlib public routes
 Route::prefix('skinlib')->group(function () {
@@ -17,7 +28,7 @@ Route::prefix('skinlib')->group(function () {
 Route::prefix('texture')->group(function () {
     Route::get('{texture}', 'SkinlibController@info');
 
-    Route::middleware(['auth:web,oauth', 'verified'])->group(function () {
+    Route::middleware(['auth:web,oauth', RejectBannedUser::class, 'verified'])->group(function () {
         Route::post('', 'SkinlibController@handleUpload');
         Route::put('{texture}/name', 'SkinlibController@rename');
         Route::put('{texture}/type', 'SkinlibController@type');
@@ -27,11 +38,11 @@ Route::prefix('texture')->group(function () {
 });
 
 // Reports
-Route::middleware(['auth:web,oauth', 'verified'])->group(function () {
+Route::middleware(['auth:web,oauth', RejectBannedUser::class, 'verified'])->group(function () {
     Route::post('reports', 'ReportController@submit');
 });
 
-Route::prefix('user')->middleware('auth:web,oauth')->group(function () {
+Route::prefix('user')->middleware(['auth:web,oauth', RejectBannedUser::class])->group(function () {
     Route::get('', 'UserController@user')->middleware(['scope:User.Read']);
 
     Route::middleware(['scope:Notification.Read'])->group(function () {
@@ -54,7 +65,7 @@ Route::prefix('user')->middleware('auth:web,oauth')->group(function () {
     Route::get('closet/ids', 'ClosetController@allIds');
 });
 
-Route::prefix('players')->middleware('auth:web,oauth')->group(function () {
+Route::prefix('players')->middleware(['auth:web,oauth', RejectBannedUser::class])->group(function () {
     Route::get('', 'PlayerController@list')->middleware(['scope:Player.Read,Player.ReadWrite']);
 
     Route::middleware(['scope:Player.ReadWrite'])->group(function () {
@@ -66,7 +77,7 @@ Route::prefix('players')->middleware('auth:web,oauth')->group(function () {
     });
 });
 
-Route::prefix('closet')->middleware('auth:web,oauth')->group(function () {
+Route::prefix('closet')->middleware(['auth:web,oauth', RejectBannedUser::class])->group(function () {
     Route::get('', 'ClosetController@getClosetData')->middleware(['scope:Closet.Read,Closet.ReadWrite']);
 
     Route::middleware(['scope:Closet.ReadWrite'])->group(function () {
@@ -77,7 +88,7 @@ Route::prefix('closet')->middleware('auth:web,oauth')->group(function () {
 });
 
 Route::prefix('admin')
-    ->middleware(['auth:web,oauth', 'role:admin'])
+    ->middleware(['auth:web,oauth', RejectBannedUser::class, 'role:admin'])
     ->group(function () {
         Route::get('chart', 'AdminController@chartData');
         Route::get('dashboard', 'AdminController@dashboardData');

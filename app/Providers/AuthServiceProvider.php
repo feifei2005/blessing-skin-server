@@ -58,5 +58,7 @@ class AuthServiceProvider extends ServiceProvider
         Passport::tokensCan(array_merge($defaultScopes, $scopes));
 
         Passport::setDefaultScope(['User.Read']);
+
+        Passport::requireCodeChallengeForPublicClients();
     }
 }

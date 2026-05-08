@@ -38,6 +38,10 @@ class NotificationsController extends Controller
         }
         Notification::send($users, $notification);
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => trans('admin.notifications.send.success')]);
+        }
+
         session(['sentResult' => trans('admin.notifications.send.success')]);
 
         return redirect('/admin');

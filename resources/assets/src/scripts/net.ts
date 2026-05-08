@@ -8,6 +8,12 @@ import {
   clearToken,
 } from '@/auth/tokenStore'
 
+function escapeHtml(str: string): string {
+  const div = document.createElement('div')
+  div.textContent = str
+  return div.innerHTML
+}
+
 export interface ResponseBody<T = null> {
   code: number
   message: string
@@ -168,11 +174,13 @@ export async function walkFetch(
         }
       }
       clearToken()
-      return showModal({
+      await showModal({
         mode: 'alert',
         text: message || t('general.fatalError'),
         type: 'warning',
       })
+      window.location.href = '/auth/login'
+      return { code: -1, message: message || t('general.fatalError') }
     } else if (response.status === 403 || response.status === 400) {
       return showModal({
         mode: 'alert',
@@ -185,7 +193,9 @@ export async function walkFetch(
       const trace = (body.trace as Array<{ file: string; line: number }>)
         .map((t, i) => `[${i + 1}] ${t.file}#L${t.line}`)
         .join('<br>')
-      message = `${message}<br><details>${trace}</details>`
+      message = `${escapeHtml(message)}<br><details>${escapeHtml(
+        trace,
+      )}</details>`
     }
 
     throw new HTTPError(message || body, cloned)
@@ -194,7 +204,7 @@ export async function walkFetch(
     await showModal({
       mode: 'alert',
       title: t('general.fatalError'),
-      dangerousHTML: error.message,
+      dangerousHTML: escapeHtml(error.message),
       type: 'danger',
       okButtonType: 'outline-light',
     })

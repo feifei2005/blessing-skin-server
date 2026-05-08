@@ -18,7 +18,6 @@ declare namespace NodeJS {
   interface ProcessEnv {
     REACT_APP_API_BASE: string
     REACT_APP_OAUTH_CLIENT_ID: string
-    REACT_APP_OAUTH_CLIENT_SECRET: string
     NODE_ENV: string
   }
 }

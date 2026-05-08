@@ -6,6 +6,7 @@ import {
 import {
   saveToken,
   getAccessToken,
+  getRefreshToken,
   clearToken,
   isAuthenticated,
 } from './tokenStore'
@@ -14,6 +15,50 @@ let apiBase = process.env.REACT_APP_API_BASE || ''
 
 export function setApiBase(base: string) {
   apiBase = base
+}
+
+let isRefreshing = false
+let refreshPromise: Promise<boolean> | null = null
+
+async function refreshAccessToken(): Promise<boolean> {
+  const refreshToken = getRefreshToken()
+  if (!refreshToken) return false
+
+  const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID || ''
+
+  try {
+    const resp = await fetch(`${apiBase}/oauth/token`, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+      }),
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: clientId,
+      }).toString(),
+      credentials: 'omit',
+    })
+
+    if (!resp.ok) {
+      clearToken()
+      return false
+    }
+
+    const data = await resp.json()
+    const expiresAt = Date.now() + (data.expires_in || 3600) * 1000
+
+    saveToken({
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token || refreshToken,
+      expiresAt,
+    })
+
+    return true
+  } catch {
+    return false
+  }
 }
 
 async function apiFetch(
@@ -30,11 +75,34 @@ async function apiFetch(
     headers.set('Content-Type', 'application/json')
   }
 
-  return fetch(`${apiBase}${path}`, {
+  const resp = await fetch(`${apiBase}${path}`, {
     ...options,
     headers,
     credentials: 'omit',
   })
+
+  if (resp.status === 401) {
+    if (!isRefreshing) {
+      isRefreshing = true
+      refreshPromise = refreshAccessToken().finally(() => {
+        isRefreshing = false
+      })
+    }
+    const refreshed = await refreshPromise
+    if (refreshed) {
+      const newToken = getAccessToken()
+      if (newToken) {
+        headers.set('Authorization', `Bearer ${newToken}`)
+        return fetch(`${apiBase}${path}`, {
+          ...options,
+          headers,
+          credentials: 'omit',
+        })
+      }
+    }
+  }
+
+  return resp
 }
 
 export interface UserInfo {
@@ -137,7 +205,10 @@ export async function handleCallback(
   }
 }
 
-export function logout(): void {
+export async function logout(): Promise<void> {
+  try {
+    await apiFetch('/api/auth/logout', { method: 'POST' })
+  } catch {}
   clearToken()
   window.location.href = '/'
 }

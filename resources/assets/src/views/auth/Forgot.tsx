@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { hot } from 'react-hot-loader/root'
+import { Link } from 'react-router-dom'
 import useEmitMounted from '@/scripts/hooks/useEmitMounted'
 import { t } from '@/scripts/i18n'
 import * as fetch from '@/scripts/net'
@@ -53,9 +54,7 @@ const Forgot: React.FC = () => {
       <Alert type="warning">{warningMessage}</Alert>
 
       <div className="d-flex justify-content-between align-items-center">
-        <a href={`${blessing.base_url}/auth/login`}>
-          {t('auth.forgot.login-link')}
-        </a>
+        <Link to="/auth/login">{t('auth.forgot.login-link')}</Link>
         <button className="btn btn-primary" type="submit" disabled={isSending}>
           {isSending ? (
             <>

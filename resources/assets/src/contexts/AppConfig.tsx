@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { loadI18n } from '@/scripts/i18n'
+import { tryRenderEmailVerification } from '@/scripts/emailVerification'
 
 export interface AppConfig {
   baseUrl: string
@@ -79,6 +80,7 @@ export function AppConfigProvider({
             if (next.siteName) {
               document.title = next.siteName
             }
+            tryRenderEmailVerification()
             return next
           })
         }

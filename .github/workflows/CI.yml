@@ -153,3 +153,22 @@ jobs:
           if-no-files-found: error
           name: blessing-skin-server-${{ steps.short-sha.outputs.sha }}.zip
           path: blessing-skin-server-${{ steps.short-sha.outputs.sha }}.zip
+  spa-build:
+    name: SPA Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build SPA Docker image
+        run: docker build -f Dockerfile.spa -t blessing-skin-spa .
+      - name: Extract static files
+        run: |
+          docker create --name spa-extract blessing-skin-spa
+          docker cp spa-extract:/app/public/app ./spa-dist
+          docker rm spa-extract
+      - name: Upload SPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: blessing-skin-spa-dist
+          path: spa-dist/

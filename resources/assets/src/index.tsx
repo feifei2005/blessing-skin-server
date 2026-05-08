@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom'
 import $ from 'jquery'
 import './scripts/app'
 import App from './App'
+import { setApiBase } from '@/auth/AuthService'
 
 Object.assign(window, { React, ReactDOM, $ })
 
@@ -15,10 +16,25 @@ entry?.addEventListener('click', async () => {
 
 const rootEl = document.getElementById('app-root')
 if (rootEl) {
-  ReactDOM.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
-    rootEl,
-  )
+  async function bootstrap() {
+    try {
+      const resp = await fetch('/config.json')
+      if (resp.ok) {
+        const config = await resp.json()
+        if (config.apiBase) {
+          ;(window as any).__API_BASE__ = config.apiBase
+          ;(window as any).blessing = (window as any).blessing || {}
+          ;(window as any).blessing.base_url = config.apiBase
+          setApiBase(config.apiBase)
+        }
+      }
+    } catch {}
+    ReactDOM.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>,
+      rootEl,
+    )
+  }
+  bootstrap()
 }

@@ -17,6 +17,8 @@ export async function logout() {
   window.location.href = blessing.base_url
 }
 
-const button = document.querySelector('#logout-button')
-/* istanbul ignore next */
-button?.addEventListener('click', logout)
+if (!document.getElementById('app-root')) {
+  const button = document.querySelector('#logout-button')
+  /* istanbul ignore next */
+  button?.addEventListener('click', logout)
+}

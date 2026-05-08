@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { hot } from 'react-hot-loader/root'
+import { Link, useHistory } from 'react-router-dom'
 import { useBlessingExtra } from '@/contexts/AppConfig'
 import useEmitMounted from '@/scripts/hooks/useEmitMounted'
 import { t } from '@/scripts/i18n'
@@ -21,6 +22,7 @@ const Registration: React.FC = () => {
   const requirePlayer = useBlessingExtra<boolean>('player')
   const confirmationRef = useRef<HTMLInputElement | null>(null)
   const captchaRef = useRef<Captcha | null>(null)
+  const history = useHistory()
 
   useEmitMounted()
 
@@ -65,7 +67,7 @@ const Registration: React.FC = () => {
     if (code === 0) {
       toast.success(message)
       setTimeout(() => {
-        window.location.href = `${blessing.base_url}/user`
+        history.push('/user')
       }, 3000)
     } else {
       setWarningMessage(message)
@@ -159,7 +161,7 @@ const Registration: React.FC = () => {
       <Alert type="warning">{warningMessage}</Alert>
 
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <a href={`${blessing.base_url}/auth/login`}>{t('auth.login-link')}</a>
+        <Link to="/auth/login">{t('auth.login-link')}</Link>
         <button className="btn btn-primary" type="submit" disabled={isPending}>
           {isPending ? (
             <>

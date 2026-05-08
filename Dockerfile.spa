@@ -7,7 +7,7 @@
 #   docker cp spa-extract:/app/public/app ./dist
 #   docker rm spa-extract
 
-FROM node:alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -18,9 +18,10 @@ COPY postcss.config.js tsconfig.build.json tsconfig.json webpack.config.ts ./
 COPY tools/ ./tools/
 COPY resources ./resources
 
-# Set environment variables for SPA build
-ENV REACT_APP_API_BASE=""
-ENV REACT_APP_OAUTH_CLIENT_ID=""
+ARG REACT_APP_API_BASE=""
+ARG REACT_APP_OAUTH_CLIENT_ID=""
+ENV REACT_APP_API_BASE=$REACT_APP_API_BASE
+ENV REACT_APP_OAUTH_CLIENT_ID=$REACT_APP_OAUTH_CLIENT_ID
 
 RUN yarn build && \
     cp resources/assets/src/images/bg.webp public/app/ && \
