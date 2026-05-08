@@ -20,13 +20,17 @@ use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class UserController extends Controller
 {
-    public function user()
+    public function user(Request $request)
     {
         /** @var User */
         $user = auth()->user();
 
-        return $user
-            ->makeHidden(['password', 'ip', 'remember_token', 'verification_token']);
+        $hidden = ['password', 'ip', 'remember_token', 'verification_token'];
+        if ($request->bearerToken() && !$request->user()->tokenCan('User.ReadEmail')) {
+            $hidden[] = 'email';
+        }
+
+        return $user->makeHidden($hidden);
     }
 
     public function index(Filter $filter)

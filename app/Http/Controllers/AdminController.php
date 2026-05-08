@@ -189,10 +189,10 @@ class AdminController extends Controller
                 ],
                 'db' => [
                     'type' => $dbType,
-                    'host' => Arr::get($db, 'host', ''),
+                    'host' => Str::mask(Arr::get($db, 'host', ''), '*', 2),
                     'port' => Arr::get($db, 'port', ''),
-                    'username' => Arr::get($db, 'username'),
-                    'database' => Arr::get($db, 'database'),
+                    'username' => Str::mask(Arr::get($db, 'username', ''), '*', 2),
+                    'database' => Str::mask(Arr::get($db, 'database', ''), '*', 2),
                     'prefix' => Arr::get($db, 'prefix'),
                 ],
             ],

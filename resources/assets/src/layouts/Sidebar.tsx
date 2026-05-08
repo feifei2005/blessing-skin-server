@@ -1,6 +1,7 @@
-import React from 'react'
-import { Link, NavLink, useRouteMatch } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Link, NavLink } from 'react-router-dom'
 import { useAppConfig } from '@/contexts/AppConfig'
+import { useAuth } from '@/auth/AuthContext'
 import { t } from '@/scripts/i18n'
 
 interface MenuItem {
@@ -141,6 +142,17 @@ interface SidebarProps {
 
 export function Sidebar({ scope }: SidebarProps) {
   const { siteName } = useAppConfig()
+  const { user } = useAuth()
+
+  useEffect(() => {
+    const $ = (window as any).$ as JQueryStatic | undefined
+    if ($) {
+      $('[data-widget="treeview"]').each((_i: number, el: HTMLElement) => {
+        $(el).Treeview('init')
+      })
+      $('[data-widget="pushmenu"]').PushMenu('_init')
+    }
+  }, [])
 
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-3">
@@ -166,18 +178,22 @@ export function Sidebar({ scope }: SidebarProps) {
                 {exploreMenu.map((item, i) => (
                   <SideMenuItem key={i} item={item} />
                 ))}
-                <li className="nav-header">{t('general.manage')}</li>
-                <li className="nav-item">
-                  <NavLink
-                    className="nav-link"
-                    to="/admin"
-                    activeClassName="active"
-                    exact
-                  >
-                    <i className="nav-icon fas fa-cog"></i>
-                    <p>{t('general.admin-panel')}</p>
-                  </NavLink>
-                </li>
+                {user?.admin && (
+                  <>
+                    <li className="nav-header">{t('general.manage')}</li>
+                    <li className="nav-item">
+                      <NavLink
+                        className="nav-link"
+                        to="/admin"
+                        activeClassName="active"
+                        exact
+                      >
+                        <i className="nav-icon fas fa-cog"></i>
+                        <p>{t('general.admin-panel')}</p>
+                      </NavLink>
+                    </li>
+                  </>
+                )}
               </>
             )}
 

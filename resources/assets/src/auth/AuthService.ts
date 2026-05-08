@@ -9,56 +9,15 @@ import {
   getRefreshToken,
   clearToken,
   isAuthenticated,
+  refreshAccessToken,
+  getIsRefreshing,
+  getRefreshPromise,
 } from './tokenStore'
 
 let apiBase = process.env.REACT_APP_API_BASE || ''
 
 export function setApiBase(base: string) {
   apiBase = base
-}
-
-let isRefreshing = false
-let refreshPromise: Promise<boolean> | null = null
-
-async function refreshAccessToken(): Promise<boolean> {
-  const refreshToken = getRefreshToken()
-  if (!refreshToken) return false
-
-  const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID || ''
-
-  try {
-    const resp = await fetch(`${apiBase}/oauth/token`, {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept: 'application/json',
-      }),
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-        client_id: clientId,
-      }).toString(),
-      credentials: 'omit',
-    })
-
-    if (!resp.ok) {
-      clearToken()
-      return false
-    }
-
-    const data = await resp.json()
-    const expiresAt = Date.now() + (data.expires_in || 3600) * 1000
-
-    saveToken({
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token || refreshToken,
-      expiresAt,
-    })
-
-    return true
-  } catch {
-    return false
-  }
 }
 
 async function apiFetch(
@@ -82,13 +41,10 @@ async function apiFetch(
   })
 
   if (resp.status === 401) {
-    if (!isRefreshing) {
-      isRefreshing = true
-      refreshPromise = refreshAccessToken().finally(() => {
-        isRefreshing = false
-      })
+    if (!getIsRefreshing()) {
+      refreshAccessToken(apiBase)
     }
-    const refreshed = await refreshPromise
+    const refreshed = await getRefreshPromise()
     if (refreshed) {
       const newToken = getAccessToken()
       if (newToken) {
@@ -144,8 +100,23 @@ export async function login(): Promise<void> {
     client_id: clientId,
     redirect_uri: redirectUri,
     response_type: 'code',
-    scope:
-      'User.Read Player.Read Player.ReadWrite Closet.Read Closet.ReadWrite',
+    scope: [
+      'User.Read',
+      'Notification.Read',
+      'Notification.ReadWrite',
+      'Player.Read',
+      'Player.ReadWrite',
+      'Closet.Read',
+      'Closet.ReadWrite',
+      'UsersManagement.Read',
+      'UsersManagement.ReadWrite',
+      'PlayersManagement.Read',
+      'PlayersManagement.ReadWrite',
+      'ClosetManagement.Read',
+      'ClosetManagement.ReadWrite',
+      'ReportsManagement.Read',
+      'ReportsManagement.ReadWrite',
+    ].join(' '),
     code_challenge: challenge,
     code_challenge_method: 'S256',
     state,

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/auth/AuthContext'
+import { t } from '@/scripts/i18n'
 
 export function Header() {
   const { isAuth, user, logout } = useAuth()
@@ -23,15 +24,15 @@ export function Header() {
               data-toggle="dropdown"
             >
               <span className="d-none d-md-inline d-sm-block">
-                {user?.nickname || user?.email || 'User'}
+                {user?.nickname || user?.email || t('general.user')}
               </span>
             </a>
             <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
               <Link className="dropdown-item" to="/user">
-                <i className="fas fa-home mr-2"></i> Dashboard
+                <i className="fas fa-home mr-2"></i> {t('general.dashboard')}
               </Link>
               <Link className="dropdown-item" to="/user/profile">
-                <i className="fas fa-user mr-2"></i> Profile
+                <i className="fas fa-user mr-2"></i> {t('general.profile')}
               </Link>
               <div className="dropdown-divider"></div>
               <a
@@ -42,14 +43,15 @@ export function Header() {
                   logout()
                 }}
               >
-                <i className="fas fa-sign-out-alt mr-2"></i> Logout
+                <i className="fas fa-sign-out-alt mr-2"></i>{' '}
+                {t('general.logout')}
               </a>
             </div>
           </li>
         ) : (
           <li className="nav-item">
             <Link className="nav-link" to="/auth/login">
-              <i className="fas fa-sign-in-alt mr-1"></i> Login
+              <i className="fas fa-sign-in-alt mr-1"></i> {t('general.login')}
             </Link>
           </li>
         )}

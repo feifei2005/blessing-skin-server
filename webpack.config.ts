@@ -73,7 +73,7 @@ export default function (env?: Env): webpack.Configuration {
       new HtmlWebpackPlugin({
         template: `${__dirname}/resources/assets/template.html`,
         chunks: ['app'],
-        scriptLoading: 'blocking',
+        scriptLoading: 'defer',
         filename: 'index.html',
       }),
       new webpack.DefinePlugin({

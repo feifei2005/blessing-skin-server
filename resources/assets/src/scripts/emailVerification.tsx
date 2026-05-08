@@ -8,8 +8,3 @@ export function tryRenderEmailVerification() {
     ReactDOM.render(<EmailVerification />, container)
   }
 }
-
-const container = document.querySelector('#email-verification')
-if (blessing.extra.unverified && container) {
-  ReactDOM.render(<EmailVerification />, container)
-}

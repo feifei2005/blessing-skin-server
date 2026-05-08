@@ -28,13 +28,15 @@ if (rootEl) {
           setApiBase(config.apiBase)
         }
       }
-    } catch {}
-    ReactDOM.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>,
-      rootEl,
-    )
+    } catch {
+    } finally {
+      ReactDOM.render(
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>,
+        rootEl,
+      )
+    }
   }
   bootstrap()
 }

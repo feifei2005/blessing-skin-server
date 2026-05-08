@@ -103,8 +103,12 @@ class AuthController extends Controller
             $dispatcher->dispatch('auth.login.succeeded', [$user]);
             event(new Events\UserLoggedIn($user));
 
+            $redirectTo = $request->hasSession()
+                ? $request->session()->pull('last_requested_path', url('/user'))
+                : url('/user');
+
             return json(trans('auth.login.success'), 0, [
-                'redirectTo' => $request->session()->pull('last_requested_path', url('/user')),
+                'redirectTo' => $redirectTo,
             ]);
         } else {
             $loginFails++;
@@ -117,11 +121,16 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Dispatcher $dispatcher)
+    public function logout(Request $request, Dispatcher $dispatcher)
     {
         $user = Auth::user();
 
         $dispatcher->dispatch('auth.logout.before', [$user]);
+
+        if ($request->bearerToken() && $request->user()) {
+            $request->user()->token()->revoke();
+        }
+
         Auth::logout();
         $dispatcher->dispatch('auth.logout.after', [$user]);
 
@@ -341,6 +350,10 @@ class AuthController extends Controller
         $user->email = $email;
         $user->save();
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => trans('auth.fill-email.success')]);
+        }
+
         return redirect('/user');
     }
 
@@ -362,11 +375,18 @@ class AuthController extends Controller
         ['email' => $email] = $request->validate(['email' => 'required|email']);
 
         if ($user->email !== $email) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => trans('auth.verify.not-matched')], 400);
+            }
             return back()->with('errorMessage', trans('auth.verify.not-matched'));
         }
 
         $user->verified = true;
         $user->save();
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => trans('auth.verify.verified')]);
+        }
 
         return redirect()->route('user.home');
     }

@@ -63,6 +63,9 @@ class NotificationsController extends Controller
             ->user()
             ->unreadNotifications
             ->first(fn ($notification) => $notification->id === $id);
+        if (!$notification) {
+            return response()->json(['message' => 'Notification not found'], 404);
+        }
         $notification->markAsRead();
 
         $converter = new GithubFlavoredMarkdownConverter();

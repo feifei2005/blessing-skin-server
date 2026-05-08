@@ -4,8 +4,10 @@ import { t } from './i18n'
 import {
   getAccessToken,
   getRefreshToken,
-  saveToken,
   clearToken,
+  refreshAccessToken,
+  getIsRefreshing,
+  getRefreshPromise,
 } from '@/auth/tokenStore'
 
 function escapeHtml(str: string): string {
@@ -55,67 +57,18 @@ function createInit(): RequestInit {
   }
 }
 
-let isRefreshing = false
-let refreshPromise: Promise<boolean> | null = null
-
-async function refreshAccessToken(): Promise<boolean> {
-  const refreshToken = getRefreshToken()
-  if (!refreshToken) return false
-
-  const clientId =
-    (window as any).__OAUTH_CLIENT_ID__ ||
-    process.env.REACT_APP_OAUTH_CLIENT_ID ||
-    ''
-  const baseUrl = getBaseUrl()
-
-  try {
-    const resp = await fetch(`${baseUrl}/oauth/token`, {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept: 'application/json',
-      }),
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-        client_id: clientId,
-      }).toString(),
-      credentials: 'omit',
-    })
-
-    if (!resp.ok) {
-      clearToken()
-      return false
-    }
-
-    const data = await resp.json()
-    const expiresAt = Date.now() + (data.expires_in || 3600) * 1000
-
-    saveToken({
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token || refreshToken,
-      expiresAt,
-    })
-
-    return true
-  } catch {
-    return false
-  }
-}
-
 export async function walkFetch(
   request: Request,
   retryCount = 0,
 ): Promise<any> {
+  const baseUrl = getBaseUrl()
+
   // Proactive token refresh: if access token expired but refresh token exists
   if (!getAccessToken() && getRefreshToken()) {
-    if (!isRefreshing) {
-      isRefreshing = true
-      refreshPromise = refreshAccessToken().finally(() => {
-        isRefreshing = false
-      })
+    if (!getIsRefreshing()) {
+      refreshAccessToken(baseUrl)
     }
-    await refreshPromise
+    await getRefreshPromise()
   }
 
   const token = retrieveToken()
@@ -158,13 +111,10 @@ export async function walkFetch(
       })
     } else if (response.status === 401) {
       if (getRefreshToken() && retryCount < 1) {
-        if (!isRefreshing) {
-          isRefreshing = true
-          refreshPromise = refreshAccessToken().finally(() => {
-            isRefreshing = false
-          })
+        if (!getIsRefreshing()) {
+          refreshAccessToken(baseUrl)
         }
-        const refreshed = await refreshPromise
+        const refreshed = await getRefreshPromise()
         if (refreshed) {
           const newToken = getAccessToken()
           if (newToken && retryClone) {
@@ -191,11 +141,9 @@ export async function walkFetch(
 
     if (body.exception && Array.isArray(body.trace)) {
       const trace = (body.trace as Array<{ file: string; line: number }>)
-        .map((t, i) => `[${i + 1}] ${t.file}#L${t.line}`)
+        .map((t, i) => `[${i + 1}] ${escapeHtml(t.file)}#L${t.line}`)
         .join('<br>')
-      message = `${escapeHtml(message)}<br><details>${escapeHtml(
-        trace,
-      )}</details>`
+      message = `${escapeHtml(message)}<br><details>${trace}</details>`
     }
 
     throw new HTTPError(message || body, cloned)

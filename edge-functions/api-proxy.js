@@ -93,10 +93,15 @@ export default {
         }
       }
 
+      const respHeaders = new Headers(response.headers)
+      respHeaders.set(
+        'Access-Control-Allow-Origin',
+        getCorsOrigin(request.headers.get('Origin'), env),
+      )
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,
-        headers: response.headers,
+        headers: respHeaders,
       })
     }
 

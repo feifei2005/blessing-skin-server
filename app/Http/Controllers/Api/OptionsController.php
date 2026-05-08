@@ -55,8 +55,8 @@ class OptionsController extends Controller
             'custom_css' => 'nullable|string',
             'custom_js' => 'nullable|string',
             'action' => 'nullable|string|in:color',
-            'navbar' => 'nullable|string',
-            'sidebar' => 'nullable|string',
+            'navbar' => 'nullable|string|in:primary,secondary,success,danger,indigo,purple,pink,teal,cyan,dark,gray,fuchsia,maroon,olive,navy,lime,light,warning,white,orange',
+            'sidebar' => 'nullable|string|in:primary,warning,info,danger,success,indigo,navy,purple,fuchsia,pink,maroon,orange,lime,teal,olive',
         ]);
         $keys = [
             'home_pic_url', 'favicon_url', 'transparent_navbar', 'hide_intro',
@@ -121,8 +121,8 @@ class OptionsController extends Controller
             'user_initial_score' => 'nullable|integer|min:0',
             'reporter_score_modification' => 'nullable|integer',
             'reporter_reward_score' => 'nullable|integer',
-            'sign_score_from' => 'nullable|integer|min:0',
-            'sign_score_to' => 'nullable|integer|min:0',
+            'sign_score_from' => 'required_with:sign_score_to|nullable|integer|min:0',
+            'sign_score_to' => 'required_with:sign_score_from|nullable|integer|gte:sign_score_from',
             'sign_gap_time' => 'nullable|integer|min:0',
             'sign_after_zero' => 'nullable|boolean',
             'score_award_per_texture' => 'nullable|integer|min:0',
