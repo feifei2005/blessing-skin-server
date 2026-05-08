@@ -4,12 +4,15 @@ import { useImmer } from 'use-immer'
 import { t } from '@/scripts/i18n'
 import * as fetch from '@/scripts/net'
 import { toast, showModal } from '@/scripts/notify'
+import { useAuth } from '@/auth/AuthContext'
 import FileInput from '@/components/FileInput'
 import Loading from '@/components/Loading'
 import InfoBox from './InfoBox'
 import type { Plugin } from './types'
 
 const PluginsManagement: React.FC = () => {
+  const { user } = useAuth()
+  const isSuperAdmin = (user?.permission ?? 0) >= 2
   const [isLoading, setIsLoading] = useState(true)
   const [plugins, setPlugins] = useImmer<Plugin[]>([])
   const [file, setFile] = useState<File | null>(null)
@@ -189,56 +192,60 @@ const PluginsManagement: React.FC = () => {
         )}
       </div>
       <div className="col-lg-4">
-        <div className="card card-primary card-outline">
-          <div className="card-header">
-            <h3 className="card-title">{t('admin.uploadArchive')}</h3>
-          </div>
-          <div className="card-body">
-            <p>{t('admin.uploadArchiveNotice')}</p>
-            <FileInput
-              file={file}
-              accept="application/zip"
-              onChange={handleFileChange}
-            />
-          </div>
-          <div className="card-footer">
-            <button
-              className="btn btn-primary float-right"
-              disabled={isUploading}
-              onClick={handleUpload}
-            >
-              {isUploading ? <Loading /> : t('general.submit')}
-            </button>
-          </div>
-        </div>
-        <div className="card card-primary card-outline">
-          <div className="card-header">
-            <h3 className="card-title">{t('admin.downloadRemote')}</h3>
-          </div>
-          <div className="card-body">
-            <p>{t('admin.downloadRemoteNotice')}</p>
-            <div className="form-group">
-              <label htmlFor="zip-url">URL</label>
-              <input
-                type="text"
-                id="zip-url"
-                className="form-control"
-                inputMode="url"
-                value={url}
-                onChange={handleUrlChange}
+        {isSuperAdmin && (
+          <div className="card card-primary card-outline">
+            <div className="card-header">
+              <h3 className="card-title">{t('admin.uploadArchive')}</h3>
+            </div>
+            <div className="card-body">
+              <p>{t('admin.uploadArchiveNotice')}</p>
+              <FileInput
+                file={file}
+                accept="application/zip"
+                onChange={handleFileChange}
               />
             </div>
+            <div className="card-footer">
+              <button
+                className="btn btn-primary float-right"
+                disabled={isUploading}
+                onClick={handleUpload}
+              >
+                {isUploading ? <Loading /> : t('general.submit')}
+              </button>
+            </div>
           </div>
-          <div className="card-footer">
-            <button
-              className="btn btn-primary float-right"
-              disabled={isDownloading}
-              onClick={handleSubmitUrl}
-            >
-              {isDownloading ? <Loading /> : t('general.submit')}
-            </button>
+        )}
+        {isSuperAdmin && (
+          <div className="card card-primary card-outline">
+            <div className="card-header">
+              <h3 className="card-title">{t('admin.downloadRemote')}</h3>
+            </div>
+            <div className="card-body">
+              <p>{t('admin.downloadRemoteNotice')}</p>
+              <div className="form-group">
+                <label htmlFor="zip-url">URL</label>
+                <input
+                  type="text"
+                  id="zip-url"
+                  className="form-control"
+                  inputMode="url"
+                  value={url}
+                  onChange={handleUrlChange}
+                />
+              </div>
+            </div>
+            <div className="card-footer">
+              <button
+                className="btn btn-primary float-right"
+                disabled={isDownloading}
+                onClick={handleSubmitUrl}
+              >
+                {isDownloading ? <Loading /> : t('general.submit')}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

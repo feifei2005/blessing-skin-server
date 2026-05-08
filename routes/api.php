@@ -80,6 +80,7 @@ Route::prefix('admin')
     ->middleware(['auth:web,oauth', 'role:admin'])
     ->group(function () {
         Route::get('chart', 'AdminController@chartData');
+        Route::get('dashboard', 'AdminController@dashboardData');
         Route::get('status', 'AdminController@statusData');
 
         Route::prefix('users')->group(function () {

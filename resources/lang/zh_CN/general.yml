@@ -40,6 +40,7 @@ no: false
 op-success: 操作成功
 unknown: 未知
 notice: 提示
+failed-to-load: 加载失败。
 illegal-parameters: 非法参数
 private: 私密
 public: 公开

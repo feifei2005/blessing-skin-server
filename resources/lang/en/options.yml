@@ -127,6 +127,8 @@ general:
   player_name_length:
     title: Player Name Length
     suffix: characters
+    min: Min
+    max: Max
   auto_del_invalid_texture:
     title: Invalid Textures
     label: Delete invalid textures automatically.
@@ -162,6 +164,9 @@ meta:
     title: Other Custom <meta> Tags
 
 recaptcha:
+  title: SEO & reCAPTCHA
+  secret_key: Secret Key
+  secret_key_placeholder: Leave blank to keep current value
   recaptcha_invisible:
     title: Invisible
     label: Enable Invisible Mode

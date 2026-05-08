@@ -114,6 +114,8 @@ general:
   player_name_length:
     title: 角色名长度
     suffix: 个字符
+    min: 最小
+    max: 最大
   auto_del_invalid_texture:
     title: 失效材质
     label: 自动删除失效材质
@@ -145,6 +147,9 @@ meta:
   meta_extras:
     title: 其它自定义 <meta> 标签
 recaptcha:
+  title: SEO 与 reCAPTCHA
+  secret_key: 密钥
+  secret_key_placeholder: 留空以保留当前值
   recaptcha_invisible:
     title: 隐藏
     label: 开启隐藏式人机验证模式

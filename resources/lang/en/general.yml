@@ -42,6 +42,8 @@ unknown: Unknown
 
 notice: Notice
 
+failed-to-load: Failed to load.
+
 illegal-parameters: Illegal parameters.
 
 private: Private

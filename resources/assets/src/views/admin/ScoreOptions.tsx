@@ -32,6 +32,7 @@ const ScoreOptions: React.FC = () => {
       .then((d) => {
         if (d && d.score_per_storage !== undefined) setData(d)
       })
+      .catch((e) => console.warn('[ScoreOptions] fetch failed:', e))
       .finally(() => setLoading(false))
   }, [])
 
@@ -57,7 +58,10 @@ const ScoreOptions: React.FC = () => {
         <div className="spinner-border" />
       </div>
     )
-  if (!data) return <div className="alert alert-warning">Failed to load.</div>
+  if (!data)
+    return (
+      <div className="alert alert-warning">{t('general.failed-to-load')}</div>
+    )
 
   const nf = (label: string, field: keyof ScoreData) => (
     <div className="form-group">

@@ -82,6 +82,35 @@ class AdminController extends Controller
         ];
     }
 
+    public function dashboardData()
+    {
+        $users = User::count();
+        $players = Player::count();
+        $textures = Texture::count();
+        $storage = Texture::select('size')->sum('size');
+
+        $humanStorage = $storage;
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $unitIndex = 0;
+        while ($humanStorage >= 1024 && $unitIndex < count($units) - 1) {
+            $humanStorage /= 1024;
+            $unitIndex++;
+        }
+
+        return response()->json([
+            'code' => 0,
+            'data' => [
+                'users' => $users,
+                'players' => $players,
+                'textures' => $textures,
+                'storage' => [
+                    'bytes' => (int) $storage,
+                    'human' => round($humanStorage, 2).' '.$units[$unitIndex],
+                ],
+            ],
+        ]);
+    }
+
     public function status(
         Request $request,
         PluginManager $plugins,

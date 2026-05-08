@@ -22,6 +22,7 @@ const UpdatePage: React.FC = () => {
       .then((d) => {
         if (d && d.latest !== undefined) setInfo(d)
       })
+      .catch((e) => console.warn('[UpdatePage] fetch failed:', e))
       .finally(() => setLoading(false))
   }
 
@@ -103,7 +104,7 @@ const UpdatePage: React.FC = () => {
                 )}
               </>
             ) : (
-              <p className="text-muted">No update info available.</p>
+              <p className="text-muted">{t('admin.update.info.no-info')}</p>
             )}
           </div>
         </div>

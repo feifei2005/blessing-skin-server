@@ -215,12 +215,17 @@ class OptionsController extends Controller
             'auto_del_invalid_texture', 'allow_downloading_texture',
             'status_code_for_private', 'texture_name_regexp',
             'meta_keywords', 'meta_description', 'meta_extras',
-            'recaptcha_sitekey', 'recaptcha_secretkey', 'recaptcha_invisible',
+            'recaptcha_sitekey', 'recaptcha_invisible',
         ];
         foreach ($keys as $key) {
             if ($request->has($key)) {
                 Option::set($key, $request->input($key));
             }
+        }
+
+        // recaptcha_secretkey: only update if a non-empty value is submitted
+        if ($request->has('recaptcha_secretkey') && $request->input('recaptcha_secretkey') !== '') {
+            Option::set('recaptcha_secretkey', $request->input('recaptcha_secretkey'));
         }
 
         // Locale-suffixed keys

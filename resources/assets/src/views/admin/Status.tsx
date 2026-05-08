@@ -45,6 +45,7 @@ const Status: React.FC = () => {
       .then((d) => {
         if (d && d.detail) setData(d)
       })
+      .catch((e) => console.warn('[Status] fetch failed:', e))
       .finally(() => setLoading(false))
   }, [])
 
@@ -57,7 +58,9 @@ const Status: React.FC = () => {
   }
 
   if (!data) {
-    return <div className="alert alert-warning">Failed to load status.</div>
+    return (
+      <div className="alert alert-warning">{t('general.failed-to-load')}</div>
+    )
   }
 
   const { detail, plugins } = data
@@ -171,13 +174,13 @@ const Status: React.FC = () => {
           </div>
           <div className="card-body p-0">
             {plugins.length === 0 ? (
-              <p className="p-3 text-muted">No plugins enabled.</p>
+              <p className="p-3 text-muted">{t('admin.status.no-plugins')}</p>
             ) : (
               <table className="table table-striped">
                 <thead>
                   <tr>
-                    <th>Plugin</th>
-                    <th>Version</th>
+                    <th>{t('admin.status.plugin-name')}</th>
+                    <th>{t('admin.status.plugin-version')}</th>
                   </tr>
                 </thead>
                 <tbody>

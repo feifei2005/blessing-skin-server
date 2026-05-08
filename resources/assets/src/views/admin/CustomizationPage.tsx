@@ -28,6 +28,7 @@ const CustomizationPage: React.FC = () => {
       .then((d) => {
         if (d && d.colors) setData(d)
       })
+      .catch((e) => console.warn('[CustomizationPage] fetch failed:', e))
       .finally(() => setLoading(false))
   }, [])
 
@@ -70,7 +71,10 @@ const CustomizationPage: React.FC = () => {
       </div>
     )
   }
-  if (!data) return <div className="alert alert-warning">Failed to load.</div>
+  if (!data)
+    return (
+      <div className="alert alert-warning">{t('general.failed-to-load')}</div>
+    )
 
   return (
     <div className="row">

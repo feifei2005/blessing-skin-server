@@ -6,6 +6,9 @@ index:
   overview: Overview
   texture-uploads: Texture Uploads
   user-registration: User Registration
+  welcome: Welcome to the administration panel.
+  monthly-statistics: Monthly Statistics
+  day: Day
 
 notifications:
   send:
@@ -31,7 +34,7 @@ users:
     nickname:
       success: Nickname changed successfully.
     password:
-     success: Password changed successfully.
+      success: Password changed successfully.
     score:
       success: Score changed successfully.
     permission: Permission updated.
@@ -93,6 +96,9 @@ status:
     database: Database
     prefix: Table Prefix
   plugins: Enabled Plugins (:amount)
+  no-plugins: No plugins enabled.
+  plugin-name: Plugin
+  plugin-version: Version
 
 plugins:
   readme: Read Me
@@ -122,13 +128,14 @@ update:
 
   info:
     title: Update Information
+    no-info: No update info available.
 
     up-to-date: Already up-to-date.
     available: New version available.
 
     versions:
-      latest: "Latest Version:"
-      current: "Current Version:"
+      latest: 'Latest Version:'
+      current: 'Current Version:'
 
     check-github: Check GitHub Releases
     button: Update Now
@@ -142,7 +149,7 @@ update:
       To change the default update source,
 
   errors:
-    connection: "Unable to access to current update source. Details: :error"
+    connection: 'Unable to access to current update source. Details: :error'
     spec: Current update source is not supported.
     php: Your PHP version is too low to update. Requires :version or later.
 

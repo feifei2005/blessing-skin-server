@@ -24,6 +24,7 @@ const Resource: React.FC = () => {
       .then((d) => {
         if (d && d.force_ssl !== undefined) setData(d)
       })
+      .catch((e) => console.warn('[Resource] fetch failed:', e))
       .finally(() => setLoading(false))
   }, [])
 
@@ -58,7 +59,10 @@ const Resource: React.FC = () => {
         <div className="spinner-border" />
       </div>
     )
-  if (!data) return <div className="alert alert-warning">Failed to load.</div>
+  if (!data)
+    return (
+      <div className="alert alert-warning">{t('general.failed-to-load')}</div>
+    )
 
   return (
     <div className="row">

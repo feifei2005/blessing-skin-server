@@ -41,6 +41,7 @@ const Options: React.FC = () => {
       .then((d) => {
         if (d && d.site_name !== undefined) setData(d)
       })
+      .catch((e) => console.warn('[Options] fetch failed:', e))
       .finally(() => setLoading(false))
   }, [])
 
@@ -66,7 +67,10 @@ const Options: React.FC = () => {
         <div className="spinner-border" />
       </div>
     )
-  if (!data) return <div className="alert alert-warning">Failed to load.</div>
+  if (!data)
+    return (
+      <div className="alert alert-warning">{t('general.failed-to-load')}</div>
+    )
 
   return (
     <div className="row">
@@ -228,7 +232,7 @@ const Options: React.FC = () => {
             <div className="form-row">
               <div className="col">
                 <div className="form-group">
-                  <label>Min</label>
+                  <label>{t('options.general.player_name_length.min')}</label>
                   <input
                     type="number"
                     className="form-control"
@@ -241,7 +245,7 @@ const Options: React.FC = () => {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label>Max</label>
+                  <label>{t('options.general.player_name_length.max')}</label>
                   <input
                     type="number"
                     className="form-control"
@@ -259,7 +263,7 @@ const Options: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">SEO & reCAPTCHA</h3>
+            <h3 className="card-title">{t('options.recaptcha.title')}</h3>
           </div>
           <div className="card-body">
             <div className="form-group">
@@ -296,9 +300,11 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Secret Key</label>
+              <label>{t('options.recaptcha.secret_key')}</label>
               <input
+                type="password"
                 className="form-control"
+                placeholder={t('options.recaptcha.secret_key_placeholder')}
                 value={data.recaptcha_secretkey}
                 onChange={(e) => update('recaptcha_secretkey', e.target.value)}
               />
