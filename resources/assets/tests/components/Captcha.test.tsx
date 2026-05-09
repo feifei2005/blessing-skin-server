@@ -1,8 +1,22 @@
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
-import Reaptcha from 'reaptcha'
 import { t } from '@/scripts/i18n'
+import { AppConfigProvider } from '@/contexts/AppConfig'
 import Captcha from '@/components/Captcha'
+
+const mockTurnstile = {
+  getResponsePromise: jest.fn().mockResolvedValue('token'),
+  reset: jest.fn(),
+}
+jest.mock('@marsidev/react-turnstile', () => {
+  const React = require('react')
+  return {
+    Turnstile: React.forwardRef((props, ref) => {
+      React.useImperativeHandle(ref, () => mockTurnstile)
+      return <div data-testid="turnstile-mock" />
+    }),
+  }
+})
 
 describe('picture captcha', () => {
   it('retrieve value', async () => {
@@ -36,30 +50,34 @@ describe('picture captcha', () => {
   })
 })
 
-describe('recaptcha', () => {
+describe('turnstile', () => {
   beforeEach(() => {
-    window.blessing.extra = { recaptcha: 'sitekey', invisible: false }
+    jest.clearAllMocks()
+    mockTurnstile.getResponsePromise.mockResolvedValue('token')
   })
 
   it('retrieve value', async () => {
-    window.blessing.extra.invisible = true
-    const spy = jest.spyOn(Reaptcha.prototype, 'execute')
-
     const ref = React.createRef<Captcha>()
-    render(<Captcha ref={ref} />)
+    render(
+      <AppConfigProvider config={{ extra: { turnstile: 'sitekey' } }}>
+        <Captcha ref={ref} />
+      </AppConfigProvider>,
+    )
 
     const value = await ref.current?.execute()
-    expect(spy).toBeCalled()
+    expect(mockTurnstile.getResponsePromise).toBeCalled()
     expect(value).toBe('token')
   })
 
   it('refresh programatically', async () => {
-    const spy = jest.spyOn(Reaptcha.prototype, 'reset')
-
     const ref = React.createRef<Captcha>()
-    render(<Captcha ref={ref} />)
+    render(
+      <AppConfigProvider config={{ extra: { turnstile: 'sitekey' } }}>
+        <Captcha ref={ref} />
+      </AppConfigProvider>,
+    )
 
     ref.current?.reset()
-    expect(spy).toBeCalled()
+    expect(mockTurnstile.reset).toBeCalled()
   })
 })

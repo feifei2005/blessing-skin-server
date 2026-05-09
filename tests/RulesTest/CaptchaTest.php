@@ -22,17 +22,21 @@ class CaptchaTest extends TestCase
         $this->assertNull(session('captcha'));
     }
 
-    public function testRecaptcha()
+    public function testTurnstile()
     {
-        option(['recaptcha_secretkey' => 'secret']);
+        option(['turnstile_secretkey' => 'secret']);
         Http::fake(Http::response(['success' => true]));
 
         $rule = new Captcha();
         $this->assertTrue($rule->passes('captcha', 'value'));
-        $this->assertEquals(trans('validation.recaptcha'), $rule->message());
+        $this->assertEquals(trans('validation.turnstile'), $rule->message());
         Http::assertSent(function (Request $request) {
             $this->assertEquals(
-                ['secret' => 'secret', 'response' => 'value'],
+                [
+                    'secret' => 'secret',
+                    'response' => 'value',
+                    'remoteip' => '127.0.0.1',
+                ],
                 $request->data()
             );
 
