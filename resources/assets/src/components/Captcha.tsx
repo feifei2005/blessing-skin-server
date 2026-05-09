@@ -2,8 +2,7 @@
 import * as React from 'react'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { t } from '@/scripts/i18n'
-import { useBlessingExtra } from '@/contexts/AppConfig'
-import { useAppConfig } from '@/contexts/AppConfig'
+import { useBlessingExtra, useAppConfig } from '@/contexts/AppConfig'
 import * as cssUtils from '@/styles/utils'
 
 export interface CaptchaHandle {

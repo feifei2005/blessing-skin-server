@@ -96,7 +96,9 @@ class AuthController extends Controller
         if ($user->verifyPassword($request->input('password'))) {
             Cache::forget($loginFailsCacheKey);
 
-            Auth::login($user, $request->input('keep'));
+            if ($request->hasSession()) {
+                Auth::login($user, $request->input('keep'));
+            }
 
             $dispatcher->dispatch('auth.login.succeeded', [$user]);
             event(new Events\UserLoggedIn($user));
@@ -129,7 +131,9 @@ class AuthController extends Controller
             $request->user()->token()->revoke();
         }
 
-        Auth::logout();
+        if ($request->hasSession()) {
+            Auth::logout();
+        }
         $dispatcher->dispatch('auth.logout.after', [$user]);
 
         return json(trans('auth.logout.success'), 0);

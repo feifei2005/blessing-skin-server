@@ -15,12 +15,15 @@ class Captcha implements Rule
     {
         $secretkey = option('turnstile_secretkey');
         if ($secretkey) {
-            return Http::asForm()
+            $result = Http::asForm()
                 ->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
                     'secret' => $secretkey,
                     'response' => $value,
+                    'remoteip' => request()->ip(),
                 ])
-                ->json()['success'];
+                ->json();
+
+            return $result['success'] ?? false;
         }
 
         $phrase = session()->pull('captcha');

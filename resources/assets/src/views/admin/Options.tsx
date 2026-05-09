@@ -262,7 +262,7 @@ const Options: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">{t('options.turnstile.title')}</h3>
+            <h3 className="card-title">{t('options.meta.title')}</h3>
           </div>
           <div className="card-body">
             <div className="form-group">
@@ -290,6 +290,13 @@ const Options: React.FC = () => {
                 onChange={(e) => update('meta_extras', e.target.value)}
               />
             </div>
+          </div>
+        </div>
+        <div className="card mt-3">
+          <div className="card-header">
+            <h3 className="card-title">{t('options.turnstile.title')}</h3>
+          </div>
+          <div className="card-body">
             <div className="form-group">
               <label>{t('options.turnstile.turnstile_sitekey.title')}</label>
               <input

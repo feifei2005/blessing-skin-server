@@ -57,7 +57,7 @@ export function AdminRoute({
         if ((user?.permission ?? 0) < requiredPermission)
           return (
             <div className="alert alert-danger m-3">
-              {t('auth.check.admin')}
+              {t('auth.check.superadmin')}
             </div>
           )
         return children
