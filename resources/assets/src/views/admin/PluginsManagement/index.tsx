@@ -39,7 +39,7 @@ const PluginsManagement: React.FC = () => {
       fetch.ResponseBody<{
         reason: string[]
       }>
-    >('/admin/plugins/manage', {
+    >('/api/admin/plugins/manage', {
       action: 'enable',
       name: plugin.name,
     })

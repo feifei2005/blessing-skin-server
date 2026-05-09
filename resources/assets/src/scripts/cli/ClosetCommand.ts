@@ -13,7 +13,7 @@ export default async function closet(stdio: Stdio, args: string[]) {
     .command('add <uid> <tid>', "add texture to someone's closet")
     .action(async (uid: string, tid: string) => {
       const { code, data } = await fetch.post<Response>(
-        `/admin/closet/${uid}`,
+        `/api/admin/closet/${uid}`,
         { tid },
       )
       if (code === 0) {
@@ -28,9 +28,12 @@ export default async function closet(stdio: Stdio, args: string[]) {
   program
     .command('remove <uid> <tid>', "remove texture from someone's closet")
     .action(async (uid: string, tid: string) => {
-      const { code, data } = await fetch.del<Response>(`/admin/closet/${uid}`, {
-        tid,
-      })
+      const { code, data } = await fetch.del<Response>(
+        `/api/admin/closet/${uid}`,
+        {
+          tid,
+        },
+      )
       if (code === 0) {
         const { texture, user } = data
         stdio.println(

@@ -38,13 +38,8 @@ class NotificationsController extends Controller
         }
         Notification::send($users, $notification);
 
-        if ($request->expectsJson()) {
-            return response()->json(['message' => trans('admin.notifications.send.success')]);
-        }
-
-        session(['sentResult' => trans('admin.notifications.send.success')]);
-
-        return redirect('/admin');
+        // API 和 Web 请求统一返回 JSON，避免在无 session 的 API 上下文中崩溃
+        return response()->json(['message' => trans('admin.notifications.send.success')]);
     }
 
     public function all()

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import * as fetch from '@/scripts/net'
 import { showModal } from '@/scripts/notify'
+import { t } from '@/scripts/i18n'
+import { useAuth } from '@/auth/AuthContext'
 
 export type Notification = {
   id: string
@@ -9,25 +11,31 @@ export type Notification = {
 
 const NotificationsList: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([])
-  const [noUnreadText, setNoUnreadText] = useState('')
+  const { isAuth } = useAuth()
 
   useEffect(() => {
-    const dataset = document.querySelector<HTMLLIElement>(
-      '[data-notifications]',
-    )?.dataset
-    if (dataset) {
-      const notifications: Notification[] = JSON.parse(dataset.notifications!)
-      setNotifications(notifications)
-      setNoUnreadText(dataset.t!)
+    if (!isAuth) return
+
+    // 从 API 获取未读通知列表
+    const fetchNotifications = async () => {
+      try {
+        const data = await fetch.get<Notification[]>('/api/user/notifications')
+        if (Array.isArray(data)) {
+          setNotifications(data)
+        }
+      } catch {
+        // 获取通知失败时静默处理
+      }
     }
-  }, [])
+    fetchNotifications()
+  }, [isAuth])
 
   const read = async (id: string) => {
     const { title, content, time } = await fetch.post<{
       title: string
       content: string
       time: string
-    }>(`/user/notifications/${id}`)
+    }>(`/api/user/notifications/${id}`)
 
     showModal({
       mode: 'alert',
@@ -60,21 +68,22 @@ const NotificationsList: React.FC = () => {
       <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
         {hasUnread ? (
           notifications.map((notification) => (
-            <>
+            <React.Fragment key={notification.id}>
               <a
                 href="#"
                 className="dropdown-item"
-                key={notification.id}
                 onClick={() => read(notification.id)}
               >
                 <i className="far fa-circle text-info mr-2"></i>
                 {notification.title}
               </a>
               <div className="dropdown-divider"></div>
-            </>
+            </React.Fragment>
           ))
         ) : (
-          <p className="text-center text-muted pt-2 pb-2">{noUnreadText}</p>
+          <p className="text-center text-muted pt-2 pb-2">
+            {t('general.noResult')}
+          </p>
         )}
       </div>
     </>

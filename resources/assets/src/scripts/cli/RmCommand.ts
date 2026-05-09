@@ -35,6 +35,6 @@ export default async function rm(stdio: Stdio, args: string[]) {
   }
 
   if (opts.force && opts.recursive && path?.startsWith('/')) {
-    await fetch.post('/admin/resource?clear-cache')
+    await fetch.post('/api/admin/options/resource/clear-cache')
   }
 }

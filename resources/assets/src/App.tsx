@@ -4,6 +4,8 @@ import { AppConfigProvider } from '@/contexts/AppConfig'
 import { AuthProvider } from '@/auth/AuthContext'
 import { MainLayout, AuthLayout, SkinlibLayout } from '@/layouts'
 import { PrivateRoute, AdminRoute } from '@/components/Guards'
+import ErrorBoundary from '@/components/ErrorBoundary'
+import { t } from '@/scripts/i18n'
 import CallbackPage from '@/views/auth/Callback'
 
 const Dashboard = lazy(() => import('@/views/user/Dashboard'))
@@ -50,153 +52,160 @@ function App() {
   return (
     <AppConfigProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <Suspense fallback={<Loading />}>
-            <Switch>
-              <Route path="/auth/callback" exact component={CallbackPage} />
+        <ErrorBoundary>
+          <BrowserRouter>
+            <Suspense fallback={<Loading />}>
+              <Switch>
+                <Route path="/auth/callback" exact component={CallbackPage} />
 
-              <Route path="/auth/login" exact component={Login} />
-              <Route path="/auth/register">
-                <AuthLayout title="Register">
-                  <Register />
-                </AuthLayout>
-              </Route>
-              <Route path="/auth/forgot">
-                <AuthLayout title="Forgot Password">
-                  <Forgot />
-                </AuthLayout>
-              </Route>
-              <Route path="/auth/reset/:uid">
-                <AuthLayout title="Reset Password">
-                  <Reset />
-                </AuthLayout>
-              </Route>
+                <Route path="/auth/login" exact component={Login} />
+                <Route path="/auth/register">
+                  <AuthLayout title="Register">
+                    <Register />
+                  </AuthLayout>
+                </Route>
+                <Route path="/auth/forgot">
+                  <AuthLayout title="Forgot Password">
+                    <Forgot />
+                  </AuthLayout>
+                </Route>
+                <Route path="/auth/reset/:uid">
+                  <AuthLayout title="Reset Password">
+                    <Reset />
+                  </AuthLayout>
+                </Route>
 
-              <PrivateRoute path="/user/closet">
-                <MainLayout scope="user" title="My Closet">
-                  <Closet />
-                </MainLayout>
-              </PrivateRoute>
-              <PrivateRoute path="/user/player">
-                <MainLayout scope="user" title="Player Management">
-                  <Players />
-                </MainLayout>
-              </PrivateRoute>
-              <PrivateRoute path="/user/oauth/manage">
-                <MainLayout scope="user" title="OAuth Management">
-                  <OAuth />
-                </MainLayout>
-              </PrivateRoute>
-              <PrivateRoute path="/user/profile">
-                <MainLayout scope="user" title="Profile">
-                  <Profile />
-                </MainLayout>
-              </PrivateRoute>
-              <PrivateRoute path="/user/reports">
-                <MainLayout scope="user" title="My Reports">
-                  <Reports />
-                </MainLayout>
-              </PrivateRoute>
-              <PrivateRoute path="/user">
-                <MainLayout scope="user" title="Dashboard">
-                  <Dashboard />
-                </MainLayout>
-              </PrivateRoute>
+                <PrivateRoute path="/user/closet">
+                  <MainLayout scope="user" title="My Closet">
+                    <Closet />
+                  </MainLayout>
+                </PrivateRoute>
+                <PrivateRoute path="/user/player">
+                  <MainLayout scope="user" title="Player Management">
+                    <Players />
+                  </MainLayout>
+                </PrivateRoute>
+                <PrivateRoute path="/user/oauth/manage">
+                  <MainLayout scope="user" title="OAuth Management">
+                    <OAuth />
+                  </MainLayout>
+                </PrivateRoute>
+                <PrivateRoute path="/user/profile">
+                  <MainLayout scope="user" title="Profile">
+                    <Profile />
+                  </MainLayout>
+                </PrivateRoute>
+                <PrivateRoute path="/user/reports">
+                  <MainLayout scope="user" title="My Reports">
+                    <Reports />
+                  </MainLayout>
+                </PrivateRoute>
+                <PrivateRoute path="/user">
+                  <MainLayout scope="user" title="Dashboard">
+                    <Dashboard />
+                  </MainLayout>
+                </PrivateRoute>
 
-              <AdminRoute path="/admin/users">
-                <MainLayout scope="admin" title="User Management">
-                  <UsersMgmt />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/players">
-                <MainLayout scope="admin" title="Player Management">
-                  <PlayersMgmt />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/reports">
-                <MainLayout scope="admin" title="Report Management">
-                  <ReportsMgmt />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/plugins/manage">
-                <MainLayout scope="admin" title="Plugin Management">
-                  <PluginsMgmt />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/plugins/market">
-                <MainLayout scope="admin" title="Plugin Market">
-                  <PluginsMarket />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/i18n">
-                <MainLayout scope="admin" title="Translations">
-                  <Translations />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/customize">
-                <MainLayout scope="admin" title="Customize">
-                  <Customization />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/score">
-                <MainLayout scope="admin" title="Score Options">
-                  <ScoreOptions />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/options">
-                <MainLayout scope="admin" title="Options">
-                  <Options />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/resource">
-                <MainLayout scope="admin" title="Resource Options">
-                  <Resource />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/status">
-                <MainLayout scope="admin" title="Status">
-                  <Status />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin/update" requiredPermission={2}>
-                <MainLayout scope="admin" title="Check Update">
-                  <UpdatePage />
-                </MainLayout>
-              </AdminRoute>
-              <AdminRoute path="/admin">
-                <MainLayout scope="admin" title="Admin Dashboard">
-                  <AdminDashboard />
-                </MainLayout>
-              </AdminRoute>
+                <AdminRoute path="/admin/users">
+                  <MainLayout scope="admin" title="User Management">
+                    <UsersMgmt />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/players">
+                  <MainLayout scope="admin" title="Player Management">
+                    <PlayersMgmt />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/reports">
+                  <MainLayout scope="admin" title="Report Management">
+                    <ReportsMgmt />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/plugins/manage">
+                  <MainLayout scope="admin" title="Plugin Management">
+                    <PluginsMgmt />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/plugins/market">
+                  <MainLayout scope="admin" title="Plugin Market">
+                    <PluginsMarket />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/i18n">
+                  <MainLayout scope="admin" title="Translations">
+                    <Translations />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/customize">
+                  <MainLayout scope="admin" title="Customize">
+                    <Customization />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/score">
+                  <MainLayout scope="admin" title="Score Options">
+                    <ScoreOptions />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/options">
+                  <MainLayout scope="admin" title="Options">
+                    <Options />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/resource">
+                  <MainLayout scope="admin" title="Resource Options">
+                    <Resource />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/status">
+                  <MainLayout scope="admin" title="Status">
+                    <Status />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin/update" requiredPermission={2}>
+                  <MainLayout scope="admin" title="Check Update">
+                    <UpdatePage />
+                  </MainLayout>
+                </AdminRoute>
+                <AdminRoute path="/admin">
+                  <MainLayout scope="admin" title="Admin Dashboard">
+                    <AdminDashboard />
+                  </MainLayout>
+                </AdminRoute>
 
-              <Route path="/skinlib/show/:id">
-                <SkinlibLayout>
-                  <Show />
-                </SkinlibLayout>
-              </Route>
-              <Route path="/skinlib/upload">
-                <SkinlibLayout>
-                  <Upload />
-                </SkinlibLayout>
-              </Route>
-              <Route path="/skinlib">
-                <SkinlibLayout>
-                  <SkinLibrary />
-                </SkinlibLayout>
-              </Route>
+                <Route path="/skinlib/show/:id">
+                  <SkinlibLayout>
+                    <Show />
+                  </SkinlibLayout>
+                </Route>
+                <Route path="/skinlib/upload">
+                  <SkinlibLayout>
+                    <Upload />
+                  </SkinlibLayout>
+                </Route>
+                <Route path="/skinlib">
+                  <SkinlibLayout>
+                    <SkinLibrary />
+                  </SkinlibLayout>
+                </Route>
 
-              <Route path="/" exact>
-                <Redirect to="/user" />
-              </Route>
+                <Route path="/" exact>
+                  <Redirect to="/user" />
+                </Route>
 
-              <Route path="*">
-                <MainLayout scope="user" title="Page Not Found">
-                  <div className="alert alert-warning">Page not found.</div>
-                </MainLayout>
-              </Route>
-            </Switch>
-          </Suspense>
-        </BrowserRouter>
+                <Route path="*">
+                  <MainLayout
+                    scope="user"
+                    title={t('general.404') || '页面未找到'}
+                  >
+                    <div className="alert alert-warning">
+                      {t('general.404') || '页面未找到'}
+                    </div>
+                  </MainLayout>
+                </Route>
+              </Switch>
+            </Suspense>
+          </BrowserRouter>
+        </ErrorBoundary>
       </AuthProvider>
     </AppConfigProvider>
   )

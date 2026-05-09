@@ -18,7 +18,7 @@ export default function (env?: Env): webpack.Configuration {
     mode: isDev ? 'development' : 'production',
     entry: {
       app: [
-        'react-hot-loader/patch',
+        ...(isDev ? ['react-hot-loader/patch'] : []),
         '@/styles/common.css',
         'admin-lte/dist/css/alt/adminlte.components.min.css',
         'admin-lte/dist/css/alt/adminlte.core.min.css',
@@ -95,7 +95,7 @@ export default function (env?: Env): webpack.Configuration {
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: {
-        'react-dom': '@hot-loader/react-dom',
+        ...(isDev ? { 'react-dom': '@hot-loader/react-dom' } : {}),
         '@': path.resolve(__dirname, 'resources/assets/src'),
         readline: '@/scripts/cli/readline.ts',
         prompts: 'prompts/lib/index.js',

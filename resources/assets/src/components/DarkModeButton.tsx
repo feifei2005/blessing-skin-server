@@ -13,7 +13,7 @@ const DarkModeButton: React.FC<Props> = ({ initMode }) => {
   const handleClick = async () => {
     setDarkMode((value) => !value)
 
-    await fetch.put('/user/dark-mode')
+    await fetch.put('/api/user/dark-mode')
     document.body.classList.toggle('dark-mode')
   }
 

@@ -1,8 +1,10 @@
-# Dockerfile for SPA frontend build
-# Build the React SPA and output static files for deployment to EdgeOne Pages / CDN.
+# SPA 前端构建 Dockerfile
+# 构建 React SPA 并输出静态文件，用于部署到 EdgeOne Pages / CDN。
 #
-# Usage:
-#   docker build -f Dockerfile.spa -t blessing-skin-spa .
+# 用法:
+#   docker build -f Dockerfile.spa -t blessing-skin-spa \
+#     --build-arg REACT_APP_API_BASE=https://api.example.com \
+#     --build-arg REACT_APP_OAUTH_CLIENT_ID=your-client-id .
 #   docker create --name spa-extract blessing-skin-spa
 #   docker cp spa-extract:/app/public/app ./dist
 #   docker rm spa-extract
@@ -15,7 +17,7 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 COPY postcss.config.js tsconfig.build.json tsconfig.json webpack.config.ts ./
-COPY tools/ ./tools/
+COPY tools/HtmlWebpackEnhancementPlugin.ts ./tools/
 COPY resources ./resources
 
 ARG REACT_APP_API_BASE=""
@@ -25,7 +27,9 @@ ENV REACT_APP_OAUTH_CLIENT_ID=$REACT_APP_OAUTH_CLIENT_ID
 
 RUN yarn build && \
     cp resources/assets/src/images/bg.webp public/app/ && \
-    cp resources/assets/src/images/favicon.ico public/app/
+    cp resources/assets/src/images/favicon.ico public/app/ && \
+    echo "{\"apiBase\": \"${REACT_APP_API_BASE}\"}" > public/app/config.json && \
+    echo "/* /index.html 200" > public/app/_redirects
 
-# Output: static files in /app/public/app/
-# Deploy this directory to EdgeOne Pages as the site root
+# 输出: 静态文件位于 /app/public/app/
+# 将此目录部署到 EdgeOne Pages 作为站点根目录

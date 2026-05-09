@@ -32,13 +32,8 @@ class TranslationsController extends Controller
             $js->resetTime($app->getLocale());
         }
 
-        if ($request->expectsJson()) {
-            return json(trans('admin.i18n.added'), 0, ['id' => $line->id]);
-        }
-
-        $request->session()->put('success', true);
-
-        return redirect('/admin/i18n');
+        // 统一返回 JSON，避免在无 session 的 API 上下文中崩溃
+        return json(trans('admin.i18n.added'), 0, ['id' => $line->id]);
     }
 
     public function update(

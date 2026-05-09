@@ -36,7 +36,7 @@ const Players: React.FC = () => {
   useEffect(() => {
     const getPlayers = async () => {
       setIsLoading(true)
-      const players = await fetch.get<Player[]>('/user/player/list')
+      const players = await fetch.get<Player[]>('/api/players')
       setPlayers(players)
       if (players.length === 1) {
         selectPlayer(players[0]!)

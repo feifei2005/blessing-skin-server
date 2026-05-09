@@ -24,7 +24,7 @@ const ReportsManagement: React.FC = () => {
   const getReports = async () => {
     setIsLoading(true)
     const { data, last_page }: Paginator<Report> = await fetch.get(
-      '/admin/reports/list',
+      '/api/admin/reports',
       {
         q: query,
         page,
@@ -55,7 +55,7 @@ const ReportsManagement: React.FC = () => {
   ) => {
     type Ok = { code: 0; message: string; data: { status: Status } }
     type Err = { code: 1; message: string }
-    const resp = await fetch.put<Ok | Err>(`/admin/reports/${report.id}`, {
+    const resp = await fetch.put<Ok | Err>(`/api/admin/reports/${report.id}`, {
       action,
     })
 

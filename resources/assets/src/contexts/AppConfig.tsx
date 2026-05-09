@@ -11,7 +11,7 @@ export interface AppConfig {
 }
 
 const defaultConfig: AppConfig = {
-  baseUrl: process.env.REACT_APP_API_BASE || '',
+  baseUrl: (window as any).__API_BASE__ || process.env.REACT_APP_API_BASE || '',
   siteName: '',
   locale: navigator.language.split('-')[0] || 'en',
   version: '',
@@ -59,7 +59,9 @@ export function AppConfigProvider({
       return
     }
 
-    const baseUrl = process.env.REACT_APP_API_BASE || ''
+    // 优先使用运行时 config.json 中的 apiBase，其次使用编译时环境变量
+    const baseUrl =
+      (window as any).__API_BASE__ || process.env.REACT_APP_API_BASE || ''
     const locale = navigator.language.split('-')[0] || 'en'
 
     Promise.all([
@@ -76,13 +78,17 @@ export function AppConfigProvider({
               ;(window as any).blessing.extra = next.extra
             }
             ;(window as any).blessing.base_url =
-              next.baseUrl || process.env.REACT_APP_API_BASE || ''
+              next.baseUrl ||
+              (window as any).__API_BASE__ ||
+              process.env.REACT_APP_API_BASE ||
+              ''
             if (next.siteName) {
               document.title = next.siteName
             }
-            tryRenderEmailVerification()
             return next
           })
+          // 副作用应在 state 更新之外执行
+          tryRenderEmailVerification()
         }
       })
       .catch((e) => {

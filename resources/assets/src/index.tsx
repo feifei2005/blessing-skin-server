@@ -28,7 +28,9 @@ if (rootEl) {
           setApiBase(config.apiBase)
         }
       }
-    } catch {
+    } catch (e) {
+      // config.json 加载失败，SPA 将使用编译时的 API 地址或同源模式
+      console.warn('[bootstrap] 加载 config.json 失败:', e)
     } finally {
       ReactDOM.render(
         <React.StrictMode>

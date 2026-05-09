@@ -10,7 +10,7 @@ export async function install(plugin: string, stdio: Stdio) {
 
   const { message, data } = await fetch.post<
     fetch.ResponseBody<{ reason?: string[] } | undefined>
-  >('/admin/plugins/market/download', { name: plugin })
+  >('/api/admin/plugins/market/download', { name: plugin })
 
   spinner.stop(`  ${message}`)
   const reasons = data?.reason
@@ -36,7 +36,7 @@ export async function remove(plugin: string, stdio: Stdio) {
   spinner.start('Uninstalling plugin...')
 
   const { message } = await fetch.post<fetch.ResponseBody>(
-    '/admin/plugins/manage',
+    '/api/admin/plugins/manage',
     { action: 'delete', name: plugin },
   )
   spinner.stop(`  ${message}`)

@@ -66,7 +66,7 @@ const Translations: React.FC = () => {
       return
     }
 
-    const { message } = await fetch.del(`/admin/i18n/${line.id}`)
+    const { message } = await fetch.del(`/api/admin/i18n/${line.id}`)
     toast.success(message)
     const { id } = line
     setLines((lines) => lines.filter((line) => line.id !== id))

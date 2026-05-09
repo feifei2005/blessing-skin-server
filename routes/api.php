@@ -11,7 +11,12 @@ Route::get('i18n/{locale}', 'HomeController@i18n')->name('api.i18n');
 Route::get('health', fn () => response()->json(['status' => 'ok', 'timestamp' => now()]));
 
 Route::prefix('auth')->middleware('throttle:10,1')->group(function () {
+    Route::post('login', 'AuthController@handleLogin');
+    Route::post('register', 'AuthController@handleRegister');
+    Route::post('forgot', 'AuthController@handleForgot');
+    Route::post('reset/{uid}', 'AuthController@handleReset');
     Route::post('logout', 'AuthController@logout')->middleware('auth:web,oauth');
+    Route::any('captcha', 'AuthController@captcha');
 });
 
 // Skinlib public routes
