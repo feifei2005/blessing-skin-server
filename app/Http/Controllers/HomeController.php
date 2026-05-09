@@ -50,8 +50,7 @@ class HomeController extends Controller
             'locale' => config('app.locale'),
             'version' => config('app.version'),
             'extra' => [
-                'recaptcha' => option('recaptcha_sitekey'),
-                'invisible' => (bool) option('recaptcha_invisible'),
+                'turnstile' => option('turnstile_sitekey'),
                 'nickname' => $user?->nickname,
                 'uploaderExists' => $user !== null,
                 'currentUid' => $user?->uid,

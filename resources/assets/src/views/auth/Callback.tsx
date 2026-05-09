@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { handleCallback } from '@/auth/AuthService'
 import { MainLayout } from '@/layouts'
+import { t } from '@/scripts/i18n'
 
 const CallbackPage: React.FC = () => {
   const history = useHistory()
@@ -36,26 +37,26 @@ const CallbackPage: React.FC = () => {
 
   if (error) {
     return (
-      <MainLayout scope="user" title="Authentication Error">
+      <MainLayout scope="user" title={t('auth.callback.errorTitle')}>
         <div className="alert alert-danger">{error}</div>
         <a href="/auth/login" className="btn btn-primary">
-          Back to Login
+          {t('auth.callback.backToLogin')}
         </a>
       </MainLayout>
     )
   }
 
   return (
-    <MainLayout scope="user" title="Authenticating...">
+    <MainLayout scope="user" title={t('auth.callback.authenticating')}>
       <div
         className="d-flex justify-content-center align-items-center"
         style={{ minHeight: '200px' }}
       >
         <div className="text-center">
           <div className="spinner-border text-primary mb-3" role="status">
-            <span className="sr-only">Authenticating...</span>
+            <span className="sr-only">{t('auth.callback.authenticating')}</span>
           </div>
-          <p>Please wait while we sign you in...</p>
+          <p>{t('auth.callback.waitMessage')}</p>
         </div>
       </div>
     </MainLayout>

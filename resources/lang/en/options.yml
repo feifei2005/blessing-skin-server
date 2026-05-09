@@ -163,13 +163,12 @@ meta:
   meta_extras:
     title: Other Custom <meta> Tags
 
-recaptcha:
-  title: SEO & reCAPTCHA
+turnstile:
+  title: Cloudflare Turnstile
+  turnstile_sitekey:
+    title: Site Key
   secret_key: Secret Key
   secret_key_placeholder: Leave blank to keep current value
-  recaptcha_invisible:
-    title: Invisible
-    label: Enable Invisible Mode
 
 res-warning: This page is ONLY for advanced users. If you aren't familiar with these, please don't modify them!
 

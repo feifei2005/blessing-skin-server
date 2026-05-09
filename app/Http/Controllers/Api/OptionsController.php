@@ -175,8 +175,7 @@ class OptionsController extends Controller
             'meta_keywords' => option('meta_keywords'),
             'meta_description' => option('meta_description'),
             'meta_extras' => option('meta_extras'),
-            'recaptcha_sitekey' => option('recaptcha_sitekey'),
-            'recaptcha_invisible' => (bool) option('recaptcha_invisible'),
+            'turnstile_sitekey' => option('turnstile_sitekey'),
         ]);
     }
 
@@ -204,9 +203,8 @@ class OptionsController extends Controller
             'meta_keywords' => 'nullable|string',
             'meta_description' => 'nullable|string',
             'meta_extras' => 'nullable|string',
-            'recaptcha_sitekey' => 'nullable|string',
-            'recaptcha_secretkey' => 'nullable|string',
-            'recaptcha_invisible' => 'nullable|boolean',
+            'turnstile_sitekey' => 'nullable|string',
+            'turnstile_secretkey' => 'nullable|string',
         ]);
         $keys = [
             'register_with_player_name', 'require_verification', 'regs_per_ip',
@@ -215,7 +213,7 @@ class OptionsController extends Controller
             'auto_del_invalid_texture', 'allow_downloading_texture',
             'status_code_for_private', 'texture_name_regexp',
             'meta_keywords', 'meta_description', 'meta_extras',
-            'recaptcha_sitekey', 'recaptcha_invisible',
+            'turnstile_sitekey',
         ];
         foreach ($keys as $key) {
             if ($request->has($key)) {
@@ -223,9 +221,9 @@ class OptionsController extends Controller
             }
         }
 
-        // recaptcha_secretkey: only update if a non-empty value is submitted
-        if ($request->has('recaptcha_secretkey') && $request->input('recaptcha_secretkey') !== '') {
-            Option::set('recaptcha_secretkey', $request->input('recaptcha_secretkey'));
+        // turnstile_secretkey: only update if a non-empty value is submitted
+        if ($request->has('turnstile_secretkey') && $request->input('turnstile_secretkey') !== '') {
+            Option::set('turnstile_secretkey', $request->input('turnstile_secretkey'));
         }
 
         // Locale-suffixed keys

@@ -304,7 +304,7 @@ class UserController extends Controller
                 $user->delete();
                 $dispatcher->dispatch('user.deleted', [$user]);
 
-                if (!$request->bearerToken()) {
+                if (!$request->bearerToken() && $request->hasSession()) {
                     session()->flush();
                 }
 

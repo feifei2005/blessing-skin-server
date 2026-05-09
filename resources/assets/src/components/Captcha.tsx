@@ -1,12 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import * as React from 'react'
-import Reaptcha from 'reaptcha'
-import { emit, on } from '@/scripts/event'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { t } from '@/scripts/i18n'
 import { useBlessingExtra } from '@/contexts/AppConfig'
+import { useAppConfig } from '@/contexts/AppConfig'
 import * as cssUtils from '@/styles/utils'
-
-const eventId = Symbol()
 
 export interface CaptchaHandle {
   execute: () => Promise<string>
@@ -14,28 +12,22 @@ export interface CaptchaHandle {
 }
 
 const Captcha = React.forwardRef<CaptchaHandle>((_props, ref) => {
-  const sitekey = useBlessingExtra<string>('recaptcha', '')
-  const invisible = useBlessingExtra<boolean>('invisible', false)
+  const { baseUrl } = useAppConfig()
+  const sitekey = useBlessingExtra<string>('turnstile', '')
   const [value, setValue] = React.useState('')
   const [time, setTime] = React.useState(Date.now())
-  const reaptchaRef = React.useRef<Reaptcha | null>(null)
+  const turnstileRef = React.useRef<TurnstileInstance>()
 
   React.useImperativeHandle(ref, () => ({
     execute: async () => {
-      if (reaptchaRef.current && invisible) {
-        return new Promise<string>((resolve) => {
-          const off = on(eventId, (val: string) => {
-            resolve(val)
-            off()
-          })
-          reaptchaRef.current!.execute()
-        })
+      if (turnstileRef.current) {
+        return turnstileRef.current.getResponsePromise()
       }
       return value
     },
     reset: () => {
-      if (reaptchaRef.current) {
-        reaptchaRef.current.reset()
+      if (turnstileRef.current) {
+        turnstileRef.current.reset()
       } else {
         setTime(Date.now())
       }
@@ -46,23 +38,13 @@ const Captcha = React.forwardRef<CaptchaHandle>((_props, ref) => {
     setValue(event.target.value)
   }
 
-  const handleVerify = (val: string) => {
-    emit(eventId, val)
-    setValue(val)
-  }
-
   const handleRefresh = () => {
     setTime(Date.now())
   }
 
   return sitekey ? (
     <div className="mb-2">
-      <Reaptcha
-        ref={reaptchaRef}
-        sitekey={sitekey}
-        size={invisible ? 'invisible' : 'normal'}
-        onVerify={handleVerify}
-      />
+      <Turnstile ref={turnstileRef} siteKey={sitekey} />
     </div>
   ) : (
     <div className="d-flex">
@@ -77,7 +59,7 @@ const Captcha = React.forwardRef<CaptchaHandle>((_props, ref) => {
         />
       </div>
       <img
-        src={`${blessing.base_url}/auth/captcha?v=${time}`}
+        src={`${baseUrl}/auth/captcha?v=${time}`}
         alt={t('auth.captcha')}
         css={cssUtils.pointerCursor}
         height={34}

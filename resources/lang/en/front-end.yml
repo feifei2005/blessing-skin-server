@@ -3,7 +3,7 @@ auth:
   loggingIn: Logging In
   tooManyFails:
     captcha: You fails too many times! Please enter the CAPTCHA.
-    recaptcha: You fails too many times! Please pass the reCAPTCHA challenge.
+    turnstile: You fails too many times! Please pass the Turnstile challenge.
   emptyEmail: Empty email address.
   invalidConfirmPwd: Confirming password is not equal with password.
   emptyNickname: Empty nickname.
@@ -28,6 +28,11 @@ auth:
   player-name-intro: Player name in Minecraft, can be changed later
   forgot:
     login-link: I do remember it
+  callback:
+    errorTitle: Authentication Error
+    backToLogin: Back to Login
+    authenticating: Authenticating...
+    waitMessage: Please wait while we sign you in...
 
 skinlib:
   private: Private

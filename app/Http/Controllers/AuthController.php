@@ -40,8 +40,7 @@ class AuthController extends Controller
             'rows' => $rows,
             'extra' => [
                 'tooManyFails' => cache(sha1('login_fails_'.$ip)) > 3,
-                'recaptcha' => option('recaptcha_sitekey'),
-                'invisible' => (bool) option('recaptcha_invisible'),
+                'turnstile' => option('turnstile_sitekey'),
             ],
         ]);
     }
@@ -95,7 +94,6 @@ class AuthController extends Controller
         $dispatcher->dispatch('auth.login.ready', [$user]);
 
         if ($user->verifyPassword($request->input('password'))) {
-            Session::forget('login_fails');
             Cache::forget($loginFailsCacheKey);
 
             Auth::login($user, $request->input('keep'));
@@ -150,8 +148,7 @@ class AuthController extends Controller
             'rows' => $rows,
             'extra' => [
                 'player' => (bool) option('register_with_player_name'),
-                'recaptcha' => option('recaptcha_sitekey'),
-                'invisible' => (bool) option('recaptcha_invisible'),
+                'turnstile' => option('turnstile_sitekey'),
             ],
         ]);
     }
@@ -233,7 +230,9 @@ class AuthController extends Controller
         }
 
         $dispatcher->dispatch('auth.login.ready', [$user]);
-        Auth::login($user);
+        if ($request->hasSession()) {
+            Auth::login($user);
+        }
         $dispatcher->dispatch('auth.login.succeeded', [$user]);
 
         return json(trans('auth.register.success'), 0);
@@ -244,8 +243,7 @@ class AuthController extends Controller
         if (config('mail.default') != '') {
             return view('auth.forgot', [
                 'extra' => [
-                    'recaptcha' => option('recaptcha_sitekey'),
-                    'invisible' => (bool) option('recaptcha_invisible'),
+                    'turnstile' => option('turnstile_sitekey'),
                 ],
             ]);
         } else {
@@ -332,9 +330,21 @@ class AuthController extends Controller
         return json(trans('auth.reset.success'), 0);
     }
 
-    public function captcha(\Gregwar\Captcha\CaptchaBuilder $builder)
+    public function captcha(\Gregwar\Captcha\CaptchaBuilder $builder, Request $request)
     {
         $builder->build(100, 34);
+
+        if ($request->expectsJson() || !$request->hasSession()) {
+            $whip = new Whip();
+            $ip = $whip->getValidIpAddress();
+            $ip = app(Filter::class)->apply('client_ip', $ip);
+            Cache::put('captcha_' . $ip, $builder->getPhrase(), 300);
+            return response($builder->output(), 200, [
+                'Content-Type' => 'image/jpeg',
+                'Cache-Control' => 'no-store',
+            ]);
+        }
+
         session(['captcha' => $builder->getPhrase()]);
 
         return response($builder->output(), 200, [

@@ -4,7 +4,7 @@ auth:
   loggingIn: 登录中
   tooManyFails:
     captcha: 你尝试的次数太多啦，请输入验证码
-    recaptcha: 你尝试的次数太多啦，请通过 reCAPTCHA 人机验证
+    turnstile: 你尝试的次数太多啦，请通过 Turnstile 人机验证
   emptyEmail: 你还没有填写邮箱哦
   invalidConfirmPwd: 密码和确认的密码不一样诶？
   emptyNickname: 你还没有填写昵称哦

@@ -86,6 +86,10 @@ export default {
         if (location) {
           const newHeaders = new Headers(response.headers)
           newHeaders.set('Location', location.replace(apiBase, url.origin))
+          newHeaders.set(
+            'Access-Control-Allow-Origin',
+            getCorsOrigin(request.headers.get('Origin'), env),
+          )
           return new Response(response.body, {
             status: response.status,
             headers: newHeaders,

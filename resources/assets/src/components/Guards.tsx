@@ -1,6 +1,7 @@
 import React from 'react'
 import { Route, Redirect, RouteProps } from 'react-router-dom'
 import { useAuth } from '@/auth/AuthContext'
+import { t } from '@/scripts/i18n'
 
 function Loading() {
   return (
@@ -50,13 +51,13 @@ export function AdminRoute({
         if (!user?.admin)
           return (
             <div className="alert alert-danger m-3">
-              Access denied. Admin privileges required.
+              {t('auth.check.admin')}
             </div>
           )
         if ((user?.permission ?? 0) < requiredPermission)
           return (
             <div className="alert alert-danger m-3">
-              Access denied. Super Admin privileges required.
+              {t('auth.check.admin')}
             </div>
           )
         return children

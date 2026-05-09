@@ -25,9 +25,8 @@ interface GeneralData {
   meta_keywords: string
   meta_description: string
   meta_extras: string
-  recaptcha_sitekey: string
-  recaptcha_secretkey: string
-  recaptcha_invisible: boolean
+  turnstile_sitekey: string
+  turnstile_secretkey: string
 }
 
 const Options: React.FC = () => {
@@ -263,7 +262,7 @@ const Options: React.FC = () => {
       <div className="col-md-6">
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">{t('options.recaptcha.title')}</h3>
+            <h3 className="card-title">{t('options.turnstile.title')}</h3>
           </div>
           <div className="card-body">
             <div className="form-group">
@@ -292,35 +291,22 @@ const Options: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>{t('options.recaptcha.recaptcha_invisible.title')}</label>
+              <label>{t('options.turnstile.turnstile_sitekey.title')}</label>
               <input
                 className="form-control"
-                value={data.recaptcha_sitekey}
-                onChange={(e) => update('recaptcha_sitekey', e.target.value)}
+                value={data.turnstile_sitekey}
+                onChange={(e) => update('turnstile_sitekey', e.target.value)}
               />
             </div>
             <div className="form-group">
-              <label>{t('options.recaptcha.secret_key')}</label>
+              <label>{t('options.turnstile.secret_key')}</label>
               <input
                 type="password"
                 className="form-control"
-                placeholder={t('options.recaptcha.secret_key_placeholder')}
-                value={data.recaptcha_secretkey}
-                onChange={(e) => update('recaptcha_secretkey', e.target.value)}
+                placeholder={t('options.turnstile.secret_key_placeholder')}
+                value={data.turnstile_secretkey}
+                onChange={(e) => update('turnstile_secretkey', e.target.value)}
               />
-            </div>
-            <div className="form-check mb-2">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                checked={data.recaptcha_invisible}
-                onChange={(e) =>
-                  update('recaptcha_invisible', e.target.checked)
-                }
-              />
-              <label className="form-check-label">
-                {t('options.recaptcha.recaptcha_invisible.label')}
-              </label>
             </div>
           </div>
         </div>

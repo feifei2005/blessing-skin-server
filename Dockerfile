@@ -14,7 +14,7 @@ RUN composer install \
     --no-interaction \
     --ignore-platform-reqs
 
-FROM node:alpine as frontend
+FROM node:20-alpine as frontend
 
 WORKDIR /app
 
