@@ -10,6 +10,8 @@ echo "[entrypoint] MySQL is ready."
 
 cd /app
 
+mkdir -p storage/framework/sessions storage/plugins
+
 if [ ! -f storage/oauth-private.key ]; then
     echo "[entrypoint] Generating Passport OAuth keys..."
     php artisan passport:keys --force
