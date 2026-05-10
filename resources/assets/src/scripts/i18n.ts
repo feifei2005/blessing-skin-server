@@ -11,14 +11,17 @@ export function setI18n(table: I18nTable) {
 
 export async function loadI18n(locale: string): Promise<void> {
   const baseUrl = process.env.REACT_APP_API_BASE || blessing.base_url || ''
-  try {
-    const resp = await fetch(`${baseUrl}/api/i18n/${locale}`)
-    if (resp.ok) {
-      const data = await resp.json()
-      setI18n(data)
+  for (const lang of [locale, 'en']) {
+    try {
+      const resp = await fetch(`${baseUrl}/api/i18n/${lang}`)
+      if (resp.ok) {
+        const data = await resp.json()
+        setI18n(data)
+        return
+      }
+    } catch {
+      // Continue to next fallback
     }
-  } catch {
-    // fallback: use empty table, keys will show as-is
   }
 }
 

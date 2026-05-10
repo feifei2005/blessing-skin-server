@@ -63,7 +63,7 @@ export function AppConfigProvider({
     // 优先使用运行时 config.json 中的 apiBase，其次使用编译时环境变量
     const baseUrl =
       (window as any).__API_BASE__ || process.env.REACT_APP_API_BASE || ''
-    const locale = navigator.language.split('-')[0] || 'en'
+    const locale = navigator.language.replace(/-/g, '_') || 'en'
 
     Promise.all([
       fetch(`${baseUrl}/api/site-config`).then((r) =>
