@@ -30,7 +30,7 @@ export function t(
   parameters = Object.create(null) as Record<string, string>,
 ): string {
   const segments = key.split('.')
-  let temp = i18nTable
+  let temp = (blessing.i18n || i18nTable) as I18nTable
   let result = ''
 
   for (const segment of segments) {
