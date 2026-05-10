@@ -6,14 +6,14 @@
 
 ## 总览
 
-| 类别            | 文件数 |      状态       |
-| :-------------- | :----: | :-------------: |
-| 源码修改        |   3    | ⚠️ 2 个有小问题 |
-| 新基础设施      |   2    |  ⚠️ 1 个有 bug  |
-| URL 前缀修复    |   12   |     ✅ 正确     |
-| Router 包裹修复 |   5    |  ⚠️ 1 个有 bug  |
-| 整文件重写      |   2    |     ✅ 正确     |
-| 非测试变更      |   3    | ⚠️ 建议分离提交 |
+| 类别            | 文件数 |           状态            |
+| :-------------- | :----: | :-----------------------: |
+| 源码修改        |   3    |          ✅ 正确          |
+| 新基础设施      |   2    |          ✅ 正确          |
+| URL 前缀修复    |   12   |          ✅ 正确          |
+| Router 包裹修复 |   5    | ✅ 正确（Issue 1 已验证） |
+| 整文件重写      |   2    |          ✅ 正确          |
+| 非测试变更      |   3    |       ✅ 已分离提交       |
 
 ---
 
@@ -21,62 +21,30 @@
 
 ### Issue 1: `Reset.test.tsx` — `urls.auth.reset(0)` 应为 `reset(1)`
 
-```diff
-// Reset.tsx L39: const uid = location.pathname.split('/').pop()
-// MemoryRouter route = '/auth/reset/1' → uid = '1' → Number('1') = 1
-// 但测试断言写的是 reset(0) ❌
+~~已否决~~：Reset 组件源码 `const uid = location.pathname.split('/').pop()` 读取的是全局 `window.location.pathname`（jsdom 默认值为 `/`），**不受 `MemoryRouter` 影响**。`'/'.split('/').pop()` = `''` → `Number('')` = `0`。经验证 (`npx jest`)，`urls.auth.reset(1)` 会导致测试失败（Expected `/api/auth/reset/1`，Received `/api/auth/reset/0`）。当前的 `urls.auth.reset(0)` 是正确的。
 
--      urls.auth.reset(0),
-+      urls.auth.reset(1),
-```
-
-`Reset.tsx` 通过 `location.pathname.split('/').pop()` 提取 uid。路由设为 `/auth/reset/1` 时，pop() 返回 `'1'`，`Number('1')` = 1。但测试中两处都写成了 `urls.auth.reset(0)`。
-
-**位置**: [Reset.test.tsx L40, L63](file:///c:/Users/Yangg/projects/blessing-skin-server/resources/assets/tests/views/auth/Reset.test.tsx#L40)
+✅ 保持现状，无需修改。建议后续将 Reset.tsx 改为使用 `useParams()`。
 
 ---
 
-### Issue 2: `AuthContext.ts` mock — 缺少 `React` import
+### Issue 2: `AuthContext.ts` mock — 缺少 `React` import ✅ 已修复
 
 ```ts
-// 当前代码
+import React from 'react' // ← 已添加
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) =>
   children
-// ❌ React 未 import，TypeScript 编译会报错
 ```
-
-**修复**:
-
-```diff
-+import React from 'react'
-+
- export const useAuth = jest.fn().mockReturnValue({
-```
-
-或者改为不使用 JSX/类型:
-
-```ts
-export const AuthProvider = ({ children }: any) => children
-```
-
-**位置**: [AuthContext.ts L10](file:///c:/Users/Yangg/projects/blessing-skin-server/resources/assets/tests/__mocks__/@/auth/AuthContext.ts#L10)
 
 ---
 
-### Issue 3: `__mocks__/@/auth/AuthContext.ts` 路径可能不会被 Jest 自动识别
+### Issue 3: `__mocks__/@/auth/AuthContext.ts` 路径可能不会被 Jest 自动识别 ✅ 已处理
 
-Jest 的 `__mocks__` 自动 mock 机制是基于**模块解析路径**的，不支持 `moduleNameMapper` 别名。`@/auth/AuthContext` 通过 `moduleNameMapper` 映射到 `src/auth/AuthContext`，但 Jest 不会自动在 `tests/__mocks__/@/auth/` 中查找 mock。
+已确认 Jest 不支持通过 `moduleNameMapper` 别名自动查找 `__mocks__`。已在需要的测试文件中显式添加 `jest.mock('@/auth/AuthContext', ...)`：
 
-**建议**: 在实际使用 `useAuth` 的测试文件中显式添加：
-
-```ts
-jest.mock('@/auth/AuthContext')
-```
-
-这样 Jest 会从 `__mocks__` 目录中找到手动 mock。或者直接在每个需要的测试文件中内联 mock（如 `Login.test.tsx` 和 `NotificationsList.test.tsx` 已经做的那样）。
-
-> [!TIP]
-> 验证方法: 跑一个使用 `useAuth` 但**没有**显式 `jest.mock` 的测试文件（如 `PluginsManagement.test.tsx`），看 `useAuth` 是否返回 mock 值。如果不是，就需要在这些文件中手动添加 `jest.mock('@/auth/AuthContext')`。
+- `Login.test.tsx` ✅
+- `NotificationsList.test.tsx` ✅
+- `PluginsManagement.test.tsx` ✅
 
 ---
 
@@ -104,31 +72,18 @@ const { getByText, queryByText } = renderWithRouter(<Show />, {
 
 ---
 
-### Issue 5: `net.ts` 改了但 `net.test.ts` 未修改
+### Issue 5: `net.ts` 改了但 `net.test.ts` 未修改 ✅ 已确认无影响
 
-`escapeHtml` 从 catch 块中移除后，`net.test.ts` 的 "process backend errors" 测试（如果存在 500 异常带 trace 的 case）断言仍会期望旧的转义行为。
-
-**当前状态**: `net.test.ts` 未出现在 diff 中 → 这个测试 case 的断言未同步更新。
+`escapeHtml` 从 catch 块移除后，`net.test.ts` 的 6 个测试全部通过 (`npx jest resources/assets/tests/scripts/net.test.ts`)。测试使用的 mock 数据不触发 double-escape 场景（error.message 不包含 HTML 标签），因此断言值不变。
 
 ---
 
-### Issue 6: `composer.json` + `composer.lock` + `AuthServiceProvider.php` 与测试修复无关
+### Issue 6: `composer.json` + `composer.lock` + `AuthServiceProvider.php` 与测试修复无关 ✅ 已分离提交
 
-- `composer.json`: 添加了 `audit.ignore` 配置
-- `composer.lock`: 大量包版本变化 (4386 行变更)
-- `AuthServiceProvider.php`: 注释掉 `requireCodeChallengeForPublicClients()`
+已拆分为两个独立 commit：
 
-这些是独立的变更，建议与测试修复**分开提交**，保持 commit 职责清晰：
-
-```bash
-# 提交 1: Passport/composer 升级
-git add composer.json composer.lock app/Providers/AuthServiceProvider.php
-git commit -m "chore: upgrade Passport to 11.x, add audit ignore"
-
-# 提交 2: 测试基础设施 + 修复
-git add resources/assets/
-git commit -m "test: fix 129 frontend tests for SPA migration"
-```
+- `a9883ad` — `chore: upgrade Passport to 11.x, add audit ignore`
+- `8096b0a` — `test: fix 129 frontend tests for SPA migration`
 
 ---
 
@@ -183,10 +138,10 @@ const [value, setValue] = useState<T>(
 ## 修复行动清单
 
 ```
-[!] 1. Reset.test.tsx: urls.auth.reset(0) → urls.auth.reset(1)  (2 处)
-[!] 2. AuthContext.ts mock: 添加 import React 或改用 any 类型
-[ ] 3. 验证 __mocks__ 路径是否被 Jest 识别，必要时添加显式 jest.mock
-[ ] 4. 补充 net.test.ts 的断言更新
-[ ] 5. Show.test.tsx 缩进规范化 (可选)
-[ ] 6. 分离 composer/Passport 变更为单独 commit
+[✓] 1. Reset.test.tsx: 已验证 urls.auth.reset(0) 正确，MemoryRouter 不影响 window.location
+[✓] 2. AuthContext.ts mock: 已添加 import React
+[✓] 3. __mocks__ 路径: 已在需要文件中显式 jest.mock
+[✓] 4. net.test.ts: 已验证通过，无需修改
+[─] 5. Show.test.tsx 缩进规范化: 跳过 (不影响功能)
+[✓] 6. 分离 composer/Passport 变更为单独 commit: 已拆分为 a9883ad + 8096b0a
 ```
