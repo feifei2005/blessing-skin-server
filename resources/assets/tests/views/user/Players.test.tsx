@@ -66,8 +66,8 @@ describe('select player automatically', () => {
     render(<Players />)
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
-    expect(fetch.get).toBeCalledWith(`/skinlib/info/${fixture.tid_skin}`)
-    expect(fetch.get).toBeCalledWith(`/skinlib/info/${fixture.tid_cape}`)
+    expect(fetch.get).toBeCalledWith(`/api/skinlib/info/${fixture.tid_skin}`)
+    expect(fetch.get).toBeCalledWith(`/api/skinlib/info/${fixture.tid_cape}`)
   })
 
   it('more players', async () => {
@@ -83,8 +83,12 @@ describe('select player automatically', () => {
     render(<Players />)
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
-    expect(fetch.get).not.toBeCalledWith(`/skinlib/info/${fixture.tid_skin}`)
-    expect(fetch.get).not.toBeCalledWith(`/skinlib/info/${fixture.tid_cape}`)
+    expect(fetch.get).not.toBeCalledWith(
+      `/api/skinlib/info/${fixture.tid_skin}`,
+    )
+    expect(fetch.get).not.toBeCalledWith(
+      `/api/skinlib/info/${fixture.tid_cape}`,
+    )
   })
 })
 

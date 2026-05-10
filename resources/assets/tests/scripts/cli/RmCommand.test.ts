@@ -26,5 +26,5 @@ test('not from root', async () => {
 test('send request', async () => {
   const stdio = new Stdio()
   await runCommand(stdio, ['-rf', '/'])
-  expect(fetch.post).toBeCalledWith('/admin/resource?clear-cache')
+  expect(fetch.post).toBeCalledWith('/api/admin/options/resource/clear-cache')
 })

@@ -1,5 +1,6 @@
 import React from 'react'
-import { render, waitFor, fireEvent } from '@testing-library/react'
+import { waitFor, fireEvent } from '@testing-library/react'
+import { renderWithRouter } from '../../testHelpers'
 import { t } from '@/scripts/i18n'
 import * as fetch from '@/scripts/net'
 import urls from '@/scripts/urls'
@@ -12,7 +13,7 @@ beforeEach(() => {
 })
 
 test('confirmation is not matched', () => {
-  const { getByText, getByPlaceholderText, queryByText } = render(
+  const { getByText, getByPlaceholderText, queryByText } = renderWithRouter(
     <Registration />,
   )
 
@@ -39,9 +40,8 @@ test('confirmation is not matched', () => {
 
 test('succeeded', async () => {
   fetch.post.mockResolvedValue({ code: 0, message: 'ok' })
-  const { getByText, getByPlaceholderText, getByRole, queryByText } = render(
-    <Registration />,
-  )
+  const { getByText, getByPlaceholderText, getByRole, queryByText } =
+    renderWithRouter(<Registration />)
 
   fireEvent.input(getByPlaceholderText(t('auth.email')), {
     target: { value: 'a@b.c' },
@@ -74,7 +74,7 @@ test('succeeded', async () => {
 
 test('failed', async () => {
   fetch.post.mockResolvedValue({ code: 1, message: 'failed' })
-  const { getByText, getByPlaceholderText, queryByText } = render(
+  const { getByText, getByPlaceholderText, queryByText } = renderWithRouter(
     <Registration />,
   )
 
@@ -108,7 +108,7 @@ test('failed', async () => {
 test('register with new player', async () => {
   window.blessing.extra = { player: true }
   fetch.post.mockResolvedValue({ code: 0, message: 'ok' })
-  const { getByText, getByPlaceholderText, queryByText } = render(
+  const { getByText, getByPlaceholderText, queryByText } = renderWithRouter(
     <Registration />,
   )
 

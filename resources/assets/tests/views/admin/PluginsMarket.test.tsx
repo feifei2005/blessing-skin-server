@@ -48,7 +48,7 @@ test('install a plugin after first page', async () => {
   fireEvent.click(getByText('2'))
   fireEvent.click(getByText(t('admin.installPlugin')))
   await waitFor(() =>
-    expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
       name: fixture.name,
     }),
   )
@@ -115,7 +115,7 @@ describe('install plugin', () => {
 
     fireEvent.click(getByText(t('admin.installPlugin')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
         name: fixture.name,
       }),
     )
@@ -132,7 +132,7 @@ describe('install plugin', () => {
 
     fireEvent.click(getByText(t('admin.installPlugin')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
         name: fixture.name,
       }),
     )
@@ -154,7 +154,7 @@ describe('install plugin', () => {
 
     fireEvent.click(getByText(t('admin.installPlugin')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
         name: fixture.name,
       }),
     )
@@ -202,7 +202,7 @@ describe('update plugin', () => {
     fireEvent.click(getByText(t('general.confirm')))
 
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
         name: fixture.name,
       }),
     )

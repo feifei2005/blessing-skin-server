@@ -15,7 +15,7 @@ const defaultConfig: AppConfig = {
   siteName: '',
   locale: navigator.language.split('-')[0] || 'en',
   version: '',
-  extra: {},
+  extra: (window as any).blessing?.extra || {},
 }
 
 const AppConfigContext = createContext<AppConfig>(defaultConfig)
@@ -26,8 +26,9 @@ export function useAppConfig() {
 
 export function useBlessingExtra<T>(key: string, defaultValue?: T): T {
   const { extra } = useAppConfig()
+  const windowExtra = (window as any).blessing?.extra?.[key]
   const [value, setValue] = useState<T>(
-    (extra[key] as T) ?? (defaultValue as T),
+    (extra[key] as T) ?? (windowExtra as T) ?? (defaultValue as T),
   )
 
   useEffect(() => {

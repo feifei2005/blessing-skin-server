@@ -14,7 +14,7 @@ describe('send email', () => {
 
     fireEvent.click(getByText(t('user.verification.resend')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/user/email-verification'),
+      expect(fetch.post).toBeCalledWith('/api/user/email-verification'),
     )
     expect(queryByText('success')).toBeInTheDocument()
     expect(getByRole('status')).toHaveClass('alert-success')
@@ -27,9 +27,9 @@ describe('send email', () => {
 
     fireEvent.click(getByText(t('user.verification.resend')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/user/email-verification'),
+      expect(fetch.post).toBeCalledWith('/api/user/email-verification'),
     )
-    expect(fetch.post).toBeCalledWith('/user/email-verification')
+    expect(fetch.post).toBeCalledWith('/api/user/email-verification')
     expect(queryByText('failed')).toBeInTheDocument()
     expect(getByRole('alert')).toHaveClass('alert-danger')
   })

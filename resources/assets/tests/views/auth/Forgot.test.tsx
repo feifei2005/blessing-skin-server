@@ -1,5 +1,6 @@
 import React from 'react'
-import { render, waitFor, fireEvent } from '@testing-library/react'
+import { waitFor, fireEvent } from '@testing-library/react'
+import { renderWithRouter } from '../../testHelpers'
 import { t } from '@/scripts/i18n'
 import * as fetch from '@/scripts/net'
 import urls from '@/scripts/urls'
@@ -11,7 +12,9 @@ describe('submit', () => {
   it('succeeded', async () => {
     fetch.post.mockResolvedValue({ code: 0, message: 'ok' })
 
-    const { getByPlaceholderText, getByText, queryByText } = render(<Forgot />)
+    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
+      <Forgot />,
+    )
 
     fireEvent.input(getByPlaceholderText(t('auth.email')), {
       target: { value: 'a@b.c' },
@@ -32,7 +35,9 @@ describe('submit', () => {
   it('failed', async () => {
     fetch.post.mockResolvedValue({ code: 1, message: 'failed' })
 
-    const { getByPlaceholderText, getByText, queryByText } = render(<Forgot />)
+    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
+      <Forgot />,
+    )
 
     fireEvent.input(getByPlaceholderText(t('auth.email')), {
       target: { value: 'a@b.c' },

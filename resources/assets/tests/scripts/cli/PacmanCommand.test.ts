@@ -17,7 +17,7 @@ describe('install plugin', () => {
     const stdio = new Stdio()
 
     await pacman(stdio, ['-S', 'test'])
-    expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
       name: 'test',
     })
     expect(stdio.getStdout()).toInclude('ok')
@@ -32,7 +32,7 @@ describe('install plugin', () => {
     const stdio = new Stdio()
 
     await pacman(stdio, ['-S', 'test'])
-    expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
       name: 'test',
     })
     expect(stdio.getStdout()).toInclude('failed')
@@ -57,7 +57,7 @@ describe('remove plugin', () => {
 
     setTimeout(() => process.stdin.emit('keypress', 'y', 'y'), 0)
     await pacman(stdio, ['-R', 'test'])
-    expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
       action: 'delete',
       name: 'test',
     })

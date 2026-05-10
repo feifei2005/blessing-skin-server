@@ -53,7 +53,7 @@ test('search reports', async () => {
 
   const { getByTitle, getByText } = render(<ReportsManagement />)
   await waitFor(() =>
-    expect(fetch.get).toBeCalledWith('/admin/reports/list', {
+    expect(fetch.get).toBeCalledWith('/api/admin/reports', {
       q: 'status:0 sort:-report_at',
       page: 1,
     }),
@@ -64,7 +64,7 @@ test('search reports', async () => {
   })
   fireEvent.click(getByText(t('vendor.datatable.search')))
   await waitFor(() =>
-    expect(fetch.get).toBeCalledWith('/admin/reports/list', {
+    expect(fetch.get).toBeCalledWith('/api/admin/reports', {
       q: 's',
       page: 1,
     }),
@@ -118,7 +118,7 @@ describe('proceed report', () => {
 
       fireEvent.click(getByText(t('report.ban')))
       await waitFor(() =>
-        expect(fetch.put).toBeCalledWith(`/admin/reports/${fixture.id}`, {
+        expect(fetch.put).toBeCalledWith(`/api/admin/reports/${fixture.id}`, {
           action: 'ban',
         }),
       )
@@ -137,7 +137,7 @@ describe('proceed report', () => {
 
       fireEvent.click(getByText(t('report.ban')))
       await waitFor(() =>
-        expect(fetch.put).toBeCalledWith(`/admin/reports/${fixture.id}`, {
+        expect(fetch.put).toBeCalledWith(`/api/admin/reports/${fixture.id}`, {
           action: 'ban',
         }),
       )
@@ -172,7 +172,7 @@ describe('proceed report', () => {
       fireEvent.click(getByText(t('skinlib.show.delete-texture')))
       fireEvent.click(getByText(t('general.confirm')))
       await waitFor(() =>
-        expect(fetch.put).toBeCalledWith(`/admin/reports/${fixture.id}`, {
+        expect(fetch.put).toBeCalledWith(`/api/admin/reports/${fixture.id}`, {
           action: 'delete',
         }),
       )
@@ -194,7 +194,7 @@ describe('proceed report', () => {
 
     fireEvent.click(getByText(t('report.reject')))
     await waitFor(() =>
-      expect(fetch.put).toBeCalledWith(`/admin/reports/${fixture.id}`, {
+      expect(fetch.put).toBeCalledWith(`/api/admin/reports/${fixture.id}`, {
         action: 'reject',
       }),
     )

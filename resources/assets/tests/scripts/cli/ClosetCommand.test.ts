@@ -17,7 +17,7 @@ describe('add texture', () => {
     const stdout = stdio.getStdout()
     expect(stdout).toInclude('kumiko')
     expect(stdout).toInclude('eupho')
-    expect(fetch.post).toBeCalledWith('/admin/closet/1', { tid: '2' })
+    expect(fetch.post).toBeCalledWith('/api/admin/closet/1', { tid: '2' })
   })
 
   it('failed', async () => {
@@ -28,7 +28,7 @@ describe('add texture', () => {
 
     const stdout = stdio.getStdout()
     expect(stdout).toInclude('Error occurred.')
-    expect(fetch.post).toBeCalledWith('/admin/closet/1', { tid: '2' })
+    expect(fetch.post).toBeCalledWith('/api/admin/closet/1', { tid: '2' })
   })
 })
 
@@ -45,7 +45,7 @@ describe('remove texture', () => {
     const stdout = stdio.getStdout()
     expect(stdout).toInclude('kumiko')
     expect(stdout).toInclude('eupho')
-    expect(fetch.del).toBeCalledWith('/admin/closet/1', { tid: '2' })
+    expect(fetch.del).toBeCalledWith('/api/admin/closet/1', { tid: '2' })
   })
 
   it('failed', async () => {
@@ -56,6 +56,6 @@ describe('remove texture', () => {
 
     const stdout = stdio.getStdout()
     expect(stdout).toInclude('Error occurred.')
-    expect(fetch.del).toBeCalledWith('/admin/closet/1', { tid: '2' })
+    expect(fetch.del).toBeCalledWith('/api/admin/closet/1', { tid: '2' })
   })
 })

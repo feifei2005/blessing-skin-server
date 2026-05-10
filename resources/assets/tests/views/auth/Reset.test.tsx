@@ -1,13 +1,18 @@
 import React from 'react'
-import { render, waitFor, fireEvent } from '@testing-library/react'
+import { waitFor, fireEvent } from '@testing-library/react'
+import { renderWithRouter } from '../../testHelpers'
 import { t } from '@/scripts/i18n'
 import * as fetch from '@/scripts/net'
+import urls from '@/scripts/urls'
 import Reset from '@/views/auth/Reset'
 
 jest.mock('@/scripts/net')
 
 test('confirmation is not matched', () => {
-  const { getByText, getByPlaceholderText, queryByText } = render(<Reset />)
+  const { getByText, getByPlaceholderText, queryByText } = renderWithRouter(
+    <Reset />,
+    { route: '/auth/reset/1' },
+  )
 
   fireEvent.input(getByPlaceholderText(t('auth.password')), {
     target: { value: 'password' },
@@ -23,9 +28,8 @@ test('confirmation is not matched', () => {
 
 test('succeeded', async () => {
   fetch.post.mockResolvedValue({ code: 0, message: 'ok' })
-  const { getByText, getByPlaceholderText, getByRole, queryByText } = render(
-    <Reset />,
-  )
+  const { getByText, getByPlaceholderText, getByRole, queryByText } =
+    renderWithRouter(<Reset />, { route: '/auth/reset/1' })
 
   fireEvent.input(getByPlaceholderText(t('auth.password')), {
     target: { value: 'password' },
@@ -35,10 +39,9 @@ test('succeeded', async () => {
   })
   fireEvent.click(getByText(t('auth.reset')))
   await waitFor(() =>
-    expect(fetch.post).toBeCalledWith(
-      location.href.replace(blessing.base_url, ''),
-      { password: 'password' },
-    ),
+    expect(fetch.post).toBeCalledWith(urls.auth.reset(0), {
+      password: 'password',
+    }),
   )
   expect(queryByText('ok')).toBeInTheDocument()
   expect(getByRole('status')).toHaveClass('alert-success')
@@ -47,7 +50,10 @@ test('succeeded', async () => {
 
 test('failed', async () => {
   fetch.post.mockResolvedValue({ code: 1, message: 'failed' })
-  const { getByText, getByPlaceholderText, queryByText } = render(<Reset />)
+  const { getByText, getByPlaceholderText, queryByText } = renderWithRouter(
+    <Reset />,
+    { route: '/auth/reset/1' },
+  )
 
   fireEvent.input(getByPlaceholderText(t('auth.password')), {
     target: { value: 'password' },
@@ -57,10 +63,9 @@ test('failed', async () => {
   })
   fireEvent.click(getByText(t('auth.reset')))
   await waitFor(() =>
-    expect(fetch.post).toBeCalledWith(
-      location.href.replace(blessing.base_url, ''),
-      { password: 'password' },
-    ),
+    expect(fetch.post).toBeCalledWith(urls.auth.reset(0), {
+      password: 'password',
+    }),
   )
   expect(queryByText('failed')).toBeInTheDocument()
 })

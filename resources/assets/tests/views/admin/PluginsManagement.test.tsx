@@ -5,6 +5,9 @@ import * as fetch from '@/scripts/net'
 import PluginsManagement from '@/views/admin/PluginsManagement'
 
 jest.mock('@/scripts/net')
+jest.mock('@/auth/AuthContext', () => ({
+  useAuth: () => ({ isAuth: true, user: { permission: 2 }, loading: false }),
+}))
 
 test('show loading indicator', () => {
   fetch.get.mockResolvedValue([])
@@ -72,7 +75,7 @@ describe('enable plugin', () => {
 
     fireEvent.click(getByTitle(t('admin.enablePlugin')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
         action: 'enable',
         name: 'a',
       }),
@@ -94,12 +97,12 @@ describe('enable plugin', () => {
 
     fireEvent.click(getByTitle(t('admin.enablePlugin')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
         action: 'enable',
         name: 'a',
       }),
     )
-    expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
       action: 'enable',
       name: 'a',
     })
@@ -129,7 +132,7 @@ describe('disable plugin', () => {
 
     fireEvent.click(getByTitle(t('admin.disablePlugin')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
         action: 'disable',
         name: 'a',
       }),
@@ -147,12 +150,12 @@ describe('disable plugin', () => {
 
     fireEvent.click(getByTitle(t('admin.disablePlugin')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
         action: 'disable',
         name: 'a',
       }),
     )
-    expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
       action: 'disable',
       name: 'a',
     })
@@ -193,7 +196,7 @@ describe('delete plugin', () => {
     fireEvent.click(getByTitle(t('admin.deletePlugin')))
     fireEvent.click(getByText(t('general.confirm')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
         action: 'delete',
         name: 'a',
       }),
@@ -214,12 +217,12 @@ describe('delete plugin', () => {
     fireEvent.click(getByTitle(t('admin.deletePlugin')))
     fireEvent.click(getByText(t('general.confirm')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
         action: 'delete',
         name: 'a',
       }),
     )
-    expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
       action: 'delete',
       name: 'a',
     })
@@ -257,7 +260,7 @@ describe('upload plugin archive', () => {
     await waitFor(() => {
       expect(fetch.get).toBeCalledTimes(2)
       expect(fetch.post).toBeCalledWith(
-        '/admin/plugins/upload',
+        '/api/admin/plugins/upload',
         expect.any(FormData),
       )
     })
@@ -285,7 +288,7 @@ describe('upload plugin archive', () => {
     await waitFor(() => {
       expect(fetch.get).toBeCalledTimes(1)
       expect(fetch.post).toBeCalledWith(
-        '/admin/plugins/upload',
+        '/api/admin/plugins/upload',
         expect.any(FormData),
       )
     })
@@ -315,7 +318,7 @@ describe('submit remote URL', () => {
     fireEvent.click(getAllByText(t('general.submit'))[1]!)
     await waitFor(() => {
       expect(fetch.get).toBeCalledTimes(2)
-      expect(fetch.post).toBeCalledWith('/admin/plugins/wget', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/wget', {
         url: 'https://example.com/a.zip',
       })
     })
@@ -345,7 +348,7 @@ describe('submit remote URL', () => {
     fireEvent.click(getAllByText(t('general.submit'))[1]!)
     await waitFor(() => {
       expect(fetch.get).toBeCalledTimes(1)
-      expect(fetch.post).toBeCalledWith('/admin/plugins/wget', {
+      expect(fetch.post).toBeCalledWith('/api/admin/plugins/wget', {
         url: 'https://example.com/a.zip',
       })
     })

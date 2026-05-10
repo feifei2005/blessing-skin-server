@@ -10,7 +10,7 @@ describe('install plugin', () => {
     const stdio = new Stdio()
 
     await dnf(stdio, ['install', 'test'])
-    expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
       name: 'test',
     })
     expect(stdio.getStdout()).toInclude('ok')
@@ -25,7 +25,7 @@ describe('install plugin', () => {
     const stdio = new Stdio()
 
     await dnf(stdio, ['install', 'test'])
-    expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
       name: 'test',
     })
     expect(stdio.getStdout()).toInclude('failed')
@@ -37,7 +37,7 @@ describe('install plugin', () => {
     const stdio = new Stdio()
 
     await dnf(stdio, ['upgrade', 'test'])
-    expect(fetch.post).toBeCalledWith('/admin/plugins/market/download', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/market/download', {
       name: 'test',
     })
     expect(stdio.getStdout()).toInclude('ok')
@@ -61,7 +61,7 @@ describe('remove plugin', () => {
 
     setTimeout(() => process.stdin.emit('keypress', 'y', 'y'), 0)
     await dnf(stdio, ['remove', 'test'])
-    expect(fetch.post).toBeCalledWith('/admin/plugins/manage', {
+    expect(fetch.post).toBeCalledWith('/api/admin/plugins/manage', {
       action: 'delete',
       name: 'test',
     })

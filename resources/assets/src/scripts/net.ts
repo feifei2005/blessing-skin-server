@@ -152,7 +152,7 @@ export async function walkFetch(
     await showModal({
       mode: 'alert',
       title: t('general.fatalError'),
-      dangerousHTML: escapeHtml(error.message),
+      dangerousHTML: error.message,
       type: 'danger',
       okButtonType: 'outline-light',
     })

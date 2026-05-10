@@ -1,5 +1,6 @@
 import React from 'react'
-import { render, fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, waitFor } from '@testing-library/react'
+import { renderWithRouter } from '../../testHelpers'
 import { t } from '@/scripts/i18n'
 import * as fetch from '@/scripts/net'
 import { Texture, TextureType } from '@/scripts/types'
@@ -56,7 +57,10 @@ afterEach(() => {
 test('without authenticated', async () => {
   fetch.get.mockResolvedValue(fixtureSkin)
 
-  const { queryByText, queryByTitle } = render(<Show />)
+  const { queryByText, queryByTitle } = renderWithRouter(<Show />, {
+    route: '/skinlib/show/1',
+    path: '/skinlib/show/:id',
+  })
   await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
   expect(queryByText(fixtureSkin.name)).toBeInTheDocument()
@@ -74,7 +78,10 @@ test('without authenticated', async () => {
 test('authenticated but not uploader', async () => {
   fetch.get.mockResolvedValue(fixtureCape)
 
-  const { queryByText, queryByTitle } = render(<Show />)
+  const { queryByText, queryByTitle } = renderWithRouter(<Show />, {
+    route: '/skinlib/show/1',
+    path: '/skinlib/show/:id',
+  })
   await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
   expect(queryByText(fixtureCape.name)).toBeInTheDocument()
@@ -94,7 +101,10 @@ test('uploader is not existed', async () => {
   window.blessing.extra.uploaderExists = false
   fetch.get.mockResolvedValue(fixtureSkin)
 
-  const { queryByText } = render(<Show />)
+  const { queryByText } = renderWithRouter(<Show />, {
+    route: '/skinlib/show/1',
+    path: '/skinlib/show/:id',
+  })
   await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
   expect(queryByText('not existed')).toBeInTheDocument()
 })
@@ -105,7 +115,10 @@ test('badges', async () => {
   ] as Badge[]
   fetch.get.mockResolvedValue(fixtureSkin)
 
-  const { queryByText } = render(<Show />)
+  const { queryByText } = renderWithRouter(<Show />, {
+    route: '/skinlib/show/1',
+    path: '/skinlib/show/:id',
+  })
   await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
   expect(queryByText('STAFF')).toBeInTheDocument()
 })
@@ -115,7 +128,10 @@ test('apply to player', async () => {
   window.blessing.extra.inCloset = true
   fetch.get.mockResolvedValueOnce(fixtureSkin).mockResolvedValueOnce([])
 
-  const { getByText, getByLabelText } = render(<Show />)
+  const { getByText, getByLabelText } = renderWithRouter(<Show />, {
+    route: '/skinlib/show/1',
+    path: '/skinlib/show/:id',
+  })
   await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
   fireEvent.click(getByText(t('skinlib.apply')))
@@ -129,7 +145,10 @@ test('set as avatar', async () => {
   fetch.get.mockResolvedValue(fixtureSkin)
   fetch.post.mockResolvedValue({ code: 0, message: 'ok' })
 
-  const { getByText, getByRole, queryByText } = render(<Show />)
+  const { getByText, getByRole, queryByText } = renderWithRouter(<Show />, {
+    route: '/skinlib/show/1',
+    path: '/skinlib/show/:id',
+  })
   await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
   fireEvent.click(getByText(t('user.setAsAvatar')))
@@ -147,7 +166,10 @@ describe('download texture', () => {
   })
 
   it('allowed', async () => {
-    const { getByText } = render(<Show />)
+    const { getByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.show.download')))
@@ -155,7 +177,10 @@ describe('download texture', () => {
 
   it('not allowed', async () => {
     window.blessing.extra.download = false
-    const { queryByText } = render(<Show />)
+    const { queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     expect(queryByText(t('skinlib.show.download'))).not.toBeInTheDocument()
@@ -170,7 +195,10 @@ describe('operation panel', () => {
   it('uploader', async () => {
     window.blessing.extra.currentUid = fixtureSkin.uploader
 
-    const { queryByText } = render(<Show />)
+    const { queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     expect(queryByText(t('skinlib.show.manage-notice'))).toBeInTheDocument()
@@ -180,7 +208,10 @@ describe('operation panel', () => {
     window.blessing.extra.currentUid = fixtureSkin.uploader + 1
     window.blessing.extra.admin = true
 
-    const { queryByText } = render(<Show />)
+    const { queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     expect(queryByText(t('skinlib.show.manage-notice'))).toBeInTheDocument()
@@ -194,9 +225,11 @@ describe('edit texture name', () => {
   })
 
   it('cancelled', async () => {
-    const { getByText, getAllByTitle, getByDisplayValue, queryByText } = render(
-      <Show />,
-    )
+    const { getByText, getAllByTitle, getByDisplayValue, queryByText } =
+      renderWithRouter(<Show />, {
+        route: '/skinlib/show/1',
+        path: '/skinlib/show/:id',
+      })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getAllByTitle(t('skinlib.show.edit'))[0]!)
@@ -220,7 +253,10 @@ describe('edit texture name', () => {
       getByDisplayValue,
       getByRole,
       queryByText,
-    } = render(<Show />)
+    } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getAllByTitle(t('skinlib.show.edit'))[0]!)
@@ -247,7 +283,10 @@ describe('edit texture name', () => {
       getByDisplayValue,
       getByRole,
       queryByText,
-    } = render(<Show />)
+    } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getAllByTitle(t('skinlib.show.edit'))[0]!)
@@ -273,9 +312,11 @@ describe('edit texture type', () => {
   })
 
   it('cancelled', async () => {
-    const { getByText, getAllByTitle, getByLabelText, queryByText } = render(
-      <Show />,
-    )
+    const { getByText, getAllByTitle, getByLabelText, queryByText } =
+      renderWithRouter(<Show />, {
+        route: '/skinlib/show/1',
+        path: '/skinlib/show/:id',
+      })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getAllByTitle(t('skinlib.show.edit'))[1]!)
@@ -289,7 +330,10 @@ describe('edit texture type', () => {
     fetch.put.mockResolvedValue({ code: 0, message: 'ok' })
 
     const { getByText, getAllByTitle, getByLabelText, getByRole, queryByText } =
-      render(<Show />)
+      renderWithRouter(<Show />, {
+        route: '/skinlib/show/1',
+        path: '/skinlib/show/:id',
+      })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getAllByTitle(t('skinlib.show.edit'))[1]!)
@@ -309,7 +353,10 @@ describe('edit texture type', () => {
     fetch.put.mockResolvedValue({ code: 1, message: 'failed' })
 
     const { getByText, getAllByTitle, getByLabelText, getByRole, queryByText } =
-      render(<Show />)
+      renderWithRouter(<Show />, {
+        route: '/skinlib/show/1',
+        path: '/skinlib/show/:id',
+      })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getAllByTitle(t('skinlib.show.edit'))[1]!)
@@ -333,7 +380,13 @@ describe('add to closet', () => {
   })
 
   it('cancelled', async () => {
-    const { getByText, getByDisplayValue, queryByText } = render(<Show />)
+    const { getByText, getByDisplayValue, queryByText } = renderWithRouter(
+      <Show />,
+      {
+        route: '/skinlib/show/1',
+        path: '/skinlib/show/:id',
+      },
+    )
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.addToCloset')))
@@ -350,9 +403,11 @@ describe('add to closet', () => {
   it('succeeded', async () => {
     fetch.post.mockResolvedValue({ code: 0, message: 'ok' })
 
-    const { getByText, getByDisplayValue, getByRole, queryByText } = render(
-      <Show />,
-    )
+    const { getByText, getByDisplayValue, getByRole, queryByText } =
+      renderWithRouter(<Show />, {
+        route: '/skinlib/show/1',
+        path: '/skinlib/show/:id',
+      })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.addToCloset')))
@@ -374,9 +429,11 @@ describe('add to closet', () => {
   it('failed', async () => {
     fetch.post.mockResolvedValue({ code: 1, message: 'failed' })
 
-    const { getByText, getByDisplayValue, getByRole, queryByText } = render(
-      <Show />,
-    )
+    const { getByText, getByDisplayValue, getByRole, queryByText } =
+      renderWithRouter(<Show />, {
+        route: '/skinlib/show/1',
+        path: '/skinlib/show/:id',
+      })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.addToCloset')))
@@ -406,13 +463,16 @@ describe('remove from closet', () => {
   it('succeeded', async () => {
     fetch.del.mockResolvedValue({ code: 0, message: 'ok' })
 
-    const { getByText, getByRole, queryByText } = render(<Show />)
+    const { getByText, getByRole, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.removeFromCloset')))
     fireEvent.click(getByText(t('general.confirm')))
     await waitFor(() =>
-      expect(fetch.del).toBeCalledWith(`/user/closet/${fixtureSkin.tid}`),
+      expect(fetch.del).toBeCalledWith(`/api/closet/${fixtureSkin.tid}`),
     )
     expect(queryByText('ok')).toBeInTheDocument()
     expect(getByRole('status')).toHaveClass('alert-success')
@@ -422,13 +482,16 @@ describe('remove from closet', () => {
   it('failed', async () => {
     fetch.del.mockResolvedValue({ code: 1, message: 'failed' })
 
-    const { getByText, getByRole, queryByText } = render(<Show />)
+    const { getByText, getByRole, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.removeFromCloset')))
     fireEvent.click(getByText(t('general.confirm')))
     await waitFor(() =>
-      expect(fetch.del).toBeCalledWith(`/user/closet/${fixtureSkin.tid}`),
+      expect(fetch.del).toBeCalledWith(`/api/closet/${fixtureSkin.tid}`),
     )
     expect(queryByText('failed')).toBeInTheDocument()
     expect(getByRole('alert')).toHaveClass('alert-danger')
@@ -445,7 +508,10 @@ describe('report texture', () => {
   it('positive score', async () => {
     window.blessing.extra.report = 5
 
-    const { getByText, queryByText } = render(<Show />)
+    const { getByText, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.report.title')))
@@ -458,7 +524,10 @@ describe('report texture', () => {
   it('negative score', async () => {
     window.blessing.extra.report = -5
 
-    const { getByText, queryByText } = render(<Show />)
+    const { getByText, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.report.title')))
@@ -471,9 +540,11 @@ describe('report texture', () => {
   it('succeeded', async () => {
     fetch.post.mockResolvedValue({ code: 0, message: 'ok' })
 
-    const { getByText, getByPlaceholderText, getByRole, queryByText } = render(
-      <Show />,
-    )
+    const { getByText, getByPlaceholderText, getByRole, queryByText } =
+      renderWithRouter(<Show />, {
+        route: '/skinlib/show/1',
+        path: '/skinlib/show/:id',
+      })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.report.title')))
@@ -482,7 +553,7 @@ describe('report texture', () => {
     })
     fireEvent.click(getByText(t('general.confirm')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/skinlib/report', {
+      expect(fetch.post).toBeCalledWith('/api/reports', {
         tid: fixtureSkin.tid,
         reason: 'illegal',
       }),
@@ -494,9 +565,11 @@ describe('report texture', () => {
   it('failed', async () => {
     fetch.post.mockResolvedValue({ code: 1, message: 'failed' })
 
-    const { getByText, getByPlaceholderText, getByRole, queryByText } = render(
-      <Show />,
-    )
+    const { getByText, getByPlaceholderText, getByRole, queryByText } =
+      renderWithRouter(<Show />, {
+        route: '/skinlib/show/1',
+        path: '/skinlib/show/:id',
+      })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.report.title')))
@@ -505,7 +578,7 @@ describe('report texture', () => {
     })
     fireEvent.click(getByText(t('general.confirm')))
     await waitFor(() =>
-      expect(fetch.post).toBeCalledWith('/skinlib/report', {
+      expect(fetch.post).toBeCalledWith('/api/reports', {
         tid: fixtureSkin.tid,
         reason: 'illegal',
       }),
@@ -523,7 +596,10 @@ describe('change privacy', () => {
   it('cancelled', async () => {
     fetch.get.mockResolvedValue(fixtureSkin)
 
-    const { getByText, queryByText } = render(<Show />)
+    const { getByText, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.setAsPrivate')))
@@ -536,7 +612,10 @@ describe('change privacy', () => {
     fetch.get.mockResolvedValue(fixtureSkin)
     fetch.put.mockResolvedValue({ code: 0, message: 'ok' })
 
-    const { getByText, getByRole, queryByText } = render(<Show />)
+    const { getByText, getByRole, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.setAsPrivate')))
@@ -553,7 +632,10 @@ describe('change privacy', () => {
     fetch.get.mockResolvedValue({ ...fixtureSkin, public: false })
     fetch.put.mockResolvedValue({ code: 1, message: 'failed' })
 
-    const { getByText, getByRole, queryByText } = render(<Show />)
+    const { getByText, getByRole, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.setAsPublic')))
@@ -574,7 +656,10 @@ describe('change privacy', () => {
       data: { tid: 2 },
     })
 
-    const { getByText, queryByText } = render(<Show />)
+    const { getByText, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.setAsPublic')))
@@ -595,7 +680,10 @@ describe('change privacy', () => {
       data: { tid: 2 },
     })
 
-    const { getByText, queryByText } = render(<Show />)
+    const { getByText, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.setAsPublic')))
@@ -617,7 +705,10 @@ describe('delete texture', () => {
   })
 
   it('cancelled', async () => {
-    const { getByText } = render(<Show />)
+    const { getByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.show.delete-texture')))
@@ -628,7 +719,10 @@ describe('delete texture', () => {
   it('succeeded', async () => {
     fetch.del.mockResolvedValue({ code: 0, message: 'ok' })
 
-    const { getByText, getByRole, queryByText } = render(<Show />)
+    const { getByText, getByRole, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.show.delete-texture')))
@@ -645,7 +739,10 @@ describe('delete texture', () => {
   it('failed', async () => {
     fetch.del.mockResolvedValue({ code: 1, message: 'failed' })
 
-    const { getByText, getByRole, queryByText } = render(<Show />)
+    const { getByText, getByRole, queryByText } = renderWithRouter(<Show />, {
+      route: '/skinlib/show/1',
+      path: '/skinlib/show/:id',
+    })
     await waitFor(() => expect(fetch.get).toBeCalledTimes(1))
 
     fireEvent.click(getByText(t('skinlib.show.delete-texture')))

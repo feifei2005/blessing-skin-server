@@ -10,7 +10,7 @@ test('click to toggle', async () => {
   const button = getByRole('button')
 
   fireEvent.click(button)
-  await waitFor(() => expect(fetch.put).toBeCalledWith('/user/dark-mode'))
+  await waitFor(() => expect(fetch.put).toBeCalledWith('/api/user/dark-mode'))
 })
 
 test('default is dark', async () => {
@@ -18,5 +18,5 @@ test('default is dark', async () => {
   const button = getByRole('button')
 
   fireEvent.click(button)
-  await waitFor(() => expect(fetch.put).toBeCalledWith('/user/dark-mode'))
+  await waitFor(() => expect(fetch.put).toBeCalledWith('/api/user/dark-mode'))
 })

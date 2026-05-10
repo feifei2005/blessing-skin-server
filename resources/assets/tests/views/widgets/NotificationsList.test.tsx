@@ -7,60 +7,61 @@ import NotificationsList, {
 } from '@/views/widgets/NotificationsList'
 
 jest.mock('@/scripts/net')
+jest.mock('@/auth/AuthContext', () => ({
+  useAuth: () => ({ isAuth: true }),
+}))
 
 beforeEach(() => {
   document.body.innerHTML = ''
 })
 
-function createContainer(notifications: Notification[]) {
-  const container = document.createElement('div')
-  container.dataset.notifications = JSON.stringify(notifications)
-  container.dataset.t = 'no unread'
-  document.body.appendChild(container)
-}
-
 test('should not throw if element does not exist', () => {
   render(<NotificationsList />)
 })
 
-test('no unread notifications', () => {
-  createContainer([])
+test('no unread notifications', async () => {
+  fetch.get.mockResolvedValue([])
 
   const { queryByText } = render(<NotificationsList />)
-
-  expect(queryByText('no unread')).toBeInTheDocument()
+  await waitFor(() =>
+    expect(fetch.get).toBeCalledWith('/api/user/notifications'),
+  )
+  expect(queryByText(t('general.noResult'))).toBeInTheDocument()
 })
 
-test('with unread notifications', () => {
-  createContainer([{ id: '1', title: 'hi' }])
+test('with unread notifications', async () => {
+  fetch.get.mockResolvedValue([{ id: '1', title: 'hi' }])
 
   const { queryByText } = render(<NotificationsList />)
+  await waitFor(() =>
+    expect(fetch.get).toBeCalledWith('/api/user/notifications'),
+  )
 
   expect(queryByText('1')).toBeInTheDocument()
   expect(queryByText('hi')).toBeInTheDocument()
 })
 
 test('read notification', async () => {
-  const time = new Date().toLocaleTimeString()
-  const fixture = {
+  fetch.get.mockResolvedValue([{ id: '1', title: 'hi' }])
+  fetch.post.mockResolvedValue({
     title: 'hi - title',
-    content: 'content here',
-    time,
-  }
-
-  createContainer([{ id: '1', title: 'hi' }])
-  fetch.post.mockResolvedValue(fixture)
+    content: 'content',
+    time: '12:00',
+  })
 
   const { getByText, queryByText } = render(<NotificationsList />)
+  await waitFor(() =>
+    expect(fetch.get).toBeCalledWith('/api/user/notifications'),
+  )
 
   fireEvent.click(getByText('hi'))
-  await waitFor(() => expect(fetch.post).toBeCalled())
+  await waitFor(() =>
+    expect(fetch.post).toBeCalledWith('/api/user/notifications/1'),
+  )
 
-  expect(queryByText(fixture.title)).toBeInTheDocument()
-  expect(queryByText(fixture.content)).toBeInTheDocument()
-  expect(queryByText(fixture.time)).toBeInTheDocument()
-  expect(queryByText('no unread')).toBeInTheDocument()
-  expect(queryByText('1')).not.toBeInTheDocument()
+  expect(queryByText('hi - title')).toBeInTheDocument()
+  expect(queryByText('content')).toBeInTheDocument()
+  expect(queryByText('12:00')).toBeInTheDocument()
 
   fireEvent.click(getByText(t('general.confirm')))
 })

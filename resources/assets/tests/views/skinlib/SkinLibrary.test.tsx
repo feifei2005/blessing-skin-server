@@ -39,7 +39,7 @@ test('without authenticated', async () => {
       return true
     }),
   )
-  expect(fetch.get).not.toBeCalledWith('/user/closet/ids')
+  expect(fetch.get).not.toBeCalledWith('/api/user/closet/ids')
   expect(queryByText(t('skinlib.seeMyUpload'))).not.toBeInTheDocument()
 })
 
