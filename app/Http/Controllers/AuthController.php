@@ -370,18 +370,14 @@ class AuthController extends Controller
     {
         $builder->build(100, 34);
 
-        if ($request->expectsJson() || !$request->hasSession()) {
-            $whip = new Whip();
-            $ip = $whip->getValidIpAddress();
-            $ip = app(Filter::class)->apply('client_ip', $ip);
-            Cache::put('captcha_' . $ip, $builder->getPhrase(), 300);
-            return response($builder->output(), 200, [
-                'Content-Type' => 'image/jpeg',
-                'Cache-Control' => 'no-store',
-            ]);
-        }
+        $whip = new Whip();
+        $ip = $whip->getValidIpAddress();
+        $ip = app(Filter::class)->apply('client_ip', $ip);
+        Cache::put('captcha_' . $ip, $builder->getPhrase(), 300);
 
-        session(['captcha' => $builder->getPhrase()]);
+        if ($request->hasSession()) {
+            session(['captcha' => $builder->getPhrase()]);
+        }
 
         return response($builder->output(), 200, [
             'Content-Type' => 'image/jpeg',
