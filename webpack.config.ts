@@ -60,6 +60,12 @@ export default function (env?: Env): webpack.Configuration {
           ],
         },
         {
+          test: /\.m?js$/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
+        {
           test: /\.(png|webp|svg|woff2?|eot|ttf)$/,
           type: 'asset',
         },
