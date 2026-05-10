@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { hot } from 'react-hot-loader/root'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import useEmitMounted from '@/scripts/hooks/useEmitMounted'
 import { t } from '@/scripts/i18n'
 import * as fetch from '@/scripts/net'
@@ -14,6 +14,7 @@ const Reset: React.FC = () => {
   const [warningMessage, setWarningMessage] = useState('')
   const [isPending, setIsPending] = useState(false)
   const history = useHistory()
+  const { uid } = useParams<{ uid: string }>()
 
   useEmitMounted()
 
@@ -36,7 +37,6 @@ const Reset: React.FC = () => {
     }
 
     setIsPending(true)
-    const uid = location.pathname.split('/').pop()
     const { code, message } = await fetch.post<fetch.ResponseBody>(
       urls.auth.reset(Number(uid)),
       { password },

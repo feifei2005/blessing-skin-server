@@ -18,7 +18,7 @@ return [
     'user_initial_score' => '1000',
     'sign_gap_time' => '24',
     'sign_score' => '10,100',
-    'score_per_storage' => 'true',
+    'score_per_storage' => '1',
     'private_score_per_storage' => '10',
     'return_score' => 'true',
     'score_per_player' => '100',

@@ -11,7 +11,7 @@ jest.mock('@/scripts/net')
 test('confirmation is not matched', () => {
   const { getByText, getByPlaceholderText, queryByText } = renderWithRouter(
     <Reset />,
-    { route: '/auth/reset/1' },
+    { route: '/auth/reset/1', path: '/auth/reset/:uid' },
   )
 
   fireEvent.input(getByPlaceholderText(t('auth.password')), {
@@ -29,7 +29,10 @@ test('confirmation is not matched', () => {
 test('succeeded', async () => {
   fetch.post.mockResolvedValue({ code: 0, message: 'ok' })
   const { getByText, getByPlaceholderText, getByRole, queryByText } =
-    renderWithRouter(<Reset />, { route: '/auth/reset/1' })
+    renderWithRouter(<Reset />, {
+      route: '/auth/reset/1',
+      path: '/auth/reset/:uid',
+    })
 
   fireEvent.input(getByPlaceholderText(t('auth.password')), {
     target: { value: 'password' },
@@ -39,7 +42,7 @@ test('succeeded', async () => {
   })
   fireEvent.click(getByText(t('auth.reset')))
   await waitFor(() =>
-    expect(fetch.post).toBeCalledWith(urls.auth.reset(0), {
+    expect(fetch.post).toBeCalledWith(urls.auth.reset(1), {
       password: 'password',
     }),
   )
@@ -52,7 +55,7 @@ test('failed', async () => {
   fetch.post.mockResolvedValue({ code: 1, message: 'failed' })
   const { getByText, getByPlaceholderText, queryByText } = renderWithRouter(
     <Reset />,
-    { route: '/auth/reset/1' },
+    { route: '/auth/reset/1', path: '/auth/reset/:uid' },
   )
 
   fireEvent.input(getByPlaceholderText(t('auth.password')), {
@@ -63,7 +66,7 @@ test('failed', async () => {
   })
   fireEvent.click(getByText(t('auth.reset')))
   await waitFor(() =>
-    expect(fetch.post).toBeCalledWith(urls.auth.reset(0), {
+    expect(fetch.post).toBeCalledWith(urls.auth.reset(1), {
       password: 'password',
     }),
   )

@@ -20,6 +20,7 @@ class ClosetManagementControllerTest extends TestCase
 
     public function testList()
     {
+        $this->app['auth']->guard('web')->forgetUser();
         $texture = Texture::factory()->create();
         $admin = User::factory()->admin()->create();
         $admin->closet()->attach($texture->tid);

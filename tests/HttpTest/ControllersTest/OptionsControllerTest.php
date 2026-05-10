@@ -155,13 +155,11 @@ class OptionsControllerTest extends BrowserKitTestCase
             ->see('<meta>');
 
         $this->visit('/admin/options')
-            ->type('key', 'recaptcha_sitekey')
-            ->type('secret', 'recaptcha_secretkey')
-            ->check('recaptcha_invisible')
-            ->press('submit_recaptcha');
-        $this->assertEquals('key', option('recaptcha_sitekey'));
-        $this->assertEquals('secret', option('recaptcha_secretkey'));
-        $this->assertTrue(option('recaptcha_invisible'));
+            ->type('key', 'turnstile_sitekey')
+            ->type('secret', 'turnstile_secretkey')
+            ->press('submit_turnstile');
+        $this->assertEquals('key', option('turnstile_sitekey'));
+        $this->assertEquals('secret', option('turnstile_secretkey'));
     }
 
     public function testResource()

@@ -11,6 +11,7 @@ use Blessing\Rejection;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
@@ -161,16 +162,14 @@ class UserControllerTest extends TestCase
         option(['require_verification' => true]);
 
         // Too frequent
+        Cache::put('last_mail_time:' . $unverified->uid, time() - 10, 120);
         $this->actingAs($unverified)
-            ->withSession([
-                'last_mail_time' => time() - 10,
-            ])
             ->postJson('/user/email-verification')
             ->assertJson([
                 'code' => 1,
                 'message' => trans('user.verification.frequent-mail'),
             ]);
-        $this->flushSession();
+        Cache::forget('last_mail_time:' . $unverified->uid);
 
         // Already verified
         $this->actingAs($verified)
@@ -191,6 +190,7 @@ class UserControllerTest extends TestCase
         });
 
         // Should handle exception when sending email
+        Cache::forget('last_mail_time:' . $unverified->uid);
         Mail::shouldReceive('to')
             ->once()
             ->andThrow(new \Mockery\Exception('A fake exception.'));

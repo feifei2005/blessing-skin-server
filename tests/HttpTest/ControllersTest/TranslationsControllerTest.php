@@ -46,16 +46,13 @@ class TranslationsControllerTest extends TestCase
             'group' => 'front-end',
             'key' => 'general.submit',
             'text' => 'submit',
-        ])->assertRedirect('/admin/i18n')->assertSessionHas('success', true);
+        ])->assertJson(['code' => 0, 'message' => trans('admin.i18n.added'), 'data' => ['id' => true]]);
 
         $this->post('/admin/i18n', [
             'group' => 'general',
             'key' => 'submit',
             'text' => 'submit',
-        ])->assertRedirect('/admin/i18n');
-        $this->get('/admin/i18n')
-            ->assertSee(trans('admin.i18n.added'))
-            ->assertSessionMissing('success');
+        ])->assertJson(['code' => 0, 'message' => trans('admin.i18n.added')]);
     }
 
     public function testUpdate()

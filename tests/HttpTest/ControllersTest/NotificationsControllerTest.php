@@ -22,8 +22,7 @@ class NotificationsControllerTest extends TestCase
                 'title' => 'all users',
                 'content' => null,
             ])
-            ->assertRedirect('/admin')
-            ->assertSessionHas('sentResult', trans('admin.notifications.send.success'));
+            ->assertJson(['message' => trans('admin.notifications.send.success')]);
         Notification::assertSentTo(
             [$admin, $normal],
             Notifications\SiteMessage::class,
