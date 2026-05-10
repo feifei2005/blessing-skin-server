@@ -13,7 +13,7 @@ export interface AppConfig {
 const defaultConfig: AppConfig = {
   baseUrl: (window as any).__API_BASE__ || process.env.REACT_APP_API_BASE || '',
   siteName: '',
-  locale: navigator.language.split('-')[0] || 'en',
+  locale: navigator.language.replace(/-/g, '_') || 'en',
   version: '',
   extra: (window as any).blessing?.extra || {},
 }

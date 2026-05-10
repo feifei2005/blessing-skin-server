@@ -67,8 +67,6 @@ class HomeController extends Controller
 
     public function i18n($locale)
     {
-        $aliases = ['zh' => 'zh_CN', 'zh-TW' => 'zh_TW'];
-        $locale = $aliases[$locale] ?? $locale;
         $supported = ['en', 'zh_CN', 'zh_TW'];
         if (!in_array($locale, $supported, true)) {
             return response()->json(['message' => 'Unsupported locale'], 400);
