@@ -2,10 +2,11 @@ interface I18nTable {
   [key: string]: string | I18nTable | undefined
 }
 
-let i18nTable: I18nTable = (blessing.i18n as I18nTable) || {}
+// Always read/write i18n data via the global `blessing.i18n` object.
+// This avoids webpack chunk isolation issues where module-level variables
+// get duplicated across chunks, causing `t()` to read from an empty copy.
 
 export function setI18n(table: I18nTable) {
-  i18nTable = table
   blessing.i18n = table
 }
 
@@ -30,7 +31,7 @@ export function t(
   parameters = Object.create(null) as Record<string, string>,
 ): string {
   const segments = key.split('.')
-  let temp = (blessing.i18n || i18nTable) as I18nTable
+  let temp = (blessing.i18n as I18nTable) || {}
   let result = ''
 
   for (const segment of segments) {

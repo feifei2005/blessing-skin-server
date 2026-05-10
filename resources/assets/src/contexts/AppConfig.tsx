@@ -53,10 +53,12 @@ export function AppConfigProvider({
     ...defaultConfig,
     ...config,
   })
+  const [ready, setReady] = useState(!!config)
 
   useEffect(() => {
     if (config) {
       setAppConfig((prev) => ({ ...prev, ...config }))
+      setReady(true)
       return
     }
 
@@ -95,7 +97,14 @@ export function AppConfigProvider({
       .catch((e) => {
         console.warn('[AppConfig] Failed to load site config:', e)
       })
+      .finally(() => {
+        setReady(true)
+      })
   }, [config])
+
+  if (!ready) {
+    return null
+  }
 
   return (
     <AppConfigContext.Provider value={appConfig}>
