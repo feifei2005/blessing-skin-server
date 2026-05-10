@@ -94,7 +94,7 @@ export default function (env?: Env): webpack.Configuration {
           process.env.REACT_APP_API_BASE || '',
         ),
         'process.env.REACT_APP_OAUTH_CLIENT_ID': JSON.stringify(
-          process.env.REACT_APP_OAUTH_CLIENT_ID || '',
+          process.env.REACT_APP_OAUTH_CLIENT_ID || '1',
         ),
       }),
     ].concat(isDev ? [new webpack.HotModuleReplacementPlugin()] : []),
