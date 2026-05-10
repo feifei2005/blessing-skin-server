@@ -71,11 +71,14 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
         libfreetype6-dev \
         libzip-dev \
         default-mysql-client \
+        libmagickwand-dev \
         zip \
         unzip && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install -j$(nproc) gd zip pdo_mysql && \
-    rm -rf /var/lib/apt/lists/*
+    printf "\n" | pecl install imagick && \
+    docker-php-ext-enable imagick && \
+    rm -rf /var/lib/apt/lists/* /tmp/pear
 
 WORKDIR /app
 
