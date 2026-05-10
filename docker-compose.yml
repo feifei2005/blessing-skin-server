@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: blessingskin-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE:-blessingskin}
+      MYSQL_USER: ${DB_USERNAME:-blessingskin}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-u',
+          'root',
+          '-p${DB_ROOT_PASSWORD}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.prod
+    container_name: blessingskin-app
+    restart: unless-stopped
+    environment:
+      APP_DEBUG: 'false'
+      APP_ENV: production
+      APP_URL: 'https://${API_DOMAIN}'
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: '3306'
+      DB_DATABASE: ${DB_DATABASE:-blessingskin}
+      DB_USERNAME: ${DB_USERNAME:-blessingskin}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      CORS_ALLOWED_ORIGINS: 'https://${SPA_DOMAIN}'
+      SPA_URL: 'https://${SPA_DOMAIN}'
+    volumes:
+      - app_storage:/app/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - internal
+
+  nginx:
+    image: nginx:alpine
+    container_name: blessingskin-nginx
+    restart: unless-stopped
+    ports:
+      - '80:80'
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - app_storage:/app/storage:ro
+    depends_on:
+      - app
+    networks:
+      - internal
+
+volumes:
+  mysql_data:
+  app_storage:
+
+networks:
+  internal:
+    driver: bridge
