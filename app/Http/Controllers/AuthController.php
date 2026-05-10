@@ -107,9 +107,41 @@ class AuthController extends Controller
                 ? $request->session()->pull('last_requested_path', url('/user'))
                 : url('/user');
 
-            return json(trans('auth.login.success'), 0, [
+            // For stateless API requests (SPA), issue a Personal Access Token
+            // so the frontend can authenticate subsequent requests without a session.
+            $tokenData = [];
+            if (!$request->hasSession()) {
+                $scopes = [
+                    'User.Read',
+                    'Notification.Read',
+                    'Notification.ReadWrite',
+                    'Player.Read',
+                    'Player.ReadWrite',
+                    'Closet.Read',
+                    'Closet.ReadWrite',
+                ];
+                if ($user->isAdmin()) {
+                    $scopes = array_merge($scopes, [
+                        'UsersManagement.Read',
+                        'UsersManagement.ReadWrite',
+                        'PlayersManagement.Read',
+                        'PlayersManagement.ReadWrite',
+                        'ClosetManagement.Read',
+                        'ClosetManagement.ReadWrite',
+                        'ReportsManagement.Read',
+                        'ReportsManagement.ReadWrite',
+                    ]);
+                }
+                $tokenResult = $user->createToken('SPA Login', $scopes);
+                $tokenData['token'] = $tokenResult->accessToken;
+                $tokenData['expires_at'] = $tokenResult->token->expires_at
+                    ? $tokenResult->token->expires_at->timestamp
+                    : null;
+            }
+
+            return json(trans('auth.login.success'), 0, array_merge([
                 'redirectTo' => $redirectTo,
-            ]);
+            ], $tokenData));
         } else {
             $loginFails++;
             Cache::put($loginFailsCacheKey, $loginFails, 3600);
