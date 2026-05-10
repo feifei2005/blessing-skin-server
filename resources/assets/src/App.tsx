@@ -1,5 +1,5 @@
-import React, { Suspense, lazy } from 'react'
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import React, { Suspense, lazy, useEffect } from 'react'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { AppConfigProvider } from '@/contexts/AppConfig'
 import { AuthProvider } from '@/auth/AuthContext'
 import { MainLayout, AuthLayout, SkinlibLayout } from '@/layouts'
@@ -188,9 +188,19 @@ function App() {
                   </SkinlibLayout>
                 </Route>
 
-                <Route path="/" exact>
-                  <Redirect to="/user" />
-                </Route>
+                <Route
+                  path="/"
+                  exact
+                  component={() => {
+                    useEffect(() => {
+                      window.location.href =
+                        (window as any).blessing?.base_url ||
+                        process.env.REACT_APP_API_BASE ||
+                        'https://skinapi.xn--suki-uf1gk54ba.cn'
+                    }, [])
+                    return null
+                  }}
+                />
 
                 <Route path="*">
                   <MainLayout
