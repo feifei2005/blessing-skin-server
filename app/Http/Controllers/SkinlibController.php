@@ -265,15 +265,25 @@ class SkinlibController extends Controller
         }
 
         $image = Image::make($file);
-        $imagick = $image->getCore();
-        if ($imagick instanceof \Imagick) {
-            $imagick->setOption('png:compression-filter', '0');
-            $imagick->setOption('png:compression-level', '9');
-            $imagick->setOption('png:compression-strategy', '0');
-            $imagick->setOption('png:exclude-chunk', 'all');
-            $imagick->stripImage();
+        $core = $image->getCore();
+        if ($core instanceof \Imagick) {
+            $core->setOption('png:compression-filter', '0');
+            $core->setOption('png:compression-level', '9');
+            $core->setOption('png:compression-strategy', '0');
+            $core->setOption('png:exclude-chunk', 'all');
+            $core->stripImage();
+            $sanitized = $image->encode('png')->getEncoded();
+        } elseif ($core instanceof \GdImage) {
+            // GD strips metadata implicitly; apply max zlib compression (level 9)
+            ob_start();
+            imagealphablending($core, false);
+            imagesavealpha($core, true);
+            imagepng($core, null, 9);
+            $sanitized = ob_get_clean();
+            $image->encoded = $sanitized;
+        } else {
+            $sanitized = $image->encode('png')->getEncoded();
         }
-        $sanitized = $image->encode('png')->getEncoded();
 
         $hash = hash('sha256', $image->encoded);
         $hash = $filter->apply('uploaded_texture_hash', $hash, [$image]);
