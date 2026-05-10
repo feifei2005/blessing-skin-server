@@ -59,6 +59,6 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::setDefaultScope(['User.Read']);
 
-        Passport::requireCodeChallengeForPublicClients();
+        // Passport::requireCodeChallengeForPublicClients(); // Method removed in Passport 11.x - PKCE enabled by default
     }
 }
