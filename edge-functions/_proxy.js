@@ -50,6 +50,11 @@ export function proxy(context) {
     respHeaders.set('Access-Control-Allow-Origin', CORS_ORIGIN)
     respHeaders.set('Access-Control-Allow-Credentials', 'true')
 
+    // fetch() 会自动解压 gzip/br，但保留原始 Content-Encoding 头
+    // 必须删除，否则浏览器会尝试二次解压导致 ERR_CONTENT_DECODING_FAILED
+    respHeaders.delete('Content-Encoding')
+    respHeaders.delete('Content-Length')
+
     // 重写 redirect Location，避免泄露后端域名
     if (response.status >= 300 && response.status < 400) {
       const location = response.headers.get('Location')

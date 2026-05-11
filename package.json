@@ -11,7 +11,7 @@
   "private": true,
   "scripts": {
     "dev": "webpack serve",
-    "build": "webpack --env production --progress && node -e \"require('fs').writeFileSync('public/app/config.json', JSON.stringify({apiBase:''}))\" && node -e \"require('fs').writeFileSync('public/app/_redirects', '/* /index.html 200\\n')\"",
+    "build": "webpack --env production --progress && node -e \"require('fs').copyFileSync('resources/assets/src/images/bg.webp','public/app/bg.webp')\" && node -e \"require('fs').copyFileSync('resources/assets/src/images/favicon.ico','public/app/favicon.ico')\" && node -e \"require('fs').writeFileSync('public/app/config.json', JSON.stringify({apiBase:''}))\" && node -e \"require('fs').writeFileSync('public/app/_redirects', '/* /index.html 200\\n')\"",
     "lint": "eslint --ext=ts -f=beauty .",
     "fmt": "prettier --write resources/assets tools webpack.config.ts",
     "fmt:check": "prettier --check resources/assets tools webpack.config.ts",
