@@ -69,6 +69,12 @@ export default {
       const headers = new Headers(request.headers)
       headers.delete('Cookie')
       headers.delete('Host')
+      headers.set(
+        'X-Forwarded-For',
+        request.headers.get('CF-Connecting-IP') ||
+          request.headers.get('X-Forwarded-For') ||
+          '',
+      )
 
       const response = await fetch(targetUrl, {
         method: request.method,
