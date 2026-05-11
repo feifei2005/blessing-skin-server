@@ -94,7 +94,9 @@ ENV APACHE_DOCUMENT_ROOT /app/public
 RUN chown -R www-data:www-data . && \
     sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
     sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
-    a2enmod rewrite headers
+    a2enmod rewrite headers && \
+    echo 'AliasMatch ^/([a-f0-9]+\\.(woff2?|ttf|eot|webp|map|wasm))$ /app/public/app/$1' > /etc/apache2/conf-available/alias-fonts.conf && \
+    a2enconf alias-fonts
 
 EXPOSE 80
 
