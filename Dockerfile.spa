@@ -29,7 +29,7 @@ RUN yarn build && \
     cp resources/assets/src/images/bg.webp public/app/ && \
     cp resources/assets/src/images/favicon.ico public/app/ && \
     echo "{\"apiBase\": \"${REACT_APP_API_BASE}\"}" > public/app/config.json && \
-    echo "/* /index.html 200" > public/app/_redirects
+    printf '/app/bg.webp /bg.webp 200\n/* /index.html 200\n' > public/app/_redirects
 
 # 输出: 静态文件位于 /app/public/app/
 # 将此目录部署到 EdgeOne Pages 作为站点根目录
