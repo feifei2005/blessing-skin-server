@@ -24,6 +24,11 @@ class AuthController extends Controller
 {
     public function login(Filter $filter)
     {
+        // Redirect traditional web pages to the SPA frontend
+        $spaUrl = env('SPA_URL', '');
+        if ($spaUrl && !request()->expectsJson()) {
+            return redirect($spaUrl . '/auth/login', 302);
+        }
         $whip = new Whip();
         $ip = $whip->getValidIpAddress();
         $ip = $filter->apply('client_ip', $ip);
@@ -173,6 +178,10 @@ class AuthController extends Controller
 
     public function register(Filter $filter)
     {
+        $spaUrl = env('SPA_URL', '');
+        if ($spaUrl && !request()->expectsJson()) {
+            return redirect($spaUrl . '/auth/register', 302);
+        }
         $rows = [
             'auth.rows.register.notice',
             'auth.rows.register.form',
@@ -276,6 +285,10 @@ class AuthController extends Controller
 
     public function forgot()
     {
+        $spaUrl = env('SPA_URL', '');
+        if ($spaUrl && !request()->expectsJson()) {
+            return redirect($spaUrl . '/auth/forgot', 302);
+        }
         if (config('mail.default') != '') {
             return view('auth.forgot', [
                 'extra' => [
@@ -345,6 +358,10 @@ class AuthController extends Controller
 
     public function reset(Request $request, $uid)
     {
+        $spaUrl = env('SPA_URL', '');
+        if ($spaUrl && !request()->expectsJson()) {
+            return redirect($spaUrl . '/auth/reset/' . $uid, 302);
+        }
         abort_unless($request->hasValidSignature(false), 403, trans('auth.reset.invalid'));
 
         return view('auth.reset')->with('user', User::find($uid));
