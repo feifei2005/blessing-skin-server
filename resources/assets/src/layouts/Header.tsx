@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/auth/AuthContext'
 import { t } from '@/scripts/i18n'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 export function Header() {
   const { isAuth, user, logout } = useAuth()
@@ -16,6 +17,7 @@ export function Header() {
         </li>
       </ul>
       <ul className="navbar-nav ml-auto">
+        <LanguageSwitcher />
         {isAuth ? (
           <li className="nav-item dropdown user-menu">
             <a

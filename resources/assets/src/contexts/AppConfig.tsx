@@ -10,6 +10,7 @@ export interface AppConfig {
   siteDescription: string
   homePicUrl: string
   extra: Record<string, any>
+  setLocale?: (locale: string) => void
 }
 
 const defaultConfig: AppConfig = {
@@ -110,8 +111,14 @@ export function AppConfigProvider({
     return null
   }
 
+  const changeLocale = (locale: string) => {
+    setAppConfig((prev) => ({ ...prev, locale }))
+  }
+
   return (
-    <AppConfigContext.Provider value={appConfig}>
+    <AppConfigContext.Provider
+      value={{ ...appConfig, setLocale: changeLocale }}
+    >
       {children}
     </AppConfigContext.Provider>
   )
