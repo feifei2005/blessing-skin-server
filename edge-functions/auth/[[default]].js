@@ -1,4 +1,4 @@
-import { proxy } from '../../_proxy.js'
+import { proxy } from '../_proxy.js'
 
 // SPA 前端路由 — 不代理，交给静态资源 / _redirects 处理
 const SPA_ROUTES = [
