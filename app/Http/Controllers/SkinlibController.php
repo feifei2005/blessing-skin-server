@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
-use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class SkinlibController extends Controller
 {

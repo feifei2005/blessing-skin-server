@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Facades\Option;
-use App\Services\OptionForm;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 
 class OptionsController extends Controller
 {

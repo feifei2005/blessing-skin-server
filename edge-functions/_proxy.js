@@ -8,7 +8,7 @@ const COOKIE_PATHS = ['/auth/captcha']
 
 function needsCookie(pathname) {
   return COOKIE_PATHS.some(
-    (p) => pathname === p || pathname.startsWith(p + '?'),
+    (p) => pathname === p || pathname.startsWith(p + '/'),
   )
 }
 
@@ -24,7 +24,8 @@ export function proxy(context) {
         'Access-Control-Allow-Origin': CORS_ORIGIN,
         'Access-Control-Allow-Methods':
           'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Headers':
+          'Content-Type, Authorization, X-CSRF-TOKEN',
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Max-Age': '86400',
       },

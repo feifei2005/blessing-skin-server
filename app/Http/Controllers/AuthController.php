@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events;
-use App\Exceptions\PrettyPageException;
 use App\Mail\ForgotPassword;
 use App\Models\Player;
 use App\Models\User;

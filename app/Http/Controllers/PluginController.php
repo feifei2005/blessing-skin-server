@@ -8,7 +8,6 @@ use App\Services\Unzip;
 use Composer\CaBundle\CaBundle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class PluginController extends Controller
 {
