@@ -11,6 +11,8 @@ COPY tools/*Plugin.ts ./tools/
 
 COPY resources ./resources
 
+ENV NO_HASH=true
+
 RUN yarn build && \
     cp resources/assets/src/images/bg.webp public/app/ && \
     cp resources/assets/src/images/favicon.ico public/app/ && \

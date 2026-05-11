@@ -49,6 +49,8 @@ class HomeController extends Controller
             'siteName' => option_localized('site_name'),
             'locale' => config('app.locale'),
             'version' => config('app.version'),
+            'siteDescription' => option_localized('site_description'),
+            'homePicUrl' => option('home_pic_url') ?: config('options.home_pic_url'),
             'extra' => [
                 'turnstile' => option('turnstile_sitekey'),
                 'nickname' => $user?->nickname,

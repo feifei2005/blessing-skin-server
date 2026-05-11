@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect } from 'react'
+import React, { Suspense, lazy } from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { AppConfigProvider } from '@/contexts/AppConfig'
 import { AuthProvider } from '@/auth/AuthContext'
@@ -7,6 +7,7 @@ import { PrivateRoute, AdminRoute } from '@/components/Guards'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { t } from '@/scripts/i18n'
 import CallbackPage from '@/views/auth/Callback'
+import Home from '@/views/Home'
 
 const Dashboard = lazy(() => import('@/views/user/Dashboard'))
 const AdminDashboard = lazy(() => import('@/views/admin/Dashboard'))
@@ -188,19 +189,7 @@ function App() {
                   </SkinlibLayout>
                 </Route>
 
-                <Route
-                  path="/"
-                  exact
-                  component={() => {
-                    useEffect(() => {
-                      window.location.href =
-                        (window as any).blessing?.base_url ||
-                        process.env.REACT_APP_API_BASE ||
-                        'https://skinapi.xn--suki-uf1gk54ba.cn'
-                    }, [])
-                    return null
-                  }}
-                />
+                <Route path="/" exact component={Home} />
 
                 <Route path="*">
                   <MainLayout

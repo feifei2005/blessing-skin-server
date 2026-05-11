@@ -31,9 +31,13 @@ export default function (env?: Env): webpack.Configuration {
     output: {
       clean: true,
       path: `${__dirname}/public/app`,
-      publicPath: '/',
-      filename: isDev ? '[name].js' : '[name].[contenthash:7].js',
-      chunkFilename: isDev ? '[id].js' : '[id].[contenthash:7].js',
+      publicPath: process.env.NO_HASH ? '/app/' : '/',
+      filename:
+        isDev || process.env.NO_HASH
+          ? '[name].js'
+          : '[name].[contenthash:7].js',
+      chunkFilename:
+        isDev || process.env.NO_HASH ? '[id].js' : '[id].[contenthash:7].js',
       crossOriginLoading: 'anonymous',
     },
     module: {

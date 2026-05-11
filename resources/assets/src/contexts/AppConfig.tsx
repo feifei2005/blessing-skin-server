@@ -7,6 +7,8 @@ export interface AppConfig {
   siteName: string
   locale: string
   version: string
+  siteDescription: string
+  homePicUrl: string
   extra: Record<string, any>
 }
 
@@ -15,6 +17,8 @@ const defaultConfig: AppConfig = {
   siteName: '',
   locale: navigator.language.replace(/-/g, '_') || 'en',
   version: '',
+  siteDescription: '',
+  homePicUrl: '',
   extra: (window as any).blessing?.extra || {},
 }
 
