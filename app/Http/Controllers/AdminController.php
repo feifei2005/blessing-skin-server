@@ -18,31 +18,8 @@ class AdminController extends Controller
 {
     public function index(Filter $filter)
     {
-        $grid = [
-            'layout' => [
-                ['md-6', 'md-6'],
-            ],
-            'widgets' => [
-                [
-                    [
-                        'admin.widgets.dashboard.usage',
-                        'admin.widgets.dashboard.notification',
-                    ],
-                    ['admin.widgets.dashboard.chart'],
-                ],
-            ],
-        ];
-        $grid = $filter->apply('grid:admin.index', $grid);
-
-        return view('admin.index', [
-            'grid' => $grid,
-            'sum' => [
-                'users' => User::count(),
-                'players' => Player::count(),
-                'textures' => Texture::count(),
-                'storage' => Texture::select('size')->sum('size'),
-            ],
-        ]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/admin', 302);
     }
 
     public function chartData()
@@ -117,12 +94,8 @@ class AdminController extends Controller
         Filesystem $filesystem,
         Filter $filter,
     ) {
-        $data = $this->buildStatusData($request, $plugins, $filesystem, $filter);
-
-        return view('admin.status')
-            ->with('grid', $data['grid'])
-            ->with('detail', $data['detail'])
-            ->with('plugins', $data['plugins']);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/admin/status', 302);
     }
 
     public function statusData(

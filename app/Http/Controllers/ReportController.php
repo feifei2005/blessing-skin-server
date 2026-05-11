@@ -58,11 +58,8 @@ class ReportController extends Controller
 
     public function track()
     {
-        $reports = Report::where('reporter', auth()->id())
-            ->orderBy('report_at', 'desc')
-            ->paginate(10);
-
-        return view('user.report', ['reports' => $reports]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/user/reports', 302);
     }
 
     public function trackData()

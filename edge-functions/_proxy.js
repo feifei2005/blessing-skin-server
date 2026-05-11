@@ -3,6 +3,15 @@ import { API_HOST, FRONTEND_HOST } from './_config.js'
 const API_BASE = `https://${API_HOST}`
 const CORS_ORIGIN = `https://${FRONTEND_HOST}`
 
+// 需要保留 Cookie 的路径（session 相关）
+const COOKIE_PATHS = ['/auth/captcha']
+
+function needsCookie(pathname) {
+  return COOKIE_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(p + '?'),
+  )
+}
+
 export function proxy(context) {
   const { request } = context
   const url = new URL(request.url)
@@ -16,6 +25,7 @@ export function proxy(context) {
         'Access-Control-Allow-Methods':
           'GET, POST, PUT, DELETE, PATCH, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Max-Age': '86400',
       },
     })
@@ -24,7 +34,10 @@ export function proxy(context) {
   const targetUrl = `${API_BASE}${url.pathname}${url.search}`
 
   const headers = new Headers(request.headers)
-  headers.delete('Cookie')
+  // 仅在不需要 Cookie 的路径上删除 Cookie
+  if (!needsCookie(url.pathname)) {
+    headers.delete('Cookie')
+  }
   headers.delete('Host')
 
   return fetch(targetUrl, {
@@ -35,6 +48,7 @@ export function proxy(context) {
   }).then((response) => {
     const respHeaders = new Headers(response.headers)
     respHeaders.set('Access-Control-Allow-Origin', CORS_ORIGIN)
+    respHeaders.set('Access-Control-Allow-Credentials', 'true')
 
     // 重写 redirect Location，避免泄露后端域名
     if (response.status >= 300 && response.status < 400) {

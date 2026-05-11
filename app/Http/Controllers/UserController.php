@@ -35,47 +35,8 @@ class UserController extends Controller
 
     public function index(Filter $filter)
     {
-        $user = Auth::user();
-
-        [$min, $max] = explode(',', option('sign_score'));
-        $scoreIntro = trans('user.score-intro.introduction', [
-            'initial_score' => option('user_initial_score'),
-            'score-from' => $min,
-            'score-to' => $max,
-            'return-score' => option('return_score')
-                ? trans('user.score-intro.will-return-score')
-                : trans('user.score-intro.no-return-score'),
-        ]);
-
-        $grid = [
-            'layout' => [
-                ['md-7', 'md-5'],
-            ],
-            'widgets' => [
-                [
-                    [
-                        'user.widgets.email-verification',
-                        'user.widgets.dashboard.usage',
-                    ],
-                    ['user.widgets.dashboard.announcement'],
-                ],
-            ],
-        ];
-        $grid = $filter->apply('grid:user.index', $grid);
-
-        $converter = new GithubFlavoredMarkdownConverter();
-
-        return view('user.index')->with([
-            'score_intro' => $scoreIntro,
-            'rates' => [
-                'storage' => option('score_per_storage'),
-                'player' => option('score_per_player'),
-                'closet' => option('score_per_closet_item'),
-            ],
-            'announcement' => $converter->convertToHtml(option_localized('announcement')),
-            'grid' => $grid,
-            'extra' => ['unverified' => option('require_verification') && !$user->verified],
-        ]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/user', 302);
     }
 
     public function scoreInfo()
@@ -180,32 +141,8 @@ class UserController extends Controller
 
     public function profile(Filter $filter)
     {
-        $user = Auth::user();
-
-        $grid = [
-            'layout' => [
-                ['md-6', 'md-6'],
-            ],
-            'widgets' => [
-                [
-                    [
-                        'user.widgets.profile.avatar',
-                        'user.widgets.profile.password',
-                    ],
-                    [
-                        'user.widgets.profile.nickname',
-                        'user.widgets.profile.email',
-                        'user.widgets.profile.delete-account',
-                    ],
-                ],
-            ],
-        ];
-        $grid = $filter->apply('grid:user.profile', $grid);
-
-        return view('user.profile')
-            ->with('user', $user)
-            ->with('grid', $grid)
-            ->with('site_name', option_localized('site_name'));
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/user/profile', 302);
     }
 
     public function handleProfile(Request $request, Filter $filter, Dispatcher $dispatcher)

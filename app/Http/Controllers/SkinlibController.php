@@ -96,54 +96,8 @@ class SkinlibController extends Controller
 
     public function show(Filter $filter, Texture $texture)
     {
-        /** @var User */
-        $user = Auth::user();
-        /** @var FilesystemAdapter */
-        $disk = Storage::disk('textures');
-
-        if ($disk->missing($texture->hash)) {
-            if (option('auto_del_invalid_texture')) {
-                $texture->delete();
-            }
-            abort(404, trans('skinlib.show.deleted'));
-        }
-
-        $badges = [];
-        $uploader = $texture->owner;
-        if ($uploader) {
-            if ($uploader->isAdmin()) {
-                $badges[] = ['text' => 'STAFF', 'color' => 'primary'];
-            }
-
-            $badges = $filter->apply('user_badges', $badges, [$uploader]);
-        }
-
-        $grid = [
-            'layout' => [
-                ['md-8', 'md-4'],
-            ],
-            'widgets' => [
-                [
-                    ['shared.previewer'],
-                    ['skinlib.widgets.show.side'],
-                ],
-            ],
-        ];
-        $grid = $filter->apply('grid:skinlib.show', $grid);
-
-        return view('skinlib.show')
-            ->with('texture', $texture)
-            ->with('grid', $grid)
-            ->with('extra', [
-                'download' => (bool) option('allow_downloading_texture'),
-                'currentUid' => $user ? $user->uid : 0,
-                'admin' => $user && $user->isAdmin(),
-                'inCloset' => $user && $user->closet()->where('tid', $texture->tid)->count() > 0,
-                'uploaderExists' => (bool) $uploader,
-                'nickname' => optional($uploader)->nickname ?? trans('general.unexistent-user'),
-                'report' => intval(option('reporter_score_modification', 0)),
-                'badges' => $badges,
-            ]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/skinlib/show/' . $texture->tid, 302);
     }
 
     public function info(Texture $texture)
@@ -153,38 +107,8 @@ class SkinlibController extends Controller
 
     public function upload(Filter $filter)
     {
-        $grid = [
-            'layout' => [
-                ['md-6', 'md-6'],
-            ],
-            'widgets' => [
-                [
-                    ['skinlib.widgets.upload.input'],
-                    ['shared.previewer'],
-                ],
-            ],
-        ];
-        $grid = $filter->apply('grid:skinlib.upload', $grid);
-
-        $converter = new GithubFlavoredMarkdownConverter();
-
-        return view('skinlib.upload')
-            ->with('grid', $grid)
-            ->with('extra', [
-                'rule' => ($regexp = option('texture_name_regexp'))
-                    ? trans('skinlib.upload.name-rule-regexp', compact('regexp'))
-                    : trans('skinlib.upload.name-rule'),
-                'privacyNotice' => trans(
-                    'skinlib.upload.private-score-notice',
-                    ['score' => option('private_score_per_storage')]
-                ),
-                'score' => (int) auth()->user()->score,
-                'scorePublic' => (int) option('score_per_storage'),
-                'scorePrivate' => (int) option('private_score_per_storage'),
-                'closetItemCost' => (int) option('score_per_closet_item'),
-                'award' => (int) option('score_award_per_texture'),
-                'contentPolicy' => $converter->convertToHtml(option_localized('content_policy'))->getContent(),
-            ]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/skinlib/upload', 302);
     }
 
     public function handleUpload(

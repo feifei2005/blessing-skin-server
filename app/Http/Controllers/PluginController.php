@@ -14,38 +14,14 @@ class PluginController extends Controller
 {
     public function config(PluginManager $plugins, $name)
     {
-        $plugin = $plugins->get($name);
-        if ($plugin && $plugin->isEnabled()) {
-            if ($plugin->hasConfigClass()) {
-                return app()->call($plugin->getConfigClass().'@render');
-            } elseif ($plugin->hasConfigView()) {
-                return $plugin->getConfigView();
-            } else {
-                return abort(404, trans('admin.plugins.operations.no-config-notice'));
-            }
-        } else {
-            return abort(404, trans('admin.plugins.operations.no-config-notice'));
-        }
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/admin/plugins/manage', 302);
     }
 
     public function readme(PluginManager $plugins, $name)
     {
-        $plugin = $plugins->get($name);
-        if (empty($plugin)) {
-            return abort(404, trans('admin.plugins.operations.no-readme-notice'));
-        }
-
-        $readmePath = $plugin->getReadme();
-        if (empty($readmePath)) {
-            return abort(404, trans('admin.plugins.operations.no-readme-notice'));
-        }
-
-        $title = trans($plugin->title);
-        $path = $plugin->getPath().'/'.$readmePath;
-        $converter = new GithubFlavoredMarkdownConverter();
-        $content = $converter->convertToHtml(file_get_contents($path));
-
-        return view('admin.plugin.readme', compact('content', 'title'));
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/admin/plugins/manage', 302);
     }
 
     public function manage(Request $request, PluginManager $plugins)

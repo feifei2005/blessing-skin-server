@@ -15,32 +15,8 @@ class ClosetController extends Controller
 {
     public function index(Filter $filter)
     {
-        $grid = [
-            'layout' => [
-                ['md-8', 'md-4'],
-            ],
-            'widgets' => [
-                [
-                    [
-                        'user.widgets.email-verification',
-                        'user.widgets.closet.list',
-                    ],
-                    ['shared.previewer'],
-                ],
-            ],
-        ];
-        $grid = $filter->apply('grid:user.closet', $grid);
-
-        return view('user.closet')
-            ->with('grid', $grid)
-            ->with('extra', [
-                'unverified' => option('require_verification') && !auth()->user()->verified,
-                'rule' => trans('user.player.player-name-rule.'.option('player_name_rule')),
-                'length' => trans(
-                    'user.player.player-name-length',
-                    ['min' => option('player_name_length_min'), 'max' => option('player_name_length_max')]
-                ),
-            ]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/user/closet', 302);
     }
 
     public function getClosetData(Request $request)

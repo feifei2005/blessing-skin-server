@@ -9,13 +9,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('home')
-            ->with('user', auth()->user())
-            ->with('site_description', option_localized('site_description'))
-            ->with('transparent_navbar', (bool) option('transparent_navbar', false))
-            ->with('fixed_bg', option('fixed_bg'))
-            ->with('hide_intro', option('hide_intro'))
-            ->with('home_pic_url', option('home_pic_url') ?: config('options.home_pic_url'));
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl, 302);
     }
 
     public function apiRoot()

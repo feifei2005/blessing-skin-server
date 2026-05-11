@@ -24,30 +24,8 @@ class AuthController extends Controller
 {
     public function login(Filter $filter)
     {
-        // Redirect traditional web pages to the SPA frontend
-        $spaUrl = env('SPA_URL', '');
-        if ($spaUrl && !request()->expectsJson()) {
-            return redirect($spaUrl . '/auth/login', 302);
-        }
-        $whip = new Whip();
-        $ip = $whip->getValidIpAddress();
-        $ip = $filter->apply('client_ip', $ip);
-
-        $rows = [
-            'auth.rows.login.notice',
-            'auth.rows.login.message',
-            'auth.rows.login.form',
-            'auth.rows.login.registration-link',
-        ];
-        $rows = $filter->apply('auth_page_rows:login', $rows);
-
-        return view('auth.login', [
-            'rows' => $rows,
-            'extra' => [
-                'tooManyFails' => cache(sha1('login_fails_'.$ip)) > 3,
-                'turnstile' => option('turnstile_sitekey'),
-            ],
-        ]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/auth/login', 302);
     }
 
     public function handleLogin(
@@ -178,24 +156,8 @@ class AuthController extends Controller
 
     public function register(Filter $filter)
     {
-        $spaUrl = env('SPA_URL', '');
-        if ($spaUrl && !request()->expectsJson()) {
-            return redirect($spaUrl . '/auth/register', 302);
-        }
-        $rows = [
-            'auth.rows.register.notice',
-            'auth.rows.register.form',
-        ];
-        $rows = $filter->apply('auth_page_rows:register', $rows);
-
-        return view('auth.register', [
-            'site_name' => option_localized('site_name'),
-            'rows' => $rows,
-            'extra' => [
-                'player' => (bool) option('register_with_player_name'),
-                'turnstile' => option('turnstile_sitekey'),
-            ],
-        ]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/auth/register', 302);
     }
 
     public function handleRegister(
@@ -285,19 +247,8 @@ class AuthController extends Controller
 
     public function forgot()
     {
-        $spaUrl = env('SPA_URL', '');
-        if ($spaUrl && !request()->expectsJson()) {
-            return redirect($spaUrl . '/auth/forgot', 302);
-        }
-        if (config('mail.default') != '') {
-            return view('auth.forgot', [
-                'extra' => [
-                    'turnstile' => option('turnstile_sitekey'),
-                ],
-            ]);
-        } else {
-            throw new PrettyPageException(trans('auth.forgot.disabled'), 8);
-        }
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/auth/forgot', 302);
     }
 
     public function handleForgot(
@@ -358,13 +309,12 @@ class AuthController extends Controller
 
     public function reset(Request $request, $uid)
     {
-        $spaUrl = env('SPA_URL', '');
-        if ($spaUrl && !request()->expectsJson()) {
-            return redirect($spaUrl . '/auth/reset/' . $uid, 302);
-        }
         abort_unless($request->hasValidSignature(false), 403, trans('auth.reset.invalid'));
 
-        return view('auth.reset')->with('user', User::find($uid));
+        $spaUrl = env('SPA_URL', config('app.url'));
+        $query = $request->getQueryString();
+
+        return redirect($spaUrl . '/auth/reset/' . $uid . ($query ? '?' . $query : ''), 302);
     }
 
     public function handleReset(Dispatcher $dispatcher, Request $request, $uid)
@@ -418,13 +368,13 @@ class AuthController extends Controller
 
     public function verify(Request $request)
     {
-        if (!option('require_verification')) {
-            throw new PrettyPageException(trans('user.verification.disabled'), 1);
-        }
-
         abort_unless($request->hasValidSignature(false), 403, trans('auth.verify.invalid'));
 
-        return view('auth.verify');
+        $spaUrl = env('SPA_URL', config('app.url'));
+        $user = $request->route('user');
+        $query = $request->getQueryString();
+
+        return redirect($spaUrl . '/auth/verify/' . $user . ($query ? '?' . $query : ''), 302);
     }
 
     public function handleVerify(Request $request, User $user)

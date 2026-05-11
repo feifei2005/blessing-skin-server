@@ -16,17 +16,8 @@ class UpdateController extends Controller
 
     public function showUpdatePage()
     {
-        $info = $this->getUpdateInfo();
-        $canUpdate = $this->canUpdate(Arr::get($info, 'info'));
-
-        return view('admin.update', [
-            'info' => [
-                'latest' => Arr::get($info, 'info.latest'),
-                'current' => config('app.version'),
-            ],
-            'error' => Arr::get($info, 'error', $canUpdate['reason']),
-            'can_update' => $canUpdate['can'],
-        ]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/admin/update', 302);
     }
 
     public function checkUpdate()

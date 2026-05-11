@@ -37,7 +37,9 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::middleware(['authorize', Middleware\EnsureEmailFilled::class])
         ->name('bind.')
         ->group(function () {
-            Route::view('bind', 'auth.bind')->name('view');
+            Route::get('bind', function () {
+                return redirect(env('SPA_URL', config('app.url')) . '/auth/bind', 302);
+            })->name('view');
             Route::post('bind', 'AuthController@fillEmail')->name('verify');
         });
 
@@ -89,7 +91,9 @@ Route::prefix('user')
         });
 
         // OAuth2 Management
-        Route::view('oauth/manage', 'user.oauth')->middleware('verified');
+        Route::get('oauth/manage', function () {
+            return redirect(env('SPA_URL', config('app.url')) . '/user/oauth/manage', 302);
+        })->middleware('verified');
     });
 
 Route::prefix('texture')->name('texture.')->group(function () {
@@ -106,7 +110,9 @@ Route::prefix('texture')->name('texture.')->group(function () {
 });
 
 Route::prefix('skinlib')->name('skinlib.')->group(function () {
-    Route::view('', 'skinlib.index')->name('home');
+    Route::get('', function () {
+        return redirect(env('SPA_URL', config('app.url')) . '/skinlib', 302);
+    })->name('home');
     Route::get('info/{texture}', 'SkinlibController@info')->name('info');
     Route::get('show/{texture}', 'SkinlibController@show')->name('show');
     Route::get('list', 'SkinlibController@library')->name('list');
@@ -133,7 +139,9 @@ Route::prefix('admin')
         Route::get('status', 'AdminController@status')->name('status');
 
         Route::prefix('users')->name('users.')->group(function () {
-            Route::view('', 'admin.users')->name('view');
+            Route::get('', function () {
+                return redirect(env('SPA_URL', config('app.url')) . '/admin/users', 302);
+            })->name('view');
             Route::get('list', 'UsersManagementController@list')->name('list');
             Route::prefix('{user}')->group(function () {
                 Route::put('email', 'UsersManagementController@email')->name('email');
@@ -147,7 +155,9 @@ Route::prefix('admin')
         });
 
         Route::prefix('players')->name('players.')->group(function () {
-            Route::view('', 'admin.players')->name('view');
+            Route::get('', function () {
+                return redirect(env('SPA_URL', config('app.url')) . '/admin/players', 302);
+            })->name('view');
             Route::get('list', 'PlayersManagementController@list')->name('list');
             Route::prefix('{player}')->group(function () {
                 Route::put('name', 'PlayersManagementController@name')->name('name');
@@ -163,13 +173,17 @@ Route::prefix('admin')
         });
 
         Route::prefix('reports')->name('reports.')->group(function () {
-            Route::view('', 'admin.reports')->name('view');
+            Route::get('', function () {
+                return redirect(env('SPA_URL', config('app.url')) . '/admin/reports', 302);
+            })->name('view');
             Route::put('{report}', 'ReportController@review')->name('review');
             Route::get('list', 'ReportController@manage')->name('list');
         });
 
         Route::prefix('i18n')->name('i18n.')->group(function () {
-            Route::view('', 'admin.i18n')->name('view');
+            Route::get('', function () {
+                return redirect(env('SPA_URL', config('app.url')) . '/admin/i18n', 302);
+            })->name('view');
             Route::get('list', 'TranslationsController@list')->name('list');
             Route::post('', 'TranslationsController@create')->name('create');
             Route::put('{line}', 'TranslationsController@update')->name('update');
@@ -179,7 +193,9 @@ Route::prefix('admin')
         Route::prefix('plugins')->name('plugins.')->group(function () {
             Route::get('data', 'PluginController@getPluginData')->name('data');
 
-            Route::view('manage', 'admin.plugins')->name('view');
+            Route::get('manage', function () {
+                return redirect(env('SPA_URL', config('app.url')) . '/admin/plugins/manage', 302);
+            })->name('view');
             Route::post('manage', 'PluginController@manage')->name('view');
             Route::any('config/{name}', 'PluginController@config')->name('config');
             Route::get('readme/{name}', 'PluginController@readme')->name('readme');
@@ -189,7 +205,9 @@ Route::prefix('admin')
             });
 
             Route::prefix('market')->name('market.')->group(function () {
-                Route::view('', 'admin.market')->name('view');
+                Route::get('', function () {
+                    return redirect(env('SPA_URL', config('app.url')) . '/admin/plugins/market', 302);
+                })->name('view');
                 Route::get('list', 'MarketController@marketData')->name('list');
                 Route::post('download', 'MarketController@download')->name('download');
             });

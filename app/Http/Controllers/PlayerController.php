@@ -37,37 +37,8 @@ class PlayerController extends Controller
 
     public function index(Filter $filter)
     {
-        $grid = [
-            'layout' => [
-                ['md-6', 'md-6'],
-            ],
-            'widgets' => [
-                [
-                    [
-                        'user.widgets.players.list',
-                        'user.widgets.players.notice',
-                    ],
-                    ['shared.previewer'],
-                ],
-            ],
-        ];
-        $grid = $filter->apply('grid:user.player', $grid);
-
-        /** @var User */
-        $user = auth()->user();
-
-        return view('user.player')
-            ->with('grid', $grid)
-            ->with('extra', [
-                'count' => $user->players()->count(),
-                'rule' => trans('user.player.player-name-rule.'.option('player_name_rule')),
-                'length' => trans(
-                    'user.player.player-name-length',
-                    ['min' => option('player_name_length_min'), 'max' => option('player_name_length_max')]
-                ),
-                'score' => auth()->user()->score,
-                'cost' => (int) option('score_per_player'),
-            ]);
+        $spaUrl = env('SPA_URL', config('app.url'));
+        return redirect($spaUrl . '/user/player', 302);
     }
 
     public function list()
