@@ -76,6 +76,11 @@ class HomeController extends Controller
 
             $translations = trans('front-end');
 
+            $translations['index'] = trans('index');
+
+            $general = trans('general');
+            $translations['general'] = array_merge($general, $translations['general'] ?? []);
+
             $plugins = app(PluginManager::class)->getEnabledPlugins();
             foreach ($plugins as $plugin) {
                 $translations[$plugin->name] = trans($plugin->namespace.'::front-end');

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\Unzip;
-use Cache;
 use Composer\CaBundle\CaBundle;
 use Composer\Semver\Comparator;
 use Illuminate\Filesystem\Filesystem;

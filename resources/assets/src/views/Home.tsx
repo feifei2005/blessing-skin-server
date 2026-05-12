@@ -12,7 +12,7 @@ export default function Home() {
   const { isAuth, user } = useAuth()
   const history = useHistory()
 
-  const bgUrl = homePicUrl || '/bg.webp'
+  const bgUrl = homePicUrl || '/app/bg.webp'
 
   return (
     <div className="layout-top-nav">
