@@ -23,7 +23,7 @@ export default {
     forgot: () => '/api/auth/forgot' as const,
     login: () => '/auth/login' as const,
     logout: () => '/api/auth/logout' as const,
-    register: () => '/auth/register' as const,
+    register: () => '/api/auth/register' as const,
     reset: (uid: number) => `/api/auth/reset/${uid}`,
     verify: (uid: number) => `/auth/verify/${uid}`,
   },
