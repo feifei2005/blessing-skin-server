@@ -23,10 +23,10 @@ const Forgot: React.FC = () => {
     setWarningMessage('')
     setIsSending(true)
 
-    const captcha = await ref.current!.execute()
+    const captchaResult = await ref.current!.execute()
     const { code, message } = await fetch.post<fetch.ResponseBody>(
       urls.auth.forgot(),
-      { email, captcha },
+      { email, ...captchaResult },
     )
     if (code === 0) {
       setSuccessMessage(message)

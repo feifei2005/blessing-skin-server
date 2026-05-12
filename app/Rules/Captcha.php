@@ -28,6 +28,12 @@ class Captcha implements Rule
 
         $phrase = session()->pull('captcha');
         if (!$phrase) {
+            $token = request()->input('captcha_token');
+            if ($token) {
+                $phrase = Cache::pull('captcha_' . $token);
+            }
+        }
+        if (!$phrase) {
             $whip = new Whip();
             $ip = $whip->getValidIpAddress();
             $ip = app(Filter::class)->apply('client_ip', $ip);

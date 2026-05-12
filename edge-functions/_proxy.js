@@ -4,7 +4,7 @@ const API_BASE = `https://${API_HOST}`
 const CORS_ORIGIN = `https://${FRONTEND_HOST}`
 
 // 需要保留 Cookie 的路径（session 相关）
-const COOKIE_PATHS = ['/auth/captcha']
+const COOKIE_PATHS = ['/auth/captcha', '/auth/register']
 
 function needsCookie(pathname) {
   return COOKIE_PATHS.some(

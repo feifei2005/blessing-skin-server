@@ -336,13 +336,20 @@ class AuthController extends Controller
     {
         $builder->build(100, 34);
 
+        $phrase = $builder->getPhrase();
+        $token = $request->query('t');
+
+        if ($token) {
+            Cache::put('captcha_' . $token, $phrase, 300);
+        }
+
         $whip = new Whip();
         $ip = $whip->getValidIpAddress();
         $ip = app(Filter::class)->apply('client_ip', $ip);
-        Cache::put('captcha_' . $ip, $builder->getPhrase(), 300);
+        Cache::put('captcha_' . $ip, $phrase, 300);
 
         if ($request->hasSession()) {
-            session(['captcha' => $builder->getPhrase()]);
+            session(['captcha' => $phrase]);
         }
 
         return response($builder->output(), 200, [

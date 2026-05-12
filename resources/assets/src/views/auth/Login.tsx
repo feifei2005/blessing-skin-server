@@ -69,9 +69,7 @@ const Login: React.FC = () => {
       identification,
       password,
       keep: remember,
-      captcha: hasTooManyFails
-        ? await captchaRef.current!.execute()
-        : undefined,
+      ...(hasTooManyFails ? await captchaRef.current!.execute() : {}),
     })
 
     if (isSuccessfulResponse(response)) {

@@ -57,12 +57,17 @@ const Registration: React.FC = () => {
     }
 
     setIsPending(true)
+    const captchaResult = await captchaRef.current!.execute()
     const { code, message } = await fetch.post<fetch.ResponseBody>(
       urls.auth.register(),
-      Object.assign(
-        { email, password, captcha: await captchaRef.current!.execute() },
-        requirePlayer ? { player_name: playerName } : { nickname: nickName },
-      ),
+      {
+        email,
+        password,
+        ...captchaResult,
+        ...(requirePlayer
+          ? { player_name: playerName }
+          : { nickname: nickName }),
+      },
     )
     if (code === 0) {
       toast.success(message)

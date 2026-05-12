@@ -1,12 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import * as React from 'react'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
+import { nanoid } from 'nanoid'
 import { t } from '@/scripts/i18n'
 import { useBlessingExtra, useAppConfig } from '@/contexts/AppConfig'
 import * as cssUtils from '@/styles/utils'
 
 export interface CaptchaHandle {
-  execute: () => Promise<string>
+  execute: () => Promise<Record<string, string>>
   reset: () => void
 }
 
@@ -14,21 +15,24 @@ const Captcha = React.forwardRef<CaptchaHandle>((_props, ref) => {
   const { baseUrl } = useAppConfig()
   const sitekey = useBlessingExtra<string>('turnstile', '')
   const [value, setValue] = React.useState('')
-  const [time, setTime] = React.useState(Date.now())
+  const [token, setToken] = React.useState(() => nanoid(8))
   const turnstileRef = React.useRef<TurnstileInstance>()
 
   React.useImperativeHandle(ref, () => ({
     execute: async () => {
       if (turnstileRef.current) {
-        return turnstileRef.current.getResponsePromise()
+        return {
+          captcha: await turnstileRef.current.getResponsePromise(),
+          captcha_token: token,
+        }
       }
-      return value
+      return { captcha: value, captcha_token: token }
     },
     reset: () => {
       if (turnstileRef.current) {
         turnstileRef.current.reset()
       } else {
-        setTime(Date.now())
+        setToken(nanoid(8))
       }
     },
   }))
@@ -38,7 +42,7 @@ const Captcha = React.forwardRef<CaptchaHandle>((_props, ref) => {
   }
 
   const handleRefresh = () => {
-    setTime(Date.now())
+    setToken(nanoid(8))
   }
 
   return sitekey ? (
@@ -58,7 +62,7 @@ const Captcha = React.forwardRef<CaptchaHandle>((_props, ref) => {
         />
       </div>
       <img
-        src={`${baseUrl}/auth/captcha?v=${time}`}
+        src={`${baseUrl}/auth/captcha?t=${token}`}
         alt={t('auth.captcha')}
         css={cssUtils.pointerCursor}
         height={34}
