@@ -10,6 +10,7 @@ import Alert from '@/components/Alert'
 import Captcha, { type CaptchaHandle } from '@/components/Captcha'
 import EmailSuggestion from '@/components/EmailSuggestion'
 import { saveToken } from '@/auth/tokenStore'
+import { useAuth } from '@/auth/AuthContext'
 
 type SuccessfulResponse = {
   code: 0
@@ -43,6 +44,7 @@ const Login: React.FC = () => {
   const captchaRef = useRef<CaptchaHandle | null>(null)
   const tooManyFails = useBlessingExtra<boolean>('tooManyFails', false)
   const history = useHistory()
+  const { refreshUser } = useAuth()
 
   useEmitMounted()
 
@@ -83,6 +85,7 @@ const Login: React.FC = () => {
           refreshToken: '',
           expiresAt,
         })
+        await refreshUser()
         history.push('/user')
       } else {
         // Session-based login (server-rendered mode) — full page redirect

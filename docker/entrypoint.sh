@@ -20,5 +20,8 @@ fi
 echo "[entrypoint] Running database migrations..."
 php artisan migrate --force
 
+echo "[entrypoint] Setting up Passport clients..."
+php artisan passport:install --no-interaction
+
 echo "[entrypoint] Starting Apache..."
 exec "$@"

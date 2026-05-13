@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { handleCallback } from '@/auth/AuthService'
+import { useAuth } from '@/auth/AuthContext'
 import { MainLayout } from '@/layouts'
 import { t } from '@/scripts/i18n'
 
 const CallbackPage: React.FC = () => {
   const history = useHistory()
   const [error, setError] = useState('')
+  const { refreshUser } = useAuth()
 
   useEffect(() => {
     const url = new URL(window.location.href)
@@ -25,15 +27,16 @@ const CallbackPage: React.FC = () => {
     }
 
     handleCallback(code, state)
-      .then((success) => {
+      .then(async (success) => {
         if (success) {
+          await refreshUser()
           history.replace('/user')
         } else {
           setError('Failed to exchange authorization code')
         }
       })
       .catch((e) => setError(e.message || 'Unexpected error'))
-  }, [history])
+  }, [history, refreshUser])
 
   if (error) {
     return (
