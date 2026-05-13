@@ -58,6 +58,7 @@ class HomeController extends Controller
                 'report' => (int) option('reporter_reward_score'),
                 'regs_per_ip' => option('regs_per_ip'),
                 'register_with_player_name' => (bool) option('register_with_player_name'),
+                'player' => (bool) option('register_with_player_name'),
             ],
         ]);
     }

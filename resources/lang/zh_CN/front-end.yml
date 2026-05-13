@@ -22,6 +22,7 @@ auth:
   captcha: 请输入验证码
   change-captcha: 点击以更换图片
   login-link: 已经有账号了？登录
+  register-link: 还没有账号？注册
   forgot-link: 忘记密码？
   keep: 记住我
   repeat-pwd: 重复密码
