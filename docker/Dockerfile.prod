@@ -57,7 +57,6 @@ RUN mkdir -p storage/plugins storage/framework/views storage/framework/cache sto
     php artisan key:generate && \
     mv .env storage/ && \
     ln -s storage/.env .env && \
-    touch storage/install.lock && \
     rm -rf *.config.js *.config.ts tsconfig.* \
       package.json yarn.lock node_modules/ \
       resources/assets/ resources/misc resources/misc/backgrounds/ \

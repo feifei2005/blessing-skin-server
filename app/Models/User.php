@@ -70,6 +70,13 @@ class User extends Authenticatable
         'is_dark_mode' => ['boolean' => true],
     ];
 
+    protected $appends = ['admin'];
+
+    public function getAdminAttribute(): bool
+    {
+        return $this->isAdmin();
+    }
+
     public function isAdmin(): bool
     {
         return $this->permission >= static::ADMIN;
