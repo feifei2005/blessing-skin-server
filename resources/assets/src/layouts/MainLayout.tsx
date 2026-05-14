@@ -2,6 +2,8 @@ import React from 'react'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
 import { useAppConfig } from '@/contexts/AppConfig'
+import { useAuth } from '@/auth/AuthContext'
+import EmailVerification from '@/views/widgets/EmailVerification'
 
 interface MainLayoutProps {
   scope: 'user' | 'admin'
@@ -11,6 +13,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ scope, title, children }: MainLayoutProps) {
   const { version, siteName } = useAppConfig()
+  const { user } = useAuth()
   return (
     <div className="wrapper">
       <Header />
@@ -29,7 +32,10 @@ export function MainLayout({ scope, title, children }: MainLayoutProps) {
           </div>
         </div>
         <section className="content">
-          <div className="container-fluid">{children}</div>
+          <div className="container-fluid">
+            {user && !user.verified && <EmailVerification />}
+            {children}
+          </div>
         </section>
       </div>
       <footer className="main-footer">

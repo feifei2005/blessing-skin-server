@@ -68,6 +68,7 @@ export interface UserInfo {
   admin: boolean
   avatar: string
   permission: number
+  verified: boolean
 }
 
 export async function fetchUser(): Promise<UserInfo | null> {
@@ -79,7 +80,8 @@ export async function fetchUser(): Promise<UserInfo | null> {
       return null
     }
     const data = await resp.json()
-    return data.data || data
+    const user = (data.data || data) as UserInfo
+    return user
   } catch {
     return null
   }

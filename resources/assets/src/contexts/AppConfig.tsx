@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { loadI18n } from '@/scripts/i18n'
-import { tryRenderEmailVerification } from '@/scripts/emailVerification'
 
 export interface AppConfig {
   baseUrl: string
@@ -95,8 +94,6 @@ export function AppConfigProvider({
             }
             return next
           })
-          // 副作用应在 state 更新之外执行
-          tryRenderEmailVerification()
         }
       })
       .catch((e) => {

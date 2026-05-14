@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAppConfig } from '@/contexts/AppConfig'
 import { useAuth } from '@/auth/AuthContext'
+import EmailVerification from '@/views/widgets/EmailVerification'
 
 interface SkinlibLayoutProps {
   children: React.ReactNode
@@ -47,6 +48,7 @@ export function SkinlibLayout({ children }: SkinlibLayoutProps) {
           </div>
         </div>
       </nav>
+      {user && !user.verified && <EmailVerification />}
       {children}
       <footer className="main-footer">
         <div className="container">
