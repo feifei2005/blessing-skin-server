@@ -54,6 +54,7 @@ export function SkinlibLayout({ children }: SkinlibLayoutProps) {
           reserved.
         </div>
       </footer>
+      <div id="previewer"></div>
     </div>
   )
 }

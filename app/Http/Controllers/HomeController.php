@@ -79,6 +79,9 @@ class HomeController extends Controller
 
             $translations['index'] = trans('index');
 
+            $user = trans('user');
+            $translations['user'] = array_merge($user, $translations['user'] ?? []);
+
             $general = trans('general');
             $translations['general'] = array_merge($general, $translations['general'] ?? []);
 

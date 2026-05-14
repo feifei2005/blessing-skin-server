@@ -4,7 +4,8 @@ export default function useMount(selector: string): HTMLElement | null {
   const container = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    const mount = document.querySelector(selector)!
+    const mount = document.querySelector(selector)
+    if (!mount) return
     const div = document.createElement('div')
     container.current = div
 
