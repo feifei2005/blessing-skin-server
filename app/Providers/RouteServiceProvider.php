@@ -29,7 +29,7 @@ class RouteServiceProvider extends ServiceProvider
 
         foreach ($router->getRoutes()->getRoutesByName() as $name => $route) {
             if (Str::startsWith($name, ['passport.authorizations', 'passport.tokens', 'passport.clients'])) {
-                $route->middleware(['auth:web,oauth']);
+                $route->action['middleware'] = ['web', 'auth:web,oauth'];
             }
         }
 
