@@ -39,13 +39,19 @@ class HomeController extends Controller
     public function siteConfig()
     {
         $user = auth()->user();
+        $locale = config('app.locale');
 
         return response()->json([
             'siteName' => option_localized('site_name'),
-            'locale' => config('app.locale'),
+            'locale' => $locale,
             'version' => config('app.version'),
             'siteDescription' => option_localized('site_description'),
             'homePicUrl' => option('home_pic_url') ?: config('options.home_pic_url'),
+            'copyrightPrefer' => (int) option('copyright_prefer_'.$locale),
+            'copyrightText' => option('copyright_text_'.$locale),
+            'transparentNavbar' => (bool) option('transparent_navbar'),
+            'hideIntro' => (bool) option('hide_intro'),
+            'fixedBg' => (bool) option('fixed_bg'),
             'extra' => [
                 'turnstile' => option('turnstile_sitekey'),
                 'nickname' => $user?->nickname,
@@ -61,6 +67,18 @@ class HomeController extends Controller
                 'player' => (bool) option('register_with_player_name'),
             ],
         ]);
+    }
+
+    public function customCss()
+    {
+        $css = (string) option('custom_css');
+        return response($css, 200)->header('Content-Type', 'text/css; charset=utf-8');
+    }
+
+    public function customJs()
+    {
+        $js = (string) option('custom_js');
+        return response($js, 200)->header('Content-Type', 'application/javascript; charset=utf-8');
     }
 
     public function i18n($locale)

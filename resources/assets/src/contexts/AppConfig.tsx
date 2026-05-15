@@ -8,6 +8,11 @@ export interface AppConfig {
   version: string
   siteDescription: string
   homePicUrl: string
+  copyrightPrefer: number
+  copyrightText: string
+  transparentNavbar: boolean
+  hideIntro: boolean
+  fixedBg: boolean
   extra: Record<string, any>
   setLocale?: (locale: string) => void
 }
@@ -19,6 +24,11 @@ const defaultConfig: AppConfig = {
   version: '',
   siteDescription: '',
   homePicUrl: '',
+  copyrightPrefer: 0,
+  copyrightText: '',
+  transparentNavbar: true,
+  hideIntro: false,
+  fixedBg: false,
   extra: (window as any).blessing?.extra || {},
 }
 

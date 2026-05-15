@@ -10,6 +10,9 @@ Route::get('i18n/{locale}', 'HomeController@i18n')->name('api.i18n');
 
 Route::get('health', fn () => response()->json(['status' => 'ok', 'timestamp' => now()]));
 
+Route::get('custom-css', 'HomeController@customCss');
+Route::get('custom-js', 'HomeController@customJs');
+
 Route::prefix('auth')->middleware('throttle:10,1')->group(function () {
     Route::post('login', 'AuthController@handleLogin');
     Route::post('register', 'AuthController@handleRegister');

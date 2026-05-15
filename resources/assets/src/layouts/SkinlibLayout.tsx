@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppConfig } from '@/contexts/AppConfig'
 import { useAuth } from '@/auth/AuthContext'
@@ -9,8 +9,21 @@ interface SkinlibLayoutProps {
 }
 
 export function SkinlibLayout({ children }: SkinlibLayoutProps) {
-  const { siteName } = useAppConfig()
+  const { siteName, copyrightPrefer, copyrightText } = useAppConfig()
   const { isAuth, user } = useAuth()
+
+  useEffect(() => {
+    const base = process.env.REACT_APP_API_BASE || ''
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = `${base}/api/custom-css`
+    document.head.appendChild(link)
+
+    const script = document.createElement('script')
+    script.src = `${base}/api/custom-js`
+    script.defer = true
+    document.body.appendChild(script)
+  }, [])
 
   return (
     <div className="wrapper">
@@ -52,8 +65,14 @@ export function SkinlibLayout({ children }: SkinlibLayoutProps) {
       {children}
       <footer className="main-footer">
         <div className="container">
-          <strong>Copyright &copy; Blessing Skin Community.</strong> All rights
-          reserved.
+          {copyrightPrefer === 2 && copyrightText ? (
+            copyrightText
+          ) : (
+            <>
+              <strong>Copyright &copy; Blessing Skin Community.</strong> All
+              rights reserved.
+            </>
+          )}
         </div>
       </footer>
       <div id="previewer"></div>

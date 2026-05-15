@@ -8,16 +8,37 @@ import '@/styles/home.css'
 const FEATURES = ['first', 'second', 'third'] as const
 
 export default function Home() {
-  const { siteName, siteDescription, homePicUrl } = useAppConfig()
+  const {
+    siteName,
+    siteDescription,
+    homePicUrl,
+    transparentNavbar,
+    hideIntro,
+    fixedBg,
+  } = useAppConfig()
   const { isAuth, user } = useAuth()
   const history = useHistory()
 
   const bgUrl = homePicUrl || '/app/bg.webp'
+  const showTransparent = transparentNavbar ?? true
+  const showIntro = !hideIntro
 
   return (
     <div className="layout-top-nav">
-      <div className="hp-wrapper" style={{ backgroundImage: `url(${bgUrl})` }}>
-        <nav className="navbar navbar-expand fixed-top navbar-dark navbar-light ml-0 transparent">
+      <div
+        className="hp-wrapper"
+        style={{
+          backgroundImage: `url(${bgUrl})`,
+          ...(fixedBg ? { backgroundAttachment: 'fixed' } : {}),
+          ...(!showIntro ? { height: 'auto' } : {}),
+        }}
+      >
+        <nav
+          className={
+            'navbar navbar-expand fixed-top navbar-dark navbar-light ml-0' +
+            (showTransparent ? ' transparent' : '')
+          }
+        >
           <div className="container">
             <div className="navbar-header">
               <Link to="/" className="navbar-brand">
@@ -85,34 +106,38 @@ export default function Home() {
         </div>
       </div>
 
-      <div id="intro">
-        <div className="container">
-          <div className="text-center">
-            <h1>{t('index.features.title')}</h1>
-            <br />
-            <br />
-            <div className="container-lg">
-              <div className="row">
-                {FEATURES.map((item) => (
-                  <div className="col-lg-4" key={item}>
-                    <i
-                      className={`fas ${t(`index.features.${item}.icon`)} mb-3`}
-                      aria-hidden="true"
-                    />
-                    <h3>{t(`index.features.${item}.name`)}</h3>
-                    <p
-                      dangerouslySetInnerHTML={{
-                        __html: t(`index.features.${item}.desc`),
-                      }}
-                    />
-                  </div>
-                ))}
+      {showIntro && (
+        <div id="intro">
+          <div className="container">
+            <div className="text-center">
+              <h1>{t('index.features.title')}</h1>
+              <br />
+              <br />
+              <div className="container-lg">
+                <div className="row">
+                  {FEATURES.map((item) => (
+                    <div className="col-lg-4" key={item}>
+                      <i
+                        className={`fas ${t(
+                          `index.features.${item}.icon`,
+                        )} mb-3`}
+                        aria-hidden="true"
+                      />
+                      <h3>{t(`index.features.${item}.name`)}</h3>
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: t(`index.features.${item}.desc`),
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+            <br />
           </div>
-          <br />
         </div>
-      </div>
+      )}
 
       <div id="footer-wrap">
         <div className="container">
@@ -133,14 +158,27 @@ export default function Home() {
         </div>
       </div>
 
-      <div id="copyright" className="with-intro">
+      <div
+        id="copyright"
+        className={showIntro ? 'with-intro' : 'without-intro'}
+      >
         <div className="container">
-          <strong>
-            Copyright &copy; {siteName || 'Blessing Skin'} Community.
-          </strong>{' '}
-          All rights reserved.
+          <Copyright />
         </div>
       </div>
     </div>
+  )
+}
+
+function Copyright() {
+  const { siteName, copyrightPrefer, copyrightText } = useAppConfig()
+  if (copyrightPrefer === 2 && copyrightText) {
+    return <>{copyrightText}</>
+  }
+  return (
+    <>
+      <strong>Copyright &copy; {siteName || 'Blessing Skin'} Community.</strong>{' '}
+      All rights reserved.
+    </>
   )
 }
