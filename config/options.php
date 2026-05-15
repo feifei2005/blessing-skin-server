@@ -42,7 +42,6 @@ return [
     'meta_keywords' => '',
     'meta_description' => '',
     'meta_extras' => '',
-    'cdn_address' => '',
     'turnstile_sitekey' => '',
     'turnstile_secretkey' => '',
     'reporter_score_modification' => '0',

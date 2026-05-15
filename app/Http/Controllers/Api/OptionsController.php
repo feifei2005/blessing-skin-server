@@ -254,7 +254,6 @@ class OptionsController extends Controller
             'force_ssl' => (bool) option('force_ssl'),
             'auto_detect_asset_url' => (bool) option('auto_detect_asset_url'),
             'cache_expire_time' => option('cache_expire_time'),
-            'cdn_address' => option('cdn_address'),
             'enable_avatar_cache' => (bool) option('enable_avatar_cache'),
             'enable_preview_cache' => (bool) option('enable_preview_cache'),
         ]);
@@ -266,7 +265,6 @@ class OptionsController extends Controller
             'force_ssl' => 'nullable|boolean',
             'auto_detect_asset_url' => 'nullable|boolean',
             'cache_expire_time' => 'nullable|integer|min:0',
-            'cdn_address' => 'nullable|string',
             'enable_avatar_cache' => 'nullable|boolean',
             'enable_preview_cache' => 'nullable|boolean',
         ]);
@@ -278,17 +276,6 @@ class OptionsController extends Controller
             if ($request->has($key)) {
                 Option::set($key, $request->input($key));
             }
-        }
-
-        if ($request->has('cdn_address')) {
-            $cdnAddress = $request->input('cdn_address');
-            if ($cdnAddress === null) {
-                $cdnAddress = '';
-            }
-            if (Str::endsWith($cdnAddress, '/')) {
-                $cdnAddress = substr($cdnAddress, 0, -1);
-            }
-            Option::set('cdn_address', $cdnAddress);
         }
 
         return json(trans('admin.options.changed'), 0);

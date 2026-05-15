@@ -7,7 +7,6 @@ interface ResourceData {
   force_ssl: boolean
   auto_detect_asset_url: boolean
   cache_expire_time: string
-  cdn_address: string
   enable_avatar_cache: boolean
   enable_preview_cache: boolean
 }
@@ -102,14 +101,6 @@ const Resource: React.FC = () => {
                 className="form-control"
                 value={data.cache_expire_time}
                 onChange={(e) => update('cache_expire_time', e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label>{t('options.resources.cdn_address.title')}</label>
-              <input
-                className="form-control"
-                value={data.cdn_address}
-                onChange={(e) => update('cdn_address', e.target.value)}
               />
             </div>
           </div>
