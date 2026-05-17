@@ -244,10 +244,103 @@ docker exec blessingskin-db mysqldump -u blessingskin -p blessingskin > backup.s
 
 ---
 
-## 九、安全建议
+## 九、安全配置
+
+### 9.1 密钥管理
+
+本项目涉及以下敏感密钥，**绝对不能提交到 Git 仓库**：
+
+| 密钥            | 用途                           | 生成方式                           |
+| --------------- | ------------------------------ | ---------------------------------- |
+| `APP_KEY`       | 加密 session、cookie、签名 URL | `php artisan key:generate`         |
+| Passport 密钥对 | 签发/验证 OAuth2 token         | `php artisan passport:keys`        |
+| `JWT_SECRET`    | 签发 JWT token                 | `php artisan jwt:secret`（如使用） |
+| `DB_PASSWORD`   | 数据库访问                     | 手动设置强密码                     |
+| `MAIL_PASSWORD` | SMTP 授权码                    | 从邮箱服务商获取                   |
+
+**已加入 `.gitignore` 的文件：**
+
+- `.env` / `.env.testing` / `.env.local` / `.env.production`
+- `.devcontainer/.env.devcontainer`
+- `storage/oauth-private.key` / `storage/oauth-public.key`
+
+### 9.2 密钥轮换（首次部署或密钥泄露后必须执行）
+
+```bash
+# 进入容器
+docker exec -it blessingskin-app bash
+
+# 1. 重新生成 APP_KEY（所有旧 session 失效，用户需重新登录）
+php artisan key:generate --force
+
+# 2. 重新生成 Passport 密钥对（所有旧 OAuth2 token 失效）
+php artisan passport:keys --force
+
+# 3. 如果使用 JWT，重新生成 JWT_SECRET
+php artisan jwt:secret --force
+
+# 4. 退出容器后重启服务
+exit
+docker compose restart app
+```
+
+> **重要：** 本仓库的 Git 历史中曾包含真实密钥（APP_KEY、Passport 私钥、JWT_SECRET）。
+> 如果你是 fork 或 clone 此仓库进行部署，**必须在首次部署时执行上述密钥轮换步骤**，
+> 确保使用全新生成的密钥，而非历史中泄露的密钥。
+
+### 9.3 Git 历史清理（仓库维护者执行）
+
+如需彻底清除 Git 历史中的泄露密钥：
+
+```bash
+# 安装 BFG Repo-Cleaner (https://rtyley.github.io/bfg-repo-cleaner/)
+# 创建替换规则文件
+cat > passwords.txt << 'EOF'
+eVX/xzF5NhpGB2luswliFx9XSBsbbAP21wOi68X/P34===>REMOVED_KEY
+JaytOHG/JlLgulTVAhiS0tRqnAfCkQydbdP6VRmoAMY===>REMOVED_KEY
+1tdM3gXarxYI4KlAHMBo238iC2tEb4I3EtBlZTQQXvInXIt7V2ix7hJ1KTvxCKZW==>REMOVED_KEY
+EOF
+
+# 清理历史
+bfg --replace-text passwords.txt
+bfg --delete-files .env.testing
+bfg --delete-files .env.devcontainer
+
+# 清理 reflog 并强制推送
+git reflog expire --expire=now --all
+git gc --prune=now --aggressive
+git push --force --all
+git push --force --tags
+```
+
+> 强制推送后，所有协作者需要重新 clone 仓库。
+
+### 9.4 生产环境安全清单
 
 - [ ] 服务器防火墙仅开放 22、80、443
-- [ ] 配置 HTTPS (Let's Encrypt + certbot)
-- [ ] 定期更新 Docker 镜像
-- [ ] MySQL 密码定期更换
-- [ ] `.env` 和 `.client_id` 不要提交到 Git
+- [ ] 确认 `APP_DEBUG=false`（生产环境禁止开启 debug）
+- [ ] 配置 HTTPS（Let's Encrypt + certbot 或云厂商证书）
+- [ ] Nginx 添加安全响应头（见下方）
+- [ ] 移除 `X-Powered-By` 头，设置 `server_tokens off`
+- [ ] 设置 `SESSION_SECURE_COOKIE=true`
+- [ ] MySQL 使用强密码，定期更换
+- [ ] `.env` 文件权限设为 600（仅 root 可读）
+- [ ] 定期更新 Docker 镜像和系统补丁
+- [ ] 配置日志轮转，避免磁盘写满
+
+### 9.5 推荐的 Nginx 安全头
+
+在 `docker/nginx.conf` 的 `server` 块中添加：
+
+```nginx
+# 安全响应头
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+# 隐藏服务器版本
+server_tokens off;
+proxy_hide_header X-Powered-By;
+```

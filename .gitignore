@@ -1,4 +1,8 @@
 .env
+.env.testing
+.env.local
+.env.production
+.devcontainer/.env.devcontainer
 .sass-cache
 coverage
 .idea/

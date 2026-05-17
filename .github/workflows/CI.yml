@@ -70,6 +70,19 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Prepare test environment
+        run: |
+          cp .env.example .env.testing
+          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env.testing
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=:memory:/' .env.testing
+          sed -i 's/CACHE_DRIVER=.*/CACHE_DRIVER=array/' .env.testing
+          sed -i 's/SESSION_DRIVER=.*/SESSION_DRIVER=array/' .env.testing
+          sed -i 's/QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env.testing
+          echo "BCRYPT_ROUNDS=4" >> .env.testing
+          echo "LOG_CHANNEL=null" >> .env.testing
+          echo "MAIL_MAILER=array" >> .env.testing
+          php artisan key:generate --env=testing
+          php artisan passport:keys --env=testing 2>/dev/null || true
       - name: Run tests only
         if: matrix.php != '8.3'
         run: ./vendor/bin/phpunit
