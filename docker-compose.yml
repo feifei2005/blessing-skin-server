@@ -49,6 +49,14 @@ services:
       DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       CORS_ALLOWED_ORIGINS: 'https://${SPA_DOMAIN}'
       SPA_URL: 'https://${SPA_DOMAIN}'
+      MAIL_MAILER: smtp
+      MAIL_HOST: smtp.qq.com
+      MAIL_PORT: '465'
+      MAIL_USERNAME: '${MAIL_USERNAME}'
+      MAIL_PASSWORD: '${MAIL_PASSWORD}'
+      MAIL_ENCRYPTION: ssl
+      MAIL_FROM_ADDRESS: '${MAIL_FROM_ADDRESS}'
+      MAIL_FROM_NAME: '${MAIL_FROM_NAME:-Blessing Skin}'
     volumes:
       - app_storage:/app/storage
     depends_on:

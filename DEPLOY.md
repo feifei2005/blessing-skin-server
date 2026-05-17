@@ -75,6 +75,14 @@ DB_PASSWORD=<应用数据库密码>
 
 API_DOMAIN=skin_api.xn--suki-uf1gk54ba.cn
 SPA_DOMAIN=skin.xn--suki-uf1gk54ba.cn
+
+# QQ SMTP 邮箱配置
+# 1. 登录 QQ 邮箱 → 设置 → 账户 → POP3/SMTP 服务 → 开启 → 生成授权码
+# 2. 将授权码填入 MAIL_PASSWORD
+MAIL_USERNAME=你的QQ邮箱@qq.com
+MAIL_PASSWORD=<QQ邮箱SMTP授权码>
+MAIL_FROM_ADDRESS=你的QQ邮箱@qq.com
+MAIL_FROM_NAME=Blessing Skin
 ```
 
 ### 3.4 构建与启动
@@ -98,7 +106,21 @@ docker compose up -d
 docker compose ps
 ```
 
-### 3.5 数据库初始化（仅首次部署）
+### 3.5 邮箱配置（QQ SMTP）
+
+在 `.env` 中配置 `MAIL_USERNAME`、`MAIL_PASSWORD`、`MAIL_FROM_ADDRESS`、`MAIL_FROM_NAME` 后启动容器即可。
+
+获取 QQ SMTP 授权码：
+
+1. 登录 QQ 邮箱 → 设置 → 账户 → POP3/IMAP/SMTP 服务
+2. 开启 SMTP 服务 → 按提示发送短信 → 获取授权码
+3. 将授权码填入 `MAIL_PASSWORD`
+
+> 发件地址建议填 QQ 邮箱本身（如 `1142595583@qq.com`），不要填自有域名——自有域名没有 SPF 指向腾讯 SMTP，收件方可能拒收。
+
+后台开启邮箱验证：`/admin/options` → 常规 → 勾选「注册需验证邮箱」。
+
+### 3.6 数据库初始化（仅首次部署）
 
 ```bash
 # 运行数据库迁移
